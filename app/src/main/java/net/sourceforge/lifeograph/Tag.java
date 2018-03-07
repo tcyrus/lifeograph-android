@@ -85,7 +85,7 @@ public class Tag extends DiaryElementChart {
     }
 
     public Tag( Diary diary, String name, Category ctg ) {
-        this( diary, name, ctg, ChartPoints.DEFAULT );
+        this( diary, name, ctg, ChartPoints.DEFAULT);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class Tag extends DiaryElementChart {
     // THEMES
     public Theme get_theme()
     {
-        return( m_theme != null ? m_theme : Theme.System.get() );
+        return ( m_theme != null ? m_theme : Theme.System.get() );
     }
 
     public boolean get_has_own_theme()
@@ -215,7 +215,7 @@ public class Tag extends DiaryElementChart {
     }
 
     boolean is_boolean() {
-        return ( ( m_chart_type & ChartPoints.VALUE_TYPE_MASK ) == ChartPoints.BOOLEAN );
+        return ( ( m_chart_type & ChartPoints.VALUE_TYPE_MASK) == ChartPoints.BOOLEAN);
     }
 
     String get_unit() {
@@ -232,7 +232,7 @@ public class Tag extends DiaryElementChart {
             return null;
 
         ChartPoints cp = new ChartPoints( m_chart_type );
-        cp.unit = m_unit;
+        cp.setUnit$production_sources_for_module_app(m_unit);
 
         // order from old to new: d/v_before > d/v_last > d/v
         Date d_before = new Date( Date.NOT_SET );
@@ -249,25 +249,25 @@ public class Tag extends DiaryElementChart {
             if( d.is_ordinal() )
                 break;
 
-            if( cp.start_date == 0 )
-                cp.start_date = d.m_date;
+            if( cp.getStart_date$production_sources_for_module_app() == 0 )
+                cp.setStart_date$production_sources_for_module_app(d.m_date);
             if( ! d_last.is_set() )
                 d_last = d;
 
             v = is_boolean() ? 1.0 : iter.getValue();
 
-            if( cp.calculate_distance( d, d_last ) > 0 )
+            if (cp.calculate_distance$production_sources_for_module_app( d, d_last ) > 0)
             // add_value() = due to lack of lambdas:
             {
-                boolean flag_sustain = ( m_chart_type & ChartPoints.VALUE_TYPE_MASK ) ==
-                                       ChartPoints.AVERAGE;
+                boolean flag_sustain = ( m_chart_type & ChartPoints.VALUE_TYPE_MASK) ==
+                        ChartPoints.AVERAGE;
                 if( flag_sustain && no_of_entries > 1 )
                     v_last /= no_of_entries;
 
-                if( cp.values.isEmpty() ) // first value is being entered i.e. v_before is not set
-                    cp.add( 0, false, 0.0, v_last );
+                if( cp.getValues$production_sources_for_module_app().isEmpty() ) // first value is being entered i.e. v_before is not set
+                    cp.add$production_sources_for_module_app( 0, false, 0.0, v_last );
                 else
-                    cp.add( cp.calculate_distance( d_last,  d_before ),
+                    cp.add$production_sources_for_module_app( cp.calculate_distance$production_sources_for_module_app( d_last,  d_before ),
                             flag_sustain, v_before, v_last );
 
                 v_before = v_last;
@@ -284,15 +284,15 @@ public class Tag extends DiaryElementChart {
 
         //add_value() = due to lack of lambdas:
         {
-            boolean flag_sustain = ( m_chart_type & ChartPoints.VALUE_TYPE_MASK ) ==
-                                   ChartPoints.AVERAGE;
+            boolean flag_sustain = (m_chart_type & ChartPoints.VALUE_TYPE_MASK) ==
+                    ChartPoints.AVERAGE;
             if( flag_sustain && no_of_entries > 1 )
                 v_last /= no_of_entries;
 
-            if( cp.values.isEmpty() ) // first value is being entered i.e. v_before is not set
-                cp.add( 0, false, 0.0, v_last );
+            if( cp.getValues$production_sources_for_module_app().isEmpty() ) // first value is being entered i.e. v_before is not set
+                cp.add$production_sources_for_module_app( 0, false, 0.0, v_last );
             else
-                cp.add( cp.calculate_distance( d_last,  d_before ),
+                cp.add$production_sources_for_module_app( cp.calculate_distance$production_sources_for_module_app( d_last,  d_before ),
                         flag_sustain, v_before, v_last );
 
             // NOTE: last assignments in lambda were not necessary here

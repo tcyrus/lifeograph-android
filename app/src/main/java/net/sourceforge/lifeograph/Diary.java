@@ -95,27 +95,27 @@ public class Diary extends DiaryElementChart
 
         Theme theme = Diary.diary.create_tag( "calm", null ).get_own_theme();
         theme.font = "Sans 11";
-        theme.color_base = Color.parseColor( "#D1E188" );
-        theme.color_text = Color.parseColor( "#001100" );
-        theme.color_heading =  Color.parseColor( "#D24242" );
-        theme.color_subheading = Color.parseColor( "#793E4C" );
-        theme.color_highlight = Color.parseColor( "#8CCB4D" );
+        theme.color_base = Color.parseColor("#D1E188");
+        theme.color_text = Color.parseColor("#001100");
+        theme.color_heading = Color.parseColor("#D24242");
+        theme.color_subheading =Color.parseColor("#793E4C");
+        theme.color_highlight = Color.parseColor("#8CCB4D");
 
         theme = Diary.diary.create_tag( "lovely", null ).get_own_theme();
         theme.font = "Sans 11";
-        theme.color_base = Color.parseColor( "#F9F0F0" );
-        theme.color_text = Color.parseColor( "#330909" );
-        theme.color_heading =  Color.parseColor( "#E13333" );
-        theme.color_subheading = Color.parseColor( "#AA4747" );
-        theme.color_highlight = Color.parseColor( "#E69595" );
+        theme.color_base = Color.parseColor("#F9F0F0");
+        theme.color_text = Color.parseColor("#330909");
+        theme.color_heading = Color.parseColor("#E13333");
+        theme.color_subheading = Color.parseColor("#AA4747");
+        theme.color_highlight = Color.parseColor("#E69595");
 
         theme = Diary.diary.create_tag( "dark", null ).get_own_theme();
         theme.font = "Sans 11";
-        theme.color_base = Color.parseColor( "#111111" );
-        theme.color_text = Color.parseColor( "#BBBBBB" );
-        theme.color_heading =  Color.parseColor( "#3874AC" );
-        theme.color_subheading = Color.parseColor( "#23538B" );
-        theme.color_highlight = Color.parseColor( "#173353" );
+        theme.color_base = Color.parseColor("#111111");
+        theme.color_text = Color.parseColor("#BBBBBB");
+        theme.color_heading = Color.parseColor("#3874AC");
+        theme.color_subheading = Color.parseColor("#23538B");
+        theme.color_highlight = Color.parseColor("#173353");
 
         return Result.SUCCESS;
     }
@@ -191,7 +191,7 @@ public class Diary extends DiaryElementChart
         Date d_last = new Date( Date.NOT_SET );
 
         for( Entry entry : m_entries.descendingMap().values() )
-            cp.add_plain( d_last, entry.get_date() );
+            cp.add_plain$production_sources_for_module_app( d_last, entry.get_date() );
 
         // TODO: fill_up_chart_points( cp );
 
@@ -511,7 +511,7 @@ public class Diary extends DiaryElementChart
     }
 
     public Tag create_tag( String name, Tag.Category ctg ) {
-        return create_tag( name, ctg, ChartPoints.DEFAULT );
+        return create_tag( name, ctg, ChartPoints.DEFAULT);
     }
 
     public void dismiss_tag( Tag tag ) {
@@ -936,35 +936,30 @@ public class Diary extends DiaryElementChart
                             }
                             switch( line.charAt( 1 ) ) {
                                 case 'f': // font
-                                    ptr2tag.get_own_theme().font = line.substring( 2 );
+                                    ptr2tag.get_own_theme().font = line.substring(2);
                                     break;
                                 case 'b': // base color
-                                    if( line.charAt( 2 ) != 'n' )
-                                        ptr2tag.get_own_theme().color_base =
-                                                Theme.parse_color( line.substring( 2 ) );
+                                    if ( line.charAt( 2 ) != 'n' )
+                                        ptr2tag.get_own_theme().color_base = Theme.parse_color(line.substring(2));
                                     break;
                                 case 't': // text color
-                                    if( line.charAt( 2 ) != 'n' )
-                                        ptr2tag.get_own_theme().color_text =
-                                                Theme.parse_color( line.substring( 2 ) );
+                                    if ( line.charAt( 2 ) != 'n' )
+                                        ptr2tag.get_own_theme().color_text = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'h': // heading color
                                     if( line.charAt( 2 ) != 'n' )
-                                        ptr2tag.get_own_theme().color_heading =
-                                                Theme.parse_color( line.substring( 2 ) );
+                                        ptr2tag.get_own_theme().color_heading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 's': // subheading color
                                     if( line.charAt( 2 ) != 'n' )
-                                        ptr2tag.get_own_theme().color_subheading =
-                                                Theme.parse_color( line.substring( 2 ) );
+                                        ptr2tag.get_own_theme().color_subheading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'l': // highlight color
                                     // a work-around against a bug in 0.3
                                     if( line.charAt( 2 ) == 'n' )
                                         ptr2tag.create_own_theme_duplicating( Theme.System.get() );
                                     else
-                                        ptr2tag.get_own_theme().color_highlight =
-                                                Theme.parse_color( line.substring( 2 ) );
+                                        ptr2tag.get_own_theme().color_highlight = Theme.parse_color(line.substring(2));
                                     break;
                             }
                             break;
@@ -1046,7 +1041,7 @@ public class Diary extends DiaryElementChart
                         case 'O': // options
                             m_option_sorting_criteria = line.charAt( 2 );
                             if( line.length() > 3 && line.charAt( 3 ) == 'Y' )
-                                set_chart_type( ChartPoints.YEARLY );
+                                set_chart_type(ChartPoints.YEARLY);
                             break;
                         case 'l': // language
                             m_language = line.substring( 2 );
@@ -1199,27 +1194,22 @@ public class Diary extends DiaryElementChart
                             }
                             switch( line.charAt( 1 ) ) {
                                 case 'f': // font
-                                    ptr2tag.get_own_theme().font = line.substring( 2 );
+                                    ptr2tag.get_own_theme().font = line.substring(2);
                                     break;
                                 case 'b': // base color
-                                    ptr2tag.get_own_theme().color_base =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2tag.get_own_theme().color_base = Theme.parse_color(line.substring(2));
                                     break;
                                 case 't': // text color
-                                    ptr2tag.get_own_theme().color_text =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2tag.get_own_theme().color_text = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'h': // heading color
-                                    ptr2tag.get_own_theme().color_heading =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2tag.get_own_theme().color_heading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 's': // subheading color
-                                    ptr2tag.get_own_theme().color_subheading =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2tag.get_own_theme().color_subheading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'l': // highlight color
-                                    ptr2tag.get_own_theme().color_highlight =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2tag.get_own_theme().color_highlight = Theme.parse_color(line.substring(2));
                                     break;
                             }
                             break;
@@ -1489,25 +1479,22 @@ public class Diary extends DiaryElementChart
                             }
                             switch( line.charAt( 1 ) ) {
                                 case 'f': // font
-                                    ptr2theme.font = line.substring( 2 );
+                                    ptr2theme.font = line.substring(2);
                                     break;
                                 case 'b': // base color
-                                    ptr2theme.color_base = Theme.parse_color( line.substring( 2 ) );
+                                    ptr2theme.color_base = Theme.parse_color(line.substring(2));
                                     break;
                                 case 't': // text color
-                                    ptr2theme.color_text = Theme.parse_color( line.substring( 2 ) );
+                                    ptr2theme.color_text = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'h': // heading color
-                                    ptr2theme.color_heading =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2theme.color_heading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 's': // subheading color
-                                    ptr2theme.color_subheading =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2theme.color_subheading = Theme.parse_color(line.substring(2));
                                     break;
                                 case 'l': // highlight color
-                                    ptr2theme.color_highlight =
-                                            Theme.parse_color( line.substring( 2 ) );
+                                    ptr2theme.color_highlight = Theme.parse_color(line.substring(2));
                                     break;
                             }
                             break;
@@ -1723,17 +1710,17 @@ public class Diary extends DiaryElementChart
         {
             Theme theme = tag.get_theme();
 
-            mBufferedWriter.append( type ).append( "f" ).append( theme.font ).append( '\n' );
+            mBufferedWriter.append( type ).append( "f" ).append(theme.font).append( '\n' );
             mBufferedWriter.append( type ).append( "b" )
-                           .append( Theme.color2string( theme.color_base ) ).append( '\n' )
+                           .append( Theme.color2string(theme.color_base) ).append( '\n' )
                            .append( type ).append( "t" )
-                           .append( Theme.color2string( theme.color_text ) ).append( '\n' )
+                           .append( Theme.color2string(theme.color_text) ).append( '\n' )
                            .append( type ).append( "h" )
-                           .append( Theme.color2string( theme.color_heading ) ).append( '\n' )
+                           .append( Theme.color2string(theme.color_heading) ).append( '\n' )
                            .append( type ).append( "s" )
-                           .append( Theme.color2string( theme.color_subheading ) ).append( '\n' )
+                           .append( Theme.color2string(theme.color_subheading) ).append( '\n' )
                            .append( type ).append( "l" )
-                           .append( Theme.color2string( theme.color_highlight ) ).append( '\n' );
+                           .append( Theme.color2string(theme.color_highlight) ).append( '\n' );
         }
     }
 
@@ -1745,7 +1732,7 @@ public class Diary extends DiaryElementChart
                            .append( '\t' ).append( chapter.get_name() )
                            .append( "\nCp" ).append( chapter.get_expanded() ? 'e' : '_' );
             create_db_todo_status_text( chapter );
-            if( ( chapter.get_chart_type() & ChartPoints.YEARLY ) != 0 )
+            if( ( chapter.get_chart_type() & ChartPoints.YEARLY) != 0 )
                 mBufferedWriter.append( "Y\n" );
             else
                 mBufferedWriter.append( '\n' );
@@ -1770,7 +1757,7 @@ public class Diary extends DiaryElementChart
     private boolean create_db_body_text() throws IOException {
         // OPTIONS
         mBufferedWriter.append( "O " ).append( m_option_sorting_criteria )
-                       .append( ( m_chart_type & ChartPoints.YEARLY ) != 0 ? "Y\n" : "\n" );
+                       .append( ( m_chart_type & ChartPoints.YEARLY) != 0 ? "Y\n" : "\n" );
         if( ! m_language.isEmpty() )
             mBufferedWriter.append( "l " ).append( m_language ).append( '\n' );
 

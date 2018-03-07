@@ -41,10 +41,10 @@ public abstract class DiaryElementChart extends DiaryElement
     }
 
     void set_chart_type( int type ) {
-        if( ( type & ChartPoints.PERIOD_MASK ) == 0 )
-            type |= ( m_chart_type & ChartPoints.PERIOD_MASK );
-        if( ( type & ChartPoints.VALUE_TYPE_MASK ) == 0 )
-            type |= ( m_chart_type & ChartPoints.VALUE_TYPE_MASK );
+        if( ( type & ChartPoints.PERIOD_MASK) == 0 )
+            type |= ( m_chart_type & ChartPoints.PERIOD_MASK);
+        if( ( type & ChartPoints.VALUE_TYPE_MASK) == 0 )
+            type |= ( m_chart_type & ChartPoints.VALUE_TYPE_MASK);
         m_chart_type = type;
     }
 

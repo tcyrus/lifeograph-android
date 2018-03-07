@@ -32,10 +32,6 @@
           android:title="@string/settings"
           android:orderInCategory="100"
           compat:showAsAction="never" />
-    <item android:id="@+id/purchase"
-          android:title="@string/purchase"
-          android:orderInCategory="100"
-          compat:showAsAction="never" />
     <item android:id="@+id/about"
           android:title="@string/about"
           android:orderInCategory="100"

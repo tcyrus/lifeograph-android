@@ -5,7 +5,7 @@
     <string name="go">Gehe</string>
     <string name="about">Über</string>
     <string name="settings">Einstellungen</string>
-    <string name="purchase">Kaufen</string>
+    <!--<string name="purchase">Kaufen</string>-->
     <string name="show">Zeige</string>
     <string name="add_today">Eintrag für Heute</string>
     <string name="calendar">Kalender</string>

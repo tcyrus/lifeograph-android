@@ -157,20 +157,20 @@ class DialogTheme extends Dialog
 
     private void updateButtonColors() {
         Theme theme =  mTag.get_theme();
-        mButtonTextColor.setBackgroundColor( theme.color_text );
-        mButtonBaseColor.setBackgroundColor( theme.color_base );
-        mButtonHeadingColor.setBackgroundColor( theme.color_heading );
-        mButtonSubheadingColor.setBackgroundColor( theme.color_subheading );
-        mButtonHighlightColor.setBackgroundColor( theme.color_highlight );
+        mButtonTextColor.setBackgroundColor(theme.color_text);
+        mButtonBaseColor.setBackgroundColor(theme.color_base);
+        mButtonHeadingColor.setBackgroundColor(theme.color_heading);
+        mButtonSubheadingColor.setBackgroundColor(theme.color_subheading);
+        mButtonHighlightColor.setBackgroundColor(theme.color_highlight);
 
-        mButtonTextColor.setTextColor( getContrastColor( theme.color_text ) );
-        mButtonBaseColor.setTextColor( getContrastColor( theme.color_base ) );
-        mButtonHeadingColor.setTextColor( getContrastColor( theme.color_heading ) );
-        mButtonSubheadingColor.setTextColor( getContrastColor( theme.color_subheading ) );
-        mButtonHighlightColor.setTextColor( getContrastColor( theme.color_highlight ) );
+        mButtonTextColor.setTextColor( getContrastColor(theme.color_text) );
+        mButtonBaseColor.setTextColor( getContrastColor(theme.color_base) );
+        mButtonHeadingColor.setTextColor( getContrastColor(theme.color_heading) );
+        mButtonSubheadingColor.setTextColor( getContrastColor(theme.color_subheading) );
+        mButtonHighlightColor.setTextColor( getContrastColor(theme.color_highlight) );
     }
 
-    // from: http://stackoverflow.com/questions/4672271/reverse-opposing-colors
+    // from: https://stackoverflow.com/a/13030061
     private static int getContrastColor( int color ) {
         double y = ( 299 * Color.red( color ) + 587 * Color.green( color ) + 114 * Color.blue(
                 color ) ) / 1000;

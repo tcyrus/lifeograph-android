@@ -211,7 +211,7 @@ public class DialogEntryTag extends Dialog
             case TO_CREATE_CUMULATIVE:
                 if( mAction == TagOperation.TO_CREATE_CUMULATIVE )
                     tag = Diary.diary.create_tag( mNAV.name, null,
-                                                  ChartPoints.MONTHLY | ChartPoints.CUMULATIVE );
+                                                  ChartPoints.MONTHLY | ChartPoints.CUMULATIVE);
                 else
                     tag = Diary.diary.create_tag( mNAV.name, null );
 

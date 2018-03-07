@@ -38,7 +38,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.ActionMode;
@@ -54,7 +54,7 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
-public class ActivityDiary extends ActionBarActivity
+public class ActivityDiary extends AppCompatActivity
         implements DialogInquireText.InquireListener, FragmentElemList.DiaryManager,
         DialogCalendar.Listener, FragmentElemList.ListOperations, PopupMenu.OnMenuItemClickListener,
         DialogTags.DialogTagsHost, ActionMode.Callback, DialogPassword.Listener
@@ -165,11 +165,6 @@ public class ActivityDiary extends ActionBarActivity
             mActionBar.setSelectedNavigationItem( savedInstanceState.getInt( "tab", 0 ) );
         }
 
-        if( !Lifeograph.getAddFreeNotPurchased() ) {
-            LinearLayout container = ( LinearLayout ) findViewById( R.id.main_container );
-            View ad = findViewById( R.id.fragmentAd );
-            container.removeView( ad );
-        }
 
         Lifeograph.sLoginStatus = Lifeograph.LoginStatus.LOGGED_IN;
     }
@@ -656,7 +651,7 @@ public class ActivityDiary extends ActionBarActivity
             }
         }
 
-        TabsAdapter( ActionBarActivity activity, ViewPager pager ) {
+        TabsAdapter( AppCompatActivity activity, ViewPager pager ) {
             mContext = activity;
             mActionBar = activity.getSupportActionBar();
             mFragMan = activity.getSupportFragmentManager();

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,7 +65,7 @@ import android.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
 
-public class ActivityEntry extends ActionBarActivity
+public class ActivityEntry extends AppCompatActivity
         implements ToDoAction.ToDoObject, DialogInquireText.InquireListener,
         PopupMenu.OnMenuItemClickListener, ViewEntryTags.Listener, DialogEntryTag.Listener
 {
@@ -188,7 +188,7 @@ public class ActivityEntry extends ActionBarActivity
             mEditText.setImeOptions( EditorInfo.IME_FLAG_NO_EXTRACT_UI );
 
         // set custom font as the default font may lack the necessary chars such as check marks:
-        /*Typeface font = Typeface.createFromAsset( getAssets(), "OpenSans-Regular.ttf" );
+        /*Typeface font = Typeface.createFromAsset( getAssets(), "fonts/OpenSans-Regular.ttf" );
         mEditText.setTypeface( font );*/
 
         mEditText.addTextChangedListener( new TextWatcher() {
@@ -424,12 +424,6 @@ public class ActivityEntry extends ActionBarActivity
             getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN );
         }
         show( entry, savedInstanceState == null );
-
-        if( !Lifeograph.getAddFreeNotPurchased() ) {
-            LinearLayout container = ( LinearLayout ) findViewById( R.id.main_container );
-            View ad = findViewById( R.id.fragmentAd );
-            container.removeView( ad );
-        }
     }
 
     /*@Override
@@ -476,7 +470,7 @@ public class ActivityEntry extends ActionBarActivity
 
         MenuItem item = menu.findItem( R.id.change_todo_status );
         ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
-        ToDoAction.mObject = this;
+        ToDoAction.setMObject$production_sources_for_module_app(this);
 
         item = menu.findItem( R.id.search_text );
         final SearchView searchView = ( SearchView ) MenuItemCompat.getActionView( item );
@@ -642,23 +636,23 @@ public class ActivityEntry extends ActionBarActivity
 
     void updateTheme() {
         Theme theme = m_ptr2entry.get_theme();
-        mEditText.setBackgroundColor( theme.color_base );
-        mEditText.setTextColor( theme.color_text );
+        mEditText.setBackgroundColor(theme.color_base);
+        mEditText.setTextColor(theme.color_text);
 
-        mColorMid = Theme.midtone( theme.color_base, theme.color_text, 0.4f );
+        mColorMid = Theme.midtone(theme.color_base, theme.color_text, 0.4f );
 
         //mColorRegionBG = Theme.midtone( theme.color_base, theme.color_text, 0.9f ); LATER
         mColorMatchBG = Theme.contrast(
-                theme.color_base, Theme.s_color_match1, Theme.s_color_match2 );
+                theme.color_base, Theme.s_color_match1, Theme.s_color_match2);
 
         //mColorLink = Theme.contrast(
         //theme.color_base, Theme.s_color_link1, Theme.s_color_link2 ); LATER
         //mColorLinkBroken = Theme.contrast(
         //theme.color_base, Theme.s_color_broken1, Theme.s_color_broken2 ); LATER
 
-        mButtonHighlight.setTextColor( theme.color_text );
+        mButtonHighlight.setTextColor(theme.color_text);
         SpannableString spanStringH = new SpannableString( "H" );
-        spanStringH.setSpan( new BackgroundColorSpan( theme.color_highlight ), 0, 1, 0 );
+        spanStringH.setSpan( new BackgroundColorSpan(theme.color_highlight), 0, 1, 0 );
         mButtonHighlight.setText( spanStringH );
     }
 
@@ -1262,7 +1256,7 @@ public class ActivityEntry extends ActionBarActivity
     private class SpanHighlight extends BackgroundColorSpan implements AdvancedSpan
     {
         SpanHighlight() {
-            super( m_ptr2entry.get_theme().color_highlight );
+            super(m_ptr2entry.get_theme().color_highlight);
         }
         public char getType() {
             return '#';
@@ -1998,7 +1992,7 @@ public class ActivityEntry extends ActionBarActivity
 
         addSpan( new TextAppearanceSpan( this, R.style.headingSpan ), 0, end,
                  Spanned.SPAN_INTERMEDIATE );
-        addSpan( new ForegroundColorSpan( m_ptr2entry.get_theme().color_heading ), 0, end, 0 );
+        addSpan( new ForegroundColorSpan(m_ptr2entry.get_theme().color_heading), 0, end, 0 );
 
         if( !mFlagSetTextOperation ) {
             m_ptr2entry.m_name = mEditText.getText().toString().substring( 0, end );
@@ -2013,7 +2007,7 @@ public class ActivityEntry extends ActionBarActivity
 
         addSpan( new TextAppearanceSpan( this, R.style.subheadingSpan ), m_pos_start, end,
                  Spanned.SPAN_INTERMEDIATE );
-        addSpan( new ForegroundColorSpan( m_ptr2entry.get_theme().color_subheading ),
+        addSpan( new ForegroundColorSpan(m_ptr2entry.get_theme().color_subheading),
                  m_pos_start, end, 0 );
     }
 
@@ -2133,27 +2127,27 @@ public class ActivityEntry extends ActionBarActivity
     }
 
     private void apply_check_unf() {
-        apply_check( new ForegroundColorSpan( Theme.s_color_todo ), new SpanBold() );
+        apply_check( new ForegroundColorSpan(Theme.s_color_todo), new SpanBold() );
     }
 
     private void apply_check_prg() {
-        apply_check( new ForegroundColorSpan( Theme.s_color_progressed ), null );
+        apply_check( new ForegroundColorSpan(Theme.s_color_progressed), null );
     }
 
     private void apply_check_fin() {
-        apply_check( new ForegroundColorSpan( Theme.s_color_done ),
-                     new BackgroundColorSpan( Theme.s_color_done ) );
+        apply_check( new ForegroundColorSpan(Theme.s_color_done),
+                     new BackgroundColorSpan(Theme.s_color_done) );
     }
 
     private void apply_check_ccl() {
-        apply_check( new ForegroundColorSpan( Theme.s_color_canceled ),
+        apply_check( new ForegroundColorSpan(Theme.s_color_canceled),
                      new SpanStrikethrough() );
     }
 
     private void apply_match() {
         addSpan( new BackgroundColorSpan( mColorMatchBG ), pos_search, pos_current + 1,
                  Spanned.SPAN_INTERMEDIATE );
-        addSpan( new ForegroundColorSpan( m_ptr2entry.get_theme().color_base ),
+        addSpan( new ForegroundColorSpan(m_ptr2entry.get_theme().color_base),
                  pos_search, pos_current + 1, 0 );
     }
 }

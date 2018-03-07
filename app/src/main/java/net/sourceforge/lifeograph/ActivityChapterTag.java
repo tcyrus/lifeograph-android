@@ -25,7 +25,7 @@ package net.sourceforge.lifeograph;
 import android.support.v7.app.ActionBar;
 import android.app.Activity;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -43,7 +43,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-public class ActivityChapterTag extends ActionBarActivity
+public class ActivityChapterTag extends AppCompatActivity
         implements ToDoAction.ToDoObject,
         DialogInquireText.InquireListener, DialogCalendar.Listener, FragmentElemList.DiaryManager,
         FragmentElemList.ListOperations, DialogTheme.DialogThemeHost, Spinner.OnItemSelectedListener
@@ -100,7 +100,7 @@ public class ActivityChapterTag extends ActionBarActivity
                     mViewChart.setVisibility( View.VISIBLE );
                     mViewChart.set_points( mElement.create_chart_data(), 1f );
                     layoutTagProperties.setVisibility( View.VISIBLE );
-                    switch( mElement.get_chart_type() & ChartPoints.VALUE_TYPE_MASK ) {
+                    switch (mElement.get_chart_type() & ChartPoints.VALUE_TYPE_MASK) {
                         case ChartPoints.BOOLEAN:
                             spinnerTagType.setSelection( 0 );
                             mAtvTagUnit.setVisibility( View.GONE );
@@ -225,7 +225,7 @@ public class ActivityChapterTag extends ActionBarActivity
 
         MenuItem item = menu.findItem( R.id.change_todo_status );
         ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
-        ToDoAction.mObject = this;
+        ToDoAction.setMObject$production_sources_for_module_app(this);
 
         mMenu = menu;
         updateIcon();
@@ -506,15 +506,15 @@ public class ActivityChapterTag extends ActionBarActivity
     public void onItemSelected( AdapterView<?> parent, View view, int pos, long id ) {
         switch( pos ) {
             case 0:
-                mElement.set_chart_type( ChartPoints.BOOLEAN );
+                mElement.set_chart_type(ChartPoints.BOOLEAN);
                 mAtvTagUnit.setVisibility( View.GONE );
                 break;
             case 1:
-                mElement.set_chart_type( ChartPoints.CUMULATIVE );
+                mElement.set_chart_type(ChartPoints.CUMULATIVE);
                 mAtvTagUnit.setVisibility( View.VISIBLE );
                 break;
             case 2:
-                mElement.set_chart_type( ChartPoints.AVERAGE );
+                mElement.set_chart_type(ChartPoints.AVERAGE);
                 mAtvTagUnit.setVisibility( View.VISIBLE );
                 break;
         }

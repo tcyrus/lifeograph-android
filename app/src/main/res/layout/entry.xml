@@ -128,12 +128,6 @@
             android:layout_gravity="center_horizontal"
             android:background="@color/t_mid" />
 
-        <fragment
-            android:id="@+id/fragmentAd"
-            android:name="net.sourceforge.lifeograph.FragmentAd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
     </LinearLayout>
 
     <!-- DRAWER  -MAY BE LATER

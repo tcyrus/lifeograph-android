@@ -78,7 +78,7 @@
     <string name="theme">Tema</string>
     <string name="show">Göster</string>
     <string name="program_name">Android İçin Lifeograph</string>
-    <string name="purchase">Satın Al</string>
+    <!--<string name="purchase">Satın Al</string>-->
     <string name="rename">Ad Değiştir</string>
     <string name="rename_chapter">Faslın Adını Değiştir</string>
     <string name="reset">Sıfırla</string>
