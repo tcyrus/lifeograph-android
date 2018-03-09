@@ -183,9 +183,9 @@ class DialogTags extends Dialog
             checkBox.setTag( R.id.tag, tag );
             checkBox.setOnClickListener( this );
 
-            if( tag.get_has_own_theme() ) {
-                title.setTextColor(tag.get_theme().color_text);
-                title.setBackgroundColor(tag.get_theme().color_base);
+            if( tag.getHasOwnTheme() ) {
+                title.setTextColor(tag.getTheme().color_text);
+                title.setBackgroundColor(tag.getTheme().color_base);
             }
             else {
                 title.setTextColor( Color.BLACK );

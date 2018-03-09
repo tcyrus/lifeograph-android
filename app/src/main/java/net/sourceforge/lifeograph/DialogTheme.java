@@ -62,40 +62,40 @@ class DialogTheme extends Dialog
         {
             public void onClick( View v ) {
                 sIndex = 0;
-                showColorDialog( mTag.get_theme().color_text + 0xff000000 );
+                showColorDialog( mTag.getTheme().color_text + 0xff000000 );
             }
         } );
         mButtonBaseColor.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
                 sIndex = 1;
-                showColorDialog( mTag.get_theme().color_base + 0xff000000 );
+                showColorDialog( mTag.getTheme().color_base + 0xff000000 );
             }
         } );
         mButtonHeadingColor.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
                 sIndex = 2;
-                showColorDialog( mTag.get_theme().color_heading + 0xff000000 );
+                showColorDialog( mTag.getTheme().color_heading + 0xff000000 );
             }
         } );
         mButtonSubheadingColor.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
                 sIndex = 3;
-                showColorDialog( mTag.get_theme().color_subheading + 0xff000000 );
+                showColorDialog( mTag.getTheme().color_subheading + 0xff000000 );
             }
         } );
         mButtonHighlightColor.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
                 sIndex = 4;
-                showColorDialog( mTag.get_theme().color_highlight + 0xff000000 );
+                showColorDialog( mTag.getTheme().color_highlight + 0xff000000 );
             }
         } );
 
 
-        mButtonReset.setEnabled( mTag.get_has_own_theme() );
+        mButtonReset.setEnabled( mTag.getHasOwnTheme() );
         mButtonReset.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
@@ -117,24 +117,24 @@ class DialogTheme extends Dialog
         {
             public void onOk( AmbilWarnaDialog dialog, int color ) {
                 mButtonReset.setEnabled( true );
-                if( !mTag.get_has_own_theme() )
+                if (!mTag.getHasOwnTheme())
                     mTag.create_own_theme_duplicating( Theme.System.get() );
 
                 switch( sIndex ) {
                     case 0:
-                        mTag.get_theme().color_text = color;
+                        mTag.getTheme().color_text = color;
                         break;
                     case 1:
-                        mTag.get_theme().color_base = color;
+                        mTag.getTheme().color_base = color;
                         break;
                     case 2:
-                        mTag.get_theme().color_heading = color;
+                        mTag.getTheme().color_heading = color;
                         break;
                     case 3:
-                        mTag.get_theme().color_subheading = color;
+                        mTag.getTheme().color_subheading = color;
                         break;
                     case 4:
-                        mTag.get_theme().color_highlight = color;
+                        mTag.getTheme().color_highlight = color;
                         break;
                 }
 
@@ -156,7 +156,7 @@ class DialogTheme extends Dialog
     }
 
     private void updateButtonColors() {
-        Theme theme =  mTag.get_theme();
+        Theme theme =  mTag.getTheme();
         mButtonTextColor.setBackgroundColor(theme.color_text);
         mButtonBaseColor.setBackgroundColor(theme.color_base);
         mButtonHeadingColor.setBackgroundColor(theme.color_heading);

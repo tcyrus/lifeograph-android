@@ -22,53 +22,57 @@
 
 package net.sourceforge.lifeograph
 
+import android.support.annotation.NonNull
+import java.util.LinkedList
 
-class ChartPoints @JvmOverloads internal constructor(internal var type: Int = MONTHLY or CUMULATIVE) {
+class ChartPoints {
+
+    @JvmOverloads internal constructor(type: Int = MONTHLY or CUMULATIVE) {
+        this.value_min = Double.POSITIVE_INFINITY
+        this.value_max = Double.NEGATIVE_INFINITY
+        this.values = LinkedList()
+        this.type = type
+    }
 
     internal val span: Int
         get() = values.size
 
-    internal var value_min: Double? = Double.POSITIVE_INFINITY//java.lang.Double.POSITIVE_INFINITY
-    internal var value_max: Double? = Double.NEGATIVE_INFINITY//java.lang.Double.NEGATIVE_INFINITY
+    @JvmField @NonNull internal var value_min: Double?
+    @JvmField @NonNull internal var value_max: Double?
 
-    internal var values = java.util.LinkedList<Double>()
-    internal var start_date: Long = 0
+    @JvmField @NonNull internal var values: LinkedList<Double>
+    @JvmField internal var type: Int
+    @JvmField internal var start_date: Long = 0
 
-    internal var chapters: List<Pair<Double, Int>>? = null
-    internal var unit = ""
+    @JvmField internal var chapters: MutableList<Map.Entry<Double, Int>>? = null;
+    @JvmField internal var unit = ""
 
     internal fun calculate_distance(d1: Date, d2: Date): Int {
         when (type and PERIOD_MASK) {
             MONTHLY -> return d1.calculate_months_between(d2.m_date)
             YEARLY -> return Math.abs(d1._year - d2._year)
+            else -> return 0 // just to silence the compiler warning
         }
-
-        return 0 // just to silence the compiler warning
     }
 
     internal fun calculate_distance_neg(d1: Date, d2: Date): Int {
         when (type and PERIOD_MASK) {
             MONTHLY -> return Date.calculate_months_between_neg(d1.m_date, d2.m_date)
             YEARLY -> return d2._year - d1._year
-        }
-
-        return 0 // just to silence the compiler warning
-    }
-
-    internal fun push_back(v: Double?) {
-        if (v != null) {
-            values.addLast(v)
-            if (v < value_min!!)
-                value_min = v
-            if (v > value_max!!)
-                value_max = v
+            else -> return 0 // just to silence the compiler warning
         }
     }
 
-    internal fun add(limit: Int, flag_sustain: Boolean, a: Double?, b: Double?) {
+    internal fun push_back(@NonNull v: Double?) {
+        values.addLast(v!!)
+        value_min!!.coerceAtLeast(v)
+        value_max!!.coerceAtMost(v)
+    }
+
+    internal fun add(limit: Int, flag_sustain: Boolean, @NonNull a: Double?, @NonNull b: Double?) {
         for (i in 1 until limit) {
             if (flag_sustain)
-            // interpolation
+                // interpolation
                 push_back(a!! + i * ((b!! - a) / limit))
             else
                 push_back(0.0)
@@ -84,18 +88,17 @@ class ChartPoints @JvmOverloads internal constructor(internal var type: Int = MO
         if (start_date == 0L)
             start_date = d.m_date
 
-        if (values.isEmpty())
-        // first value is being entered i.e. v_before is not set
+        if (values.isEmpty()) {
+            // first value is being entered i.e. v_before is not set
             push_back(1.0)
-        else if (calculate_distance(d, d_last) > 0)
+        } else if (calculate_distance(d, d_last) > 0) {
             add(calculate_distance(d, d_last), false, 0.0, 1.0)
-        else {
-            val v = values.last + 1
+        } else {
+            val v = values.last!! + 1
             values[values.size - 1] = v
-            if (v < value_min!!)
-                value_min = v
-            if (v > value_max!!)
-                value_max = v
+
+            value_min!!.coerceAtLeast(v)
+            value_max!!.coerceAtMost(v)
         }
 
         d_last.m_date = d.m_date

@@ -168,16 +168,16 @@ public class FragmentElemList extends ListFragment
                 else if( mCurTabIndex == 2 ) {
                     Log.d( Lifeograph.TAG, "FragmentElemList.updateList()::TAGS" );
                     // ROOT TAGS
-                    for( Tag t : Diary.diary.m_tags.values() ) {
-                        if( t.get_category() == null )
-                            mElems.add( t );
+                    for (Tag t : Diary.diary.m_tags.values()) {
+                        if (t.getCategory() == null)
+                            mElems.add(t);
                     }
                     // CATEGORIES
                     for( Tag.Category c : Diary.diary.m_tag_categories.values() ) {
                         mElems.add( c );
-                        if( c.get_expanded() ) {
-                            for( Tag t : c.mTags )
-                                mElems.add( t );
+                        if (c.getExpanded()) {
+                            for (Tag t : c.mTags)
+                                mElems.add(t);
                         }
                     }
                     // UNTAGGED META TAG
@@ -335,7 +335,7 @@ public class FragmentElemList extends ListFragment
             switch( elem.get_type().layout_type ) {
                 case HEADER_TAG_CTG:
                     Tag.Category tc = ( Tag.Category ) elem;
-                    tc.set_expanded( !tc.get_expanded() );
+                    tc.setExpanded(!tc.getExpanded());
                     break;
                 case HEADER_CHAPTER_CTG:
                     Chapter.Category cc = ( Chapter.Category ) elem;
@@ -375,17 +375,17 @@ public class FragmentElemList extends ListFragment
                     Tag.Category tc = ( Tag.Category ) elem;
                     ImageButton iconCollapse = holder.getIconCollapse();
                     iconCollapse.setImageResource(
-                            tc.get_expanded() ? R.drawable.ic_expanded : R.drawable.ic_collapsed );
+                            tc.getExpanded() ? R.drawable.ic_expanded : R.drawable.ic_collapsed );
                     iconCollapse.setOnClickListener( new View.OnClickListener()
                     {
                         public void onClick( View v ) {
                             handleCollapse( elem );
                         }
                     } );
-                    if( Diary.diary.is_read_only() )
-                        holder.getIconOptions().setVisibility( View.INVISIBLE );
+                    if (Diary.diary.is_read_only())
+                        holder.getIconOptions().setVisibility(View.INVISIBLE);
                     else
-                        holder.getIconOptions().setTag( tc );
+                        holder.getIconOptions().setTag(tc);
                     break;
                 }
                 case HEADER_CHAPTER_CTG: {

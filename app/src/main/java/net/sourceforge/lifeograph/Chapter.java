@@ -311,8 +311,8 @@ public class Chapter extends DiaryElementChart {
         ChartPoints cp = new ChartPoints( m_chart_type );
         Date d_last = new Date( Date.NOT_SET );
 
-        for( Entry entry : mEntries.descendingSet() )
-            cp.add_plain$production_sources_for_module_app( d_last, entry.get_date() );
+        for (Entry entry : mEntries.descendingSet())
+            cp.add_plain$production_sources_for_module_app(d_last, entry.get_date());
 
         //Diary.diary.fill_up_chart_points( cp );
 

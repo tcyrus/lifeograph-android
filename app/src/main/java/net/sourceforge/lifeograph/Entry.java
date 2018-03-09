@@ -21,8 +21,6 @@
 
 package net.sourceforge.lifeograph;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class Entry extends DiaryElement {
@@ -291,7 +289,7 @@ public class Entry extends DiaryElement {
             tag.add_entry( this, value );
             m_ptr2diary.get_untagged().remove_entry( this );
 
-            if( m_ptr2theme_tag == null && tag.get_has_own_theme() )
+            if( m_ptr2theme_tag == null && tag.getHasOwnTheme() )
                 m_ptr2theme_tag = tag;
 
             return true;
@@ -309,8 +307,8 @@ public class Entry extends DiaryElement {
 
             // if this tag was the theme tag, re-adjust the theme tag
             if( m_ptr2theme_tag == tag ) {
-                for( Tag t : m_tags ) {
-                    if( t.get_has_own_theme() ) {
+                for (Tag t : m_tags) {
+                    if (t.getHasOwnTheme()) {
                         m_ptr2theme_tag = t;
                         return true;
                     }
@@ -326,10 +324,10 @@ public class Entry extends DiaryElement {
     }
 
     public boolean clear_tags() {
-        if( m_tags.isEmpty() )
+        if (m_tags.isEmpty())
             return false;
 
-        for( Tag tag : m_tags )
+        for (Tag tag : m_tags)
             tag.remove_entry( this );
 
         m_tags.clear();
@@ -339,8 +337,8 @@ public class Entry extends DiaryElement {
 
     // THEME
     public Theme get_theme() {
-        return( m_ptr2theme_tag != null ?
-                m_ptr2theme_tag.get_theme() : m_ptr2diary.get_untagged().get_theme() );
+        return (m_ptr2theme_tag != null ?
+                m_ptr2theme_tag.getTheme() : m_ptr2diary.get_untagged().getTheme());
     }
 
     public Tag get_theme_tag()
@@ -360,14 +358,14 @@ public class Entry extends DiaryElement {
 
     public void update_theme() { // called when a tag gained or lost custom theme
         if( m_ptr2theme_tag != null ) { // if there already was a theme tag set
-            if( !m_ptr2theme_tag.get_has_own_theme() ) // if it is no longer a theme tag
+            if( !m_ptr2theme_tag.getHasOwnTheme() ) // if it is no longer a theme tag
                 m_ptr2theme_tag = null;
         }
 
         if( m_ptr2theme_tag == null ) {
             // check if another tag has its own theme and set it
             for( Tag tag : m_tags ) {
-                if( tag.get_has_own_theme() ) {
+                if( tag.getHasOwnTheme() ) {
                     m_ptr2theme_tag = tag;
                     break;
                 }

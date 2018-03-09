@@ -470,7 +470,7 @@ public class ActivityEntry extends AppCompatActivity
 
         MenuItem item = menu.findItem( R.id.change_todo_status );
         ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
-        ToDoAction.setMObject$production_sources_for_module_app(this);
+        ToDoAction.mObject = this;
 
         item = menu.findItem( R.id.search_text );
         final SearchView searchView = ( SearchView ) MenuItemCompat.getActionView( item );

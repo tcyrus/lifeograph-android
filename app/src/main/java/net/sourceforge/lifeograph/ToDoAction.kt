@@ -98,5 +98,5 @@ class ToDoAction(context: Context)//mContext = context;
         fun setTodoStatus(s: Int)
     }
 
-    internal var mObject: ToDoObject? = null
+    @JvmField internal var mObject: ToDoObject? = null
 }

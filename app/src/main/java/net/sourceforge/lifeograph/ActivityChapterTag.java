@@ -106,23 +106,23 @@ public class ActivityChapterTag extends AppCompatActivity
                             mAtvTagUnit.setVisibility( View.GONE );
                             break;
                         case ChartPoints.CUMULATIVE:
-                            spinnerTagType.setSelection( 1 );
-                            mAtvTagUnit.setVisibility( View.VISIBLE );
-                            mAtvTagUnit.setText( ( ( Tag ) mElement ).get_unit() );
+                            spinnerTagType.setSelection(1);
+                            mAtvTagUnit.setVisibility(View.VISIBLE);
+                            mAtvTagUnit.setText(((Tag) mElement).unit);
                             break;
                         default:
-                            spinnerTagType.setSelection( 2 );
-                            mAtvTagUnit.setVisibility( View.VISIBLE );
-                            mAtvTagUnit.setText( ( ( Tag ) mElement ).get_unit() );
+                            spinnerTagType.setSelection(2);
+                            mAtvTagUnit.setVisibility(View.VISIBLE);
+                            mAtvTagUnit.setText(((Tag) mElement).unit);
                             break;
                     }
                     break;
             }
 
-        //updateFilterWidgets( Diary.diary.m_filter_active.get_status() );
+        //updateFilterWidgets(Diary.diary.m_filter_active.get_status());
 
         // LISTENERS
-        spinnerTagType.setOnItemSelectedListener( this );
+        spinnerTagType.setOnItemSelectedListener(this);
 
         String[] units = getResources().getStringArray( R.array.array_tag_units );
         ArrayAdapter< String > adapter_units = new ArrayAdapter< String >
@@ -135,17 +135,16 @@ public class ActivityChapterTag extends AppCompatActivity
                                             }
                                         }
         );
-        mAtvTagUnit.addTextChangedListener( new TextWatcher()
-        {
-            public void afterTextChanged( Editable s ) {
+        mAtvTagUnit.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
             }
 
-            public void beforeTextChanged( CharSequence s, int start, int count, int after ) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
-            public void onTextChanged( CharSequence s, int start, int before, int count ) {
-                ( ( Tag ) mElement ).set_unit( s.toString() );
-                mViewChart.set_points( mElement.create_chart_data(), 1f );
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                ((Tag) mElement).unit = s.toString();
+                mViewChart.set_points(mElement.create_chart_data(), 1f);
             }
         } );
 
@@ -157,27 +156,27 @@ public class ActivityChapterTag extends AppCompatActivity
             }
         } );
 
-        mDrawerLayout.setDrawerListener( new DrawerLayout.DrawerListener()
+        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener()
         {
-            public void onDrawerSlide( View view, float v ) { }
+            public void onDrawerSlide(View view, float v) {}
 
-            public void onDrawerOpened( View view ) {
-                if( mFragmentList != null )
-                    mFragmentList.getListView().setEnabled( false );
+            public void onDrawerOpened(View view) {
+                if (mFragmentList != null)
+                    mFragmentList.getListView().setEnabled(false);
             }
 
-            public void onDrawerClosed( View view ) {
-                if( mFragmentList != null )
-                    mFragmentList.getListView().setEnabled( true );
+            public void onDrawerClosed(View view) {
+                if (mFragmentList != null)
+                    mFragmentList.getListView().setEnabled(true);
             }
 
-            public void onDrawerStateChanged( int i ) { }
+            public void onDrawerStateChanged(int i) {}
         } );
 
         // ACTIONBAR
         mActionBar = getSupportActionBar();
-        if( mActionBar != null ) {
-            mActionBar.setDisplayHomeAsUpEnabled( true );
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
             // mActionBar.setIcon( mElement.get_icon() );
             setTitle( mElement.get_title_str() );
             mActionBar.setSubtitle( mElement.get_info_str() );
@@ -225,7 +224,7 @@ public class ActivityChapterTag extends AppCompatActivity
 
         MenuItem item = menu.findItem( R.id.change_todo_status );
         ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
-        ToDoAction.setMObject$production_sources_for_module_app(this);
+        ToDoAction.mObject = this;
 
         mMenu = menu;
         updateIcon();

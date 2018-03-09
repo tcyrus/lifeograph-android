@@ -1,16 +1,27 @@
+buildscript {
+    ext.kotlin_version = '1.2.30'
+    //ext.kotlin_version = '1.1.1'
+
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.0-rc1'
+    buildToolsVersion '28.0.0 rc1'
     defaultConfig {
         applicationId 'net.sourceforge.lifeograph'
         minSdkVersion 14
         targetSdkVersion 27
-        compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_6
-            targetCompatibility JavaVersion.VERSION_1_6
-        }
         versionName '0.7.1'
         versionCode 7010
     }
@@ -19,30 +30,35 @@ android {
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir 'src/main/libs'
-        java.srcDirs += 'src/main/kotlin'
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt')
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
         }
-        debug {
-            jniDebuggable true
-        }
     }
-    productFlavors {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    return void // just to avoid warning
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
+    }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:27.1.0'
-    compile 'com.github.yukuku:ambilwarna:2.0.1'
-    compile 'com.android.support:appcompat-v7:27.1.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation 'com.android.support:support-annotations:27.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:support-v4:27.1.0'
+    implementation 'com.github.yukuku:ambilwarna:2.0.1'
 }
 
 repositories {

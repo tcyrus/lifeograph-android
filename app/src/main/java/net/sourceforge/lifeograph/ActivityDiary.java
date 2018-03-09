@@ -604,10 +604,10 @@ public class ActivityDiary extends AppCompatActivity
         return( ( Tag.Category ) mElemMenu ).mTags;
     }
     public void addTag( Tag t ) {
-        t.set_category( ( Tag.Category ) mElemMenu );
+        t.setCategory( ( Tag.Category ) mElemMenu );
     }
     public void removeTag( Tag t ) {
-        t.set_category( null );
+        t.setCategory( null );
     }
 
     // VARIABLES ===================================================================================

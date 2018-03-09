@@ -123,16 +123,16 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
             if( ti.hovered && m_flag_editable )
                 mPaint.setStrokeWidth( 6 * STROKE_WIDTH );
 
-            if( ti.tag != null && ti.tag.get_has_own_theme() ) {
-                mPaint.setColor(ti.tag.get_theme().color_base);
+            if( ti.tag != null && ti.tag.getHasOwnTheme() ) {
+                mPaint.setColor(ti.tag.getTheme().color_base);
                 canvas.drawPath( mPath, mPaint );
 
-                mPaint.setColor(ti.tag.get_theme().color_highlight);
+                mPaint.setColor(ti.tag.getTheme().color_highlight);
                 mPaint.setStyle( Paint.Style.STROKE );
                 canvas.drawPath( mPath, mPaint );
 
                 mPaint.setPathEffect( new DashPathEffect( new float[] { 5, 10 }, 0 ) );
-                mPaint.setColor(ti.tag.get_theme().color_heading);
+                mPaint.setColor(ti.tag.getTheme().color_heading);
                 canvas.drawPath( mPath, mPaint );
                 mPaint.setPathEffect( null );
             }
@@ -151,8 +151,8 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
         // LABEL
         if( ti.tag == null )
             mPaint.setColor( ti.hovered ? m_color_text_default : Color.WHITE );
-        else if( ti.tag.get_has_own_theme() )
-            mPaint.setColor(ti.tag.get_theme().color_text);
+        else if( ti.tag.getHasOwnTheme() )
+            mPaint.setColor(ti.tag.getTheme().color_text);
         else
             mPaint.setColor( m_color_text_default );
 
@@ -175,7 +175,7 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
     protected void onDraw( Canvas canvas ) {
         super.onDraw( canvas );
 
-        if( m_ptr2entry == null )
+        if (m_ptr2entry == null)
             return;
 
         m_pos_x = m_pos_y = MARGIN;

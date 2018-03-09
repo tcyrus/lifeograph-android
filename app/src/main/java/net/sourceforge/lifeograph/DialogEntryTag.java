@@ -61,7 +61,7 @@ public class DialogEntryTag extends Dialog
         mButtonTheme.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
-                if( mTag.get_has_own_theme() )
+                if( mTag.getHasOwnTheme() )
                     mEntry.set_theme_tag( mTag );
                 mListener.onTagsChanged();
                 dismiss();
@@ -69,13 +69,13 @@ public class DialogEntryTag extends Dialog
         } );
 
         mInput1 = ( AutoCompleteTextView ) findViewById( R.id.entry_tag_edit );
-        if( mTag != null ) // add new tag case
+        if (mTag != null) // add new tag case
             mInput1.setText( mTag.get_name_and_value( mEntry, true, true ) );
 
         String[] tags = new String[ Diary.diary.m_tags.size() ];
         int i = 0;
-        for( String tag : Diary.diary.m_tags.keySet() ) {
-            tags[ i++ ] = Tag.escape_name( tag );
+        for (String tag : Diary.diary.m_tags.keySet() ) {
+            tags[ i++ ] = Tag.escape_name$production_sources_for_module_app( tag );
         }
         ArrayAdapter< String > adapter_tags = new ArrayAdapter< String >
                 ( getContext(), android.R.layout.simple_dropdown_item_1line, tags );
@@ -122,37 +122,32 @@ public class DialogEntryTag extends Dialog
         mNAV = NameAndValue.parse( text.toString() );
 
         // empty
-        if( ( mNAV.status & NameAndValue.HAS_NAME ) == 0 ) {
+        if ((mNAV.status & NameAndValue.HAS_NAME) == 0) {
             mAction = TagOperation.TO_NONE;
-        }
-        else {
+        } else {
             tag = Diary.diary.m_tags.get( mNAV.name );
-            if( tag == null ) {
-                if( mNAV.value == 1 )
+            if (tag == null) {
+                if (mNAV.value == 1)
                     mAction = TagOperation.TO_CREATE_BOOLEAN;
                 else
                     mAction = TagOperation.TO_CREATE_CUMULATIVE;
-            }
-            else if( tag.is_boolean() && mNAV.value != 1 ) {
-                    tag = null;
-                    mAction = TagOperation.TO_INVALID;
-            }
-            else
-            {
-                if( ! tag.is_boolean() && ( mNAV.status & NameAndValue.HAS_EQUAL ) == 0 &&
-                    direction > 0 ) { // we don't want this to engage on erase
-                    String txt = Tag.escape_name( tag.get_name() ) + " = ";
+            } else if (tag.isBoolean$production_sources_for_module_app() && mNAV.value != 1) {
+                tag = null;
+                mAction = TagOperation.TO_INVALID;
+            } else {
+                if (!tag.isBoolean$production_sources_for_module_app() && (mNAV.status & NameAndValue.HAS_EQUAL) == 0 &&
+                    direction > 0) { // we don't want this to engage on erase
+                    String txt = Tag.escape_name$production_sources_for_module_app(tag.get_name()) + " = ";
 
-                    mInput1.setText( txt );
-                    mInput1.setSelection( txt.length() );
+                    mInput1.setText(txt);
+                    mInput1.setSelection(txt.length());
                 }
-                if( mEntry.get_tags().contains( tag ) ) {
-                    if( tag.get_value( mEntry ) != mNAV.value )
+                if (mEntry.get_tags().contains(tag)) {
+                    if (tag.get_value$production_sources_for_module_app(mEntry) != mNAV.value)
                         mAction = TagOperation.TO_CHANGE_VALUE;
                     else
                         mAction = TagOperation.TO_REMOVE;
-                }
-                else {
+                } else {
                     mAction = TagOperation.TO_ADD;
                 }
             }
@@ -160,8 +155,8 @@ public class DialogEntryTag extends Dialog
 
         mTag = tag;
 
-        if( mAction == TagOperation.TO_INVALID )
-            mInput1.setError( "Invalid expression" );
+        if (mAction == TagOperation.TO_INVALID)
+            mInput1.setError("Invalid expression");
 
         updateButtons();
     }
@@ -170,23 +165,23 @@ public class DialogEntryTag extends Dialog
         mButtonTheme.setVisibility( View.GONE );
         mButtonAction.setVisibility( View.VISIBLE );
 
-        switch( mAction ) {
+        switch (mAction) {
             case TO_INVALID:
             case TO_NONE:
                 mButtonAction.setVisibility( View.GONE );
                 break;
             case TO_CREATE_BOOLEAN:
             case TO_CREATE_CUMULATIVE:
-                mButtonAction.setText( Lifeograph.getStr( R.string.create_tag ) );
+                mButtonAction.setText(Lifeograph.getStr(R.string.create_tag));
                 break;
             case TO_REMOVE:
-                mButtonAction.setText( Lifeograph.getStr( R.string.remove_tag ) );
+                mButtonAction.setText(Lifeograph.getStr(R.string.remove_tag));
 
-                if( mTag.get_has_own_theme() && mEntry.get_theme_tag() != mTag )
+                if (mTag.getHasOwnTheme() && mEntry.get_theme_tag() != mTag)
                     mButtonTheme.setVisibility( View.VISIBLE );
                 break;
             case TO_ADD:
-                mButtonAction.setText( Lifeograph.getStr( R.string.add_tag ) );
+                mButtonAction.setText(Lifeograph.getStr(R.string.add_tag));
                 break;
             case TO_CHANGE_VALUE:
                 mButtonAction.setText( Lifeograph.getStr( R.string.change_value ) );
@@ -199,7 +194,7 @@ public class DialogEntryTag extends Dialog
     private void go() {
         Tag tag;
 
-        switch( mAction ) {
+        switch (mAction) {
             case TO_NONE:
             case TO_INVALID:
                 break; // don't even clear
@@ -209,7 +204,7 @@ public class DialogEntryTag extends Dialog
                 break;
             case TO_CREATE_BOOLEAN:
             case TO_CREATE_CUMULATIVE:
-                if( mAction == TagOperation.TO_CREATE_CUMULATIVE )
+                if (mAction == TagOperation.TO_CREATE_CUMULATIVE)
                     tag = Diary.diary.create_tag( mNAV.name, null,
                                                   ChartPoints.MONTHLY | ChartPoints.CUMULATIVE);
                 else
@@ -228,7 +223,7 @@ public class DialogEntryTag extends Dialog
                 break;
         }
 
-        mInput1.setText( "" ); // why bother?
+        mInput1.setText(""); // why bother?
 
         mListener.onTagsChanged();
 
