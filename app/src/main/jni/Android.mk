@@ -1,29 +1,25 @@
 # CONSTANTS ========================================================================================
-ABS_PATH    := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-
 LOCAL_PATH  := $(call my-dir)
 
 
-
 # ADJUSTABLE VARIABLES =============================================================================
-#NDK_ABI         ?= arm
-
-PLATFORM_PREFIX ?= $(ABS_PATH)/../../../../external/prefix/$(TARGET_ARCH)
-
+external := $(NDK_APP_PROJECT_PATH)/external
+prefix   := data/data/net.sourceforge.lifeograph/app_opt
+LOCAL    := $(external)/$(prefix)
 
 
 # libgcrypt
 include $(CLEAR_VARS)
 LOCAL_MODULE    := libgcrypt
-LOCAL_SRC_FILES := $(PLATFORM_PREFIX)/lib/libgcrypt.so
+LOCAL_SRC_FILES := $(LOCAL)/lib/libgcrypt.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 
 # libgpg-error
 include $(CLEAR_VARS)
 LOCAL_MODULE    := libgpg-error
-LOCAL_SRC_FILES := $(PLATFORM_PREFIX)/lib/libgpg-error.so
-LOCAL_EXPORT_C_INCLUDES := $(PLATFORM_PREFIX)/include
+LOCAL_SRC_FILES := $(LOCAL)/lib/libgpg-error.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL)/include
 include $(PREBUILT_SHARED_LIBRARY)
 
 

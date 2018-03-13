@@ -305,14 +305,14 @@ public class Chapter extends DiaryElementChart {
 
     @Override
     ChartPoints create_chart_data() {
-        if( mEntries.isEmpty() )
+        if (mEntries.isEmpty())
             return null;
 
-        ChartPoints cp = new ChartPoints( m_chart_type );
-        Date d_last = new Date( Date.NOT_SET );
+        ChartPoints cp = new ChartPoints(m_chart_type);
+        Date d_last = new Date(Date.NOT_SET);
 
         for (Entry entry : mEntries.descendingSet())
-            cp.add_plain$production_sources_for_module_app(d_last, entry.get_date());
+            cp.addPlain(d_last, entry.get_date());
 
         //Diary.diary.fill_up_chart_points( cp );
 
@@ -323,7 +323,6 @@ public class Chapter extends DiaryElementChart {
     Date m_date_begin;
     int m_time_span = 0;
     Type m_type;
-    java.util.TreeSet< Entry > mEntries =
-            new TreeSet< Entry >( DiaryElement.compare_elems_by_date );
+    TreeSet<Entry> mEntries = new TreeSet<>(DiaryElement.compare_elems_by_date);
     int m_color = Color.WHITE;
 }

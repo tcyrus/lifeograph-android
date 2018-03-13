@@ -71,7 +71,7 @@ public class ViewChart extends View implements GestureDetector.OnGestureListener
     public void set_points( ChartPoints points, float zoom_level ) {
         m_points = points;
         m_zoom_level = zoom_level;
-        m_span = points != null ? points.getSpan$production_sources_for_module_app() : 0;
+        m_span = points != null ? points.getSpan() : 0;
 
         if (m_width > 0) { // if on_size_allocate is executed before
             update_col_geom( true );

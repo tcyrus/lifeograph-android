@@ -34,7 +34,7 @@ class ChartPoints {
         this.type = type
     }
 
-    internal val span: Int
+    /*internal*/ val span: Int
         get() = values.size
 
     @JvmField @NonNull internal var value_min: Double?
@@ -81,7 +81,7 @@ class ChartPoints {
         push_back(b)
     }
 
-    internal fun add_plain(d_last: Date, d: Date) {
+    /*internal*/ fun addPlain(d_last: Date, d: Date) {
         if (d.is_ordinal)
             return
 

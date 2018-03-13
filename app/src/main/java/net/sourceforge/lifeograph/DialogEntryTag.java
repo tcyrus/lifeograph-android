@@ -74,46 +74,44 @@ public class DialogEntryTag extends Dialog
 
         String[] tags = new String[ Diary.diary.m_tags.size() ];
         int i = 0;
-        for (String tag : Diary.diary.m_tags.keySet() ) {
-            tags[ i++ ] = Tag.escape_name$production_sources_for_module_app( tag );
+        for (String tag : Diary.diary.m_tags.keySet()) {
+            tags[i++] = Tag.escapeName(tag);
         }
-        ArrayAdapter< String > adapter_tags = new ArrayAdapter< String >
+        ArrayAdapter<String> adapter_tags = new ArrayAdapter<>
                 ( getContext(), android.R.layout.simple_dropdown_item_1line, tags );
         mInput1.setAdapter( adapter_tags );
 
-        /*if( Lifeograph.getScreenHeight() >= Lifeograph.MIN_HEIGHT_FOR_NO_EXTRACT_UI )
-            mInput1.setImeOptions( EditorInfo.IME_FLAG_NO_EXTRACT_UI );*/
+        /*if (Lifeograph.getScreenHeight() >= Lifeograph.MIN_HEIGHT_FOR_NO_EXTRACT_UI)
+            mInput1.setImeOptions( EditorInfo.IME_FLAG_NO_EXTRACT_UI );
+        */
 
         // show all suggestions w/o entering text:
-        mInput1.setOnClickListener( new AutoCompleteTextView.OnClickListener()
-                                    {
-                                        public void onClick( View view ) {
-                                            mInput1.showDropDown();
-                                        }
-                                    }
-        );
+        mInput1.setOnClickListener(new AutoCompleteTextView.OnClickListener() {
+            public void onClick(View view) {
+                mInput1.showDropDown();
+            }
+        });
 
-        mInput1.addTextChangedListener( new TextWatcher()
-        {
-            public void afterTextChanged( Editable s ) {
+        mInput1.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
             }
 
-            public void beforeTextChanged( CharSequence s, int start, int count, int after ) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
-            public void onTextChanged( CharSequence s, int start, int before, int count ) {
-                handleNameEdited( s, count - before );
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handleNameEdited(s, count - before);
             }
-        } );
-        mInput1.setOnEditorActionListener( new TextView.OnEditorActionListener()
+        });
+        mInput1.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
             public boolean onEditorAction( TextView v, int actionId, KeyEvent event ) {
                 go();
                 return true;
             }
-        } );
+        });
 
-        handleNameEdited( mInput1.getText(), 1000 ); // 1000 just means positive direction here
+        handleNameEdited(mInput1.getText(), 1000); // 1000 just means positive direction here
     }
 
     private void handleNameEdited( CharSequence text, int direction ) {
@@ -131,19 +129,19 @@ public class DialogEntryTag extends Dialog
                     mAction = TagOperation.TO_CREATE_BOOLEAN;
                 else
                     mAction = TagOperation.TO_CREATE_CUMULATIVE;
-            } else if (tag.isBoolean$production_sources_for_module_app() && mNAV.value != 1) {
+            } else if (tag.isBoolean() && mNAV.value != 1) {
                 tag = null;
                 mAction = TagOperation.TO_INVALID;
             } else {
-                if (!tag.isBoolean$production_sources_for_module_app() && (mNAV.status & NameAndValue.HAS_EQUAL) == 0 &&
+                if (!tag.isBoolean() && (mNAV.status & NameAndValue.HAS_EQUAL) == 0 &&
                     direction > 0) { // we don't want this to engage on erase
-                    String txt = Tag.escape_name$production_sources_for_module_app(tag.get_name()) + " = ";
+                    String txt = Tag.escapeName(tag.get_name()) + " = ";
 
                     mInput1.setText(txt);
                     mInput1.setSelection(txt.length());
                 }
                 if (mEntry.get_tags().contains(tag)) {
-                    if (tag.get_value$production_sources_for_module_app(mEntry) != mNAV.value)
+                    if (tag.getValue(mEntry) != mNAV.value)
                         mAction = TagOperation.TO_CHANGE_VALUE;
                     else
                         mAction = TagOperation.TO_REMOVE;

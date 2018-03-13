@@ -46,15 +46,7 @@ enum Result {
     FILE_NOT_FOUND, FILE_NOT_READABLE, FILE_NOT_WRITABLE, FILE_LOCKED
 }
 
-public class Diary extends DiaryElementChart
-{
-    static {
-        System.loadLibrary( "gpg-error" );
-        System.loadLibrary( "gcrypt" );
-        System.loadLibrary( "lifeocrypt" );
-
-        initCipher();
-    }
+public class Diary extends DiaryElementChart {
 
     static final char SC_DATE = 'd';
 //    public static final char SC_SIZE = 's';
@@ -191,7 +183,7 @@ public class Diary extends DiaryElementChart
         Date d_last = new Date( Date.NOT_SET );
 
         for (Entry entry : m_entries.descendingMap().values())
-            cp.add_plain$production_sources_for_module_app(d_last, entry.get_date());
+            cp.addPlain(d_last, entry.get_date());
 
         // TODO: fill_up_chart_points( cp );
 
@@ -1698,7 +1690,7 @@ public class Diary extends DiaryElementChart
                            .append( "\ntc" );
         mBufferedWriter.append( Integer.toString( tag.get_chart_type() ) ).append( '\n' );
 
-        if (!tag.isBoolean$production_sources_for_module_app() && !tag.unit.isEmpty())
+        if (!tag.isBoolean() && !tag.unit.isEmpty())
             mBufferedWriter.append("tu").append(tag.unit).append('\n');
 
         if (tag.getHasOwnTheme()) {
@@ -1867,13 +1859,12 @@ public class Diary extends DiaryElementChart
                 //mStrIO += entry.m_text;
                 while( true ) {
                     pt_end = entry.m_text.indexOf( '\n', pt_start );
-                    if( pt_end == -1 ) {
+                    if (pt_end == -1) {
                         pt_end = entry.m_text.length();
                         mBufferedWriter.append( "P " )
                                        .append( entry.m_text.substring( pt_start, pt_end ) );
                         break; // end of while( true )
-                    }
-                    else {
+                    } else {
                         pt_end++;
                         mBufferedWriter.append( "P " )
                                        .append( entry.m_text.substring( pt_start, pt_end ) );
@@ -1891,12 +1882,11 @@ public class Diary extends DiaryElementChart
     // DB READ/WRITE ===============================================================================
     private void close_file() {
         try {
-            if( mBufferedReader != null ) {
+            if (mBufferedReader != null) {
                 mBufferedReader.close();
                 mBufferedReader = null;
             }
-        }
-        catch( IOException e ) {
+        } catch (IOException e) {
             Log.e( Lifeograph.TAG, e.getMessage() );
         }
     }
@@ -1924,41 +1914,39 @@ public class Diary extends DiaryElementChart
             file.read( iv );
 
             // calculate bytes of data in file
-            int size = ( int ) ( file.length() - file.getFilePointer() );
-            if( size <= 3 ) {
+            int size = (int) (file.length() - file.getFilePointer());
+            if (size <= 3) {
                 clear();
                 return Result.CORRUPT_FILE;
             }
-            byte[] buffer = new byte[ size ];
-            file.readFully( buffer );
+            byte[] buffer = new byte[size];
+            file.readFully(buffer);
             file.close();
 
-            String output = decryptBuffer( m_passphrase, salt, buffer, size, iv );
+            String output = decryptBuffer(m_passphrase, salt, buffer, size, iv);
 
             // passphrase check
-            if( output.charAt( 0 ) != m_passphrase.charAt( 0 ) || output.charAt( 1 ) != '\n' ) {
+            if (output.charAt(0) != m_passphrase.charAt(0) || output.charAt(1) != '\n') {
                 clear();
                 return Result.WRONG_PASSWORD;
             }
 
             mBufferedReader = new BufferedReader( new StringReader( output ) );
-        }
-        catch( FileNotFoundException ex ) {
+        } catch (FileNotFoundException ex) {
             return Result.FILE_NOT_FOUND;
-        }
-        catch( IOException ex ) {
+        } catch (IOException ex) {
             return Result.CORRUPT_FILE;
         }
 
         return parse_db_body_text();
     }
 
-    private Result write_plain( String path, boolean flag_header_only ) {
+    private Result write_plain(String path, boolean flag_header_only) {
         try {
-            mBufferedWriter = new BufferedWriter( new FileWriter( path ) );
-            create_db_header_text( flag_header_only );
+            mBufferedWriter = new BufferedWriter(new FileWriter(path));
+            create_db_header_text(flag_header_only);
             // header only mode is for encrypted diaries
-            if( !flag_header_only ) {
+            if (!flag_header_only) {
                 create_db_body_text();
             }
 
@@ -1966,8 +1954,7 @@ public class Diary extends DiaryElementChart
             mBufferedWriter = null;
 
             return Result.SUCCESS;
-        }
-        catch( IOException ex ) {
+        } catch (IOException ex) {
             Log.e( Lifeograph.TAG, "Failed to save diary: " + ex.getMessage() );
 
             mBufferedWriter = null;
@@ -1976,32 +1963,31 @@ public class Diary extends DiaryElementChart
         }
     }
 
-    private Result write_encrypted( String path ) {
+    private Result write_encrypted(String path) {
         // writing header
-        write_plain( path, true );
+        write_plain(path, true);
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            mBufferedWriter = new BufferedWriter( new OutputStreamWriter( baos ) );
+            mBufferedWriter = new BufferedWriter(new OutputStreamWriter(baos));
 
             // first char of passphrase for validity checking
-            mBufferedWriter.append( m_passphrase.charAt( 0 ) ).append( '\n' );
+            mBufferedWriter.append(m_passphrase.charAt(0)).append('\n');
             create_db_body_text();
             mBufferedWriter.close();
 
             byte[] buffer = baos.toByteArray();
 
-            byte[] output = encryptBuffer( m_passphrase, buffer, buffer.length );
+            byte[] output = encryptBuffer(m_passphrase, buffer, buffer.length);
 
-            FileOutputStream file = new FileOutputStream( path, true );
+            FileOutputStream file = new FileOutputStream(path, true);
 
-            file.write( output );
+            file.write(output);
 
             file.close();
             mBufferedWriter = null;
-        }
-        catch( IOException ex ) {
-            Log.e( Lifeograph.TAG, "Failed to save diary: " + ex.getMessage() );
+        } catch (IOException ex) {
+            Log.e(Lifeograph.TAG, "Failed to save diary: " + ex.getMessage());
 
             mBufferedWriter = null;
 
@@ -2012,9 +1998,9 @@ public class Diary extends DiaryElementChart
     }
 
     // DISK I/O ====================================================================================
-    public Result set_path( String path, SetPathType type ) {
+    public Result set_path(String path, SetPathType type) {
         // ANDROID ONLY:
-        if( path.equals( sExampleDiaryPath ) ) {
+        if (path.equals(sExampleDiaryPath)) {
             m_path = path;
             m_name = sExampleDiaryName;
             m_flag_read_only = true;
@@ -2022,36 +2008,30 @@ public class Diary extends DiaryElementChart
         }
 
         // CHECK FOR SYSTEM PERMISSIONS
-        File fp = new File( path );
-        if( !fp.exists() ) {
-            if( type != SetPathType.NEW )
-            {
-                Log.e( Lifeograph.TAG, "File is not found" );
+        File fp = new File(path);
+        if (!fp.exists()) {
+            if (type != SetPathType.NEW) {
+                Log.e(Lifeograph.TAG, "File is not found");
                 return Result.FILE_NOT_FOUND;
             }
-        }
-        else if( !fp.canRead() ) {
-            Log.e( Lifeograph.TAG, "File is not readable" );
+        } else if (!fp.canRead()) {
+            Log.e(Lifeograph.TAG, "File is not readable");
             return Result.FILE_NOT_READABLE;
-        }
-        else if( type != SetPathType.READ_ONLY && !fp.canWrite() ) {
-            if( type == SetPathType.NEW )
-            {
-                Log.w( Lifeograph.TAG, "File is not writable" );
+        } else if (type != SetPathType.READ_ONLY && !fp.canWrite()) {
+            if (type == SetPathType.NEW) {
+                Log.w(Lifeograph.TAG, "File is not writable");
                 return Result.FILE_NOT_WRITABLE;
             }
 
-            //Lifeograph.showToast( Lifeograph.activityLogin, R.string.resorting_to_read_only );
-            Log.w( Lifeograph.TAG, Lifeograph.getStr( R.string.resorting_to_read_only ) );
+            //Lifeograph.showToast(Lifeograph.activityLogin, R.string.resorting_to_read_only);
+            Log.w(Lifeograph.TAG, Lifeograph.getStr(R.string.resorting_to_read_only));
             type = SetPathType.READ_ONLY;
         }
 
         // CHECK AND "TOUCH" THE NEW LOCK
-        if( type != SetPathType.READ_ONLY )
-        {
-            File lockFile = new File( path + LOCK_SUFFIX );
-            if( lockFile.exists() )
-            {
+        if (type != SetPathType.READ_ONLY) {
+            File lockFile = new File(path + LOCK_SUFFIX);
+            if (lockFile.exists()) {
                 /* option for ignoring locks may never come to Android
                 if( s_flag_ignore_locks )
                     Log.w( Lifeograph.TAG, "Ignored file lock" );
@@ -2060,12 +2040,10 @@ public class Diary extends DiaryElementChart
             }
 
             /* TODO - locking will be implemented in 0.8
-            if( type == SetPathType.NORMAL )
-            {
+            if (type == SetPathType.NORMAL) {
                 try {
                     lockFile.createNewFile();
-                }
-                catch( IOException ex ) {
+                } catch (IOException ex) {
                     Log.w( Lifeograph.TAG, "Could not create lock file" );
                 }
             }*/
@@ -2077,13 +2055,13 @@ public class Diary extends DiaryElementChart
         m_path = path;
 
         // update m_name
-        int i = m_path.lastIndexOf( "/" );
-        if( i == -1 )
+        int i = m_path.lastIndexOf("/");
+        if (i == -1)
             m_name = m_path;
         else
-            m_name = m_path.substring( i + 1 );
+            m_name = m_path.substring(i + 1);
 
-        m_flag_read_only = ( type == SetPathType.READ_ONLY );
+        m_flag_read_only = (type == SetPathType.READ_ONLY);
 
         return Result.SUCCESS;
     }
@@ -2102,8 +2080,8 @@ public class Diary extends DiaryElementChart
 
         try {
             if (m_path.equals(sExampleDiaryPath)) {
-                mBufferedReader = new BufferedReader( new InputStreamReader(
-                        assetMan.open( "example.diary" ) ) );
+                mBufferedReader = new BufferedReader(new InputStreamReader(
+                        assetMan.open("example.diary")));
             } else {
                 mBufferedReader = new BufferedReader(new FileReader(m_path));
             }
@@ -2122,17 +2100,17 @@ public class Diary extends DiaryElementChart
                     return Result.SUCCESS;
                 }
 
-                switch( line.charAt( 0 ) ) {
+                switch (line.charAt(0)) {
                     case 'V':
-                        m_read_version = Integer.parseInt( line.substring( 2 ) );
-                        if( m_read_version < DB_FILE_VERSION_INT_MIN
-                                || m_read_version > DB_FILE_VERSION_INT ) {
+                        m_read_version = Integer.parseInt(line.substring(2));
+                        if (m_read_version < DB_FILE_VERSION_INT_MIN
+                                || m_read_version > DB_FILE_VERSION_INT) {
                             clear();
                             return Result.INCOMPATIBLE_FILE;
                         }
                         break;
                     case 'E':
-                        if( line.charAt( 2 ) == 'y' )
+                        if (line.charAt(2) == 'y')
                             // passphrase is set to a dummy value to indicate that diary
                             // is an encrypted one until user enters the real passphrase
                             m_passphrase = " ";
@@ -2144,14 +2122,13 @@ public class Diary extends DiaryElementChart
                     // mFileReader.close();
 
                     default:
-                        Log.e( Lifeograph.TAG, "Unrecognized header line: " + line );
+                        Log.e(Lifeograph.TAG, "Unrecognized header line: " + line);
                         break;
                 }
             }
-        }
-        catch( IOException e ) {
+        } catch (IOException e) {
             // Unable to create file, likely because external storage is not currently mounted.
-            Log.e( Lifeograph.TAG, "Failed to open diary file " + m_path, e );
+            Log.e(Lifeograph.TAG, "Failed to open diary file " + m_path, e);
         }
 
         clear();
@@ -2168,17 +2145,17 @@ public class Diary extends DiaryElementChart
 
     public Result write() {
         // BACKUP THE PREVIOUS VERSION
-        File file = new File( m_path );
-        if( file.exists() ) {
-            File dir_backups = new File( file.getParent() + "/backups" );
-            if( dir_backups.exists() || dir_backups.mkdirs() ) {
-                File file_backup = new File( dir_backups, file.getName() + ".backup0" );
-                if( file_backup.exists() ) {
-                    File file_backup1 = new File( dir_backups, file.getName() + ".backup1" );
-                    file_backup.renameTo( file_backup1 );
+        File file = new File(m_path);
+        if (file.exists()) {
+            File dir_backups = new File(file.getParent() + "/backups");
+            if (dir_backups.exists() || dir_backups.mkdirs()) {
+                File file_backup = new File(dir_backups, file.getName() + ".backup0");
+                if (file_backup.exists()) {
+                    File file_backup1 = new File(dir_backups, file.getName() + ".backup1");
+                    file_backup.renameTo(file_backup1);
                 }
-                if( file.renameTo( file_backup ) )
-                    Log.d( Lifeograph.TAG, "Backup written to: " + file_backup.toString() );
+                if (file.renameTo(file_backup))
+                    Log.d(Lifeograph.TAG, "Backup written to: " + file_backup.toString());
             }
         }
 
@@ -2192,7 +2169,7 @@ public class Diary extends DiaryElementChart
         if (m_passphrase.isEmpty())
             return write_plain(path, false);
         else
-            return write_encrypted( path );
+            return write_encrypted(path);
     }
 
     public Result write_txt() {
@@ -2202,11 +2179,10 @@ public class Diary extends DiaryElementChart
             File file = new File(m_path);
             File dir_backups = new File( file.getParent() + "/backups" );
             FileWriter fileWriter;
-            if( dir_backups.exists() || dir_backups.mkdirs() ) {
+            if (dir_backups.exists() || dir_backups.mkdirs()) {
                 File file_text = new File( dir_backups, file.getName() + ".txt" );
                 fileWriter = new FileWriter( file_text.toString() );
-            }
-            else
+            } else
                 return Result.FILE_NOT_WRITABLE;
 
             // HELPERS
@@ -2226,10 +2202,10 @@ public class Diary extends DiaryElementChart
                       .append( separator_thick );
 
             // ENTRIES
-            for( int i = 0; i < 4; i++ ) {
+            for (int i = 0; i < 4; i++) {
                 // CHAPTERS
-                for( Chapter chapter : chapters[ i ].getMap().descendingMap().values() ) {
-                    if( !chapter.mEntries.isEmpty() ) {
+                for (Chapter chapter : chapters[i].getMap().descendingMap().values()) {
+                    if (!chapter.mEntries.isEmpty()) {
                         fileWriter.append( "\n\n" )
                                   .append( separator_chapter )
                                   .append( chapter.get_date().format_string() )
@@ -2241,48 +2217,47 @@ public class Diary extends DiaryElementChart
                     }
 
                     // ENTRIES
-                    for( Entry entry : chapter.mEntries.descendingSet() ) {
+                    for (Entry entry : chapter.mEntries.descendingSet()) {
                         // PURGE EMPTY ENTRIES
-                        if( ( entry.m_text.isEmpty() && entry.m_tags.isEmpty() ) ||
-                                entry.get_filtered_out() )
+                        if ((entry.m_text.isEmpty() && entry.m_tags.isEmpty()) ||
+                                entry.get_filtered_out())
                             continue;
 
-                        if( entry.is_favored() )
-                            fileWriter.append( separator_favored );
+                        if (entry.is_favored())
+                            fileWriter.append(separator_favored);
                         else
-                            fileWriter.append( separator );
+                            fileWriter.append(separator);
 
                         // DATE AND FAVOREDNESS
-                        fileWriter.append( entry.get_date().format_string() );
-                        if( entry.is_favored() )
-                            fileWriter.append( '\n' ).append( separator_favored );
+                        fileWriter.append(entry.get_date().format_string());
+                        if (entry.is_favored())
+                            fileWriter.append( '\n' ).append(separator_favored);
                         else
-                            fileWriter.append( '\n' ).append( separator );
+                            fileWriter.append( '\n' ).append(separator);
 
                         // CONTENT
                         fileWriter.append( entry.get_text() );
 
                         // TAGS
                         boolean first_tag = true;
-                        for( Tag tag : entry.m_tags ) {
-                            if( first_tag ) {
+                        for (Tag tag : entry.m_tags) {
+                            if (first_tag) {
                                 fileWriter.append( "\n\n" )
                                           .append( "TAGS" )
                                           .append( ": " );
                                 first_tag = false;
-                            }
-                            else
+                            } else
                                 fileWriter.append( ", " );
 
-                            fileWriter.append( tag.get_name() );
+                            fileWriter.append(tag.get_name());
                         }
 
-                        fileWriter.append( "\n\n" );
+                        fileWriter.append("\n\n");
                     }
                 }
             }
 
-            fileWriter.append( '\n' );
+            fileWriter.append('\n');
 
             fileWriter.close();
 
@@ -2295,10 +2270,20 @@ public class Diary extends DiaryElementChart
     }
 
     // NATIVE ENCRYPTION METHODS ===================================================================
+    /*
     private static native boolean initCipher();
     private native String decryptBuffer( String passphrase, byte[] salt,
                                          byte[] buffer, int size, byte[] iv );
     private native byte[] encryptBuffer( String passphrase, byte[] buffer, int size );
+    */
+
+    private String decryptBuffer(String passphrase, byte[] salt, byte[] buffer, int size, byte[] iv) {
+        return LifeocryptHelper.decryptBuffer(passphrase, salt, buffer, size, iv);
+    }
+    private byte[] encryptBuffer(String passphrase, byte[] buffer, int size) {
+        return LifeocryptHelper.encryptBuffer(passphrase, buffer, size);
+    }
+
 
     // VARIABLES ===================================================================================
     private String m_path;
@@ -2306,21 +2291,18 @@ public class Diary extends DiaryElementChart
 
     private int m_current_id;
     private int m_force_id;
-    private java.util.TreeMap< Integer, DiaryElement > m_ids =
-            new TreeMap< Integer, DiaryElement >();
+    private TreeMap<Integer, DiaryElement> m_ids = new TreeMap<>();
 
-    java.util.TreeMap< Long, Entry > m_entries =
-            new TreeMap< Long, Entry >( DiaryElement.compare_dates );
+    TreeMap<Long, Entry> m_entries = new TreeMap<>(DiaryElement.compare_dates);
     Untagged m_untagged = new Untagged();
-    java.util.TreeMap< String, Tag > m_tags = new TreeMap< String, Tag >( DiaryElement.compare_names );
-    java.util.TreeMap< String, Tag.Category > m_tag_categories =
-            new TreeMap< String, Tag.Category >( DiaryElement.compare_names );
-    java.util.TreeMap< String, Chapter.Category > m_chapter_categories =
-            new TreeMap< String, Chapter.Category >( DiaryElement.compare_names );
+    TreeMap<String, Tag> m_tags = new TreeMap<>(DiaryElement.compare_names);
+    TreeMap<String, Tag.Category> m_tag_categories = new TreeMap<>(DiaryElement.compare_names);
+    TreeMap<String, Chapter.Category> m_chapter_categories =
+            new TreeMap<>(DiaryElement.compare_names);
     Chapter.Category m_ptr2chapter_ctg_cur = null;
-    Chapter.Category m_topics = new Chapter.Category( this, Date.TOPIC_MIN );
-    Chapter.Category m_groups = new Chapter.Category( this, Date.GROUP_MIN );
-    Chapter m_orphans = new Chapter( null, "<Other Entries>", Date.DATE_MAX );
+    Chapter.Category m_topics = new Chapter.Category(this, Date.TOPIC_MIN);
+    Chapter.Category m_groups = new Chapter.Category(this, Date.GROUP_MIN);
+    Chapter m_orphans = new Chapter(null, "<Other Entries>", Date.DATE_MAX);
 
     private int m_startup_elem_id; // DEID
     private int m_last_elem_id; // DEID
@@ -2333,8 +2315,8 @@ public class Diary extends DiaryElementChart
     private String m_language;
     // filtering
     private String m_search_text;
-    Filter m_filter_active = new Filter( null, "Active Filter" );
-    Filter m_filter_default = new Filter( null, "Default Filter" );
+    Filter m_filter_active = new Filter(null, "Active Filter");
+    Filter m_filter_default = new Filter(null, "Default Filter");
 
     // i/o
     // protected int m_body_offset;

@@ -27,7 +27,7 @@ import java.util.TreeMap
 
 open class Tag : DiaryElementChart {
 
-    @JvmOverloads constructor(diary: Diary, name: String, ctg: Category?, chart_type: Int = ChartPoints.DEFAULT) :
+    @JvmOverloads constructor(diary: Diary?, name: String?, ctg: Category?, chart_type: Int = ChartPoints.DEFAULT) :
             super(diary, name, DiaryElement.ES_VOID, chart_type) {
         this.m_ptr2category = ctg
         ctg?.add(this)
@@ -66,7 +66,7 @@ open class Tag : DiaryElementChart {
             return m_theme!!
         }
 
-    internal val isBoolean: Boolean
+    /*internal*/ val isBoolean: Boolean
         get() = m_chart_type and ChartPoints.VALUE_TYPE_MASK == ChartPoints.BOOLEAN
     @JvmField internal var mEntries: TreeMap<Entry, Double> = TreeMap(DiaryElement.compare_elems_by_date)
     private var m_theme: Theme? = null
@@ -130,11 +130,11 @@ open class Tag : DiaryElementChart {
         return "Tag with $_size entries"
     }
 
-    fun get_name_and_value(entry: Entry, flag_escape: Boolean, flag_unit: Boolean): String {
-        val result = StringBuilder(if (flag_escape) escape_name(m_name) else m_name)
+    fun get_name_and_value(entry: Entry, flagEscape: Boolean, flag_unit: Boolean): String {
+        val result = StringBuilder(if (flagEscape) escapeName(m_name) else m_name)
 
         if (!isBoolean) {
-            result.append(" = ").append(get_value(entry))
+            result.append(" = ").append(getValue(entry))
 
             // addressing Java-shortcomings
             if (result.toString().endsWith(".0") || result.toString().endsWith(",0"))
@@ -175,7 +175,7 @@ open class Tag : DiaryElementChart {
     }
 
     // PARAMETRIC TAG SYSTEM PROPERTIES
-    internal fun get_value(entry: Entry): Double {
+    /*internal*/ fun getValue(entry: Entry): Double {
         return if (mEntries.containsKey(entry))
             mEntries[entry]!!
         else
@@ -260,7 +260,7 @@ open class Tag : DiaryElementChart {
 
     companion object {
 
-        @JvmStatic internal fun escape_name(name: String): String {
+        @JvmStatic /*internal*/ fun escapeName(name: String): String {
             val result = StringBuilder()
 
             for (c in name) {
