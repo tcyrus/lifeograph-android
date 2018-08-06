@@ -26,7 +26,7 @@ import org.apache.commons.codec.binary.StringUtils;
 
 public class LifeocryptHelper {
 
-    private static Key Cipher_expand_key(String passphrase, byte[] salt) throws NoSuchAlgorithmException {
+    private static Key expandKeyHelper(String passphrase, byte[] salt) throws NoSuchAlgorithmException {
         // OPEN MESSAGE DIGEST ALGORITHM
         MessageDigest hash = MessageDigest.getInstance(cHASH_ALGORITHM);
 
@@ -37,34 +37,34 @@ public class LifeocryptHelper {
         hash.update(salt, 0, cSALT_SIZE);
 
         // ADD PASSPHRASE TO HASH
+        //hash.update(pass.getBytes(StandardCharsets.UTF_8));
         hash.update(StringUtils.getBytesUtf8(passphrase));
 
         // FETCH DIGEST (THE EXPANDED KEY)
+        // PAD KEY WITH '0' AT THE END IF DIGEST SIZE SMALLER THEN KEY SIZE?
         byte[] hashresult = Arrays.copyOf(hash.digest(), cKEY_SIZE);
 
         return new SecretKeySpec(hashresult, cHASH_ALGORITHM);
     }
 
 
-    private static byte[] Cipher_encrypt_buffer(byte[] buffer, int size, Key key, byte[] iv)
+    private static byte[] encryptBufferHelper(byte[] buffer, int size, Key key, byte[] iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
 
-        Cipher cipher = Cipher.getInstance(cCIPHER_ALGORITHM + "/" + cCIPHER_MODE);
+        Cipher cipher = Cipher.getInstance(cCIPHER_TRANSFORM);
 
-        // SET KEY + IV
+        // SET KEY + INITILIZING VECTOR (IV)
         cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
 
-        // ENCRYPT BUFFER
-        byte[] out = cipher.doFinal(buffer, 0, size);
-
-        return out;
+        // ENCRYPT (AND RETURN) BUFFER
+        return cipher.doFinal(buffer, 0, size);
     }
 
-    private static byte[] Cipher_decrypt_buffer(byte[] buffer, int size, Key key, byte[] iv) {
+    private static byte[] decryptBufferHelper(byte[] buffer, int size, Key key, byte[] iv) {
         byte[] out = new byte[size];
         try {
-            Cipher cipher = Cipher.getInstance(cCIPHER_ALGORITHM + "/" + cCIPHER_MODE);
+            Cipher cipher = Cipher.getInstance(cCIPHER_TRANSFORM);
 
             // SET KEY
             cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
@@ -78,23 +78,20 @@ public class LifeocryptHelper {
         return out;
     }
 
-
     public static String decryptBuffer(String passphrase, byte[] salt, byte[] buffer, int size, byte[] iv) {
         byte[] out = new byte[size];
 
         try {
-            Key key = Cipher_expand_key(passphrase, salt);
-
-            out = Cipher_decrypt_buffer(buffer, size, key, iv);
+            Key key = expandKeyHelper(passphrase, salt);
+            out = decryptBufferHelper(buffer, size, key, iv);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         int size_dec_buf = 0;
-        int round = 0;
 
         // EOF DETECTION: RATHER UGLY CODE
-        for (; size_dec_buf < size - 1; size_dec_buf++) {
+        for (int round = 0; size_dec_buf < size - 1; size_dec_buf++) {
             if (out[size_dec_buf] == '\n' && out[size_dec_buf + 1] == '\n') {
                 if (round > 0 && size_dec_buf < size - 3 &&
                     (out[size_dec_buf + 2] != 'I' || out[size_dec_buf + 3] != 'D')) {
@@ -112,6 +109,7 @@ public class LifeocryptHelper {
         String output = "XX";
         // cannot check the '\n' due to multi-byte char case
         if (dec_buf[0] == passphrase.codePointAt(0)) //&& buffer[ 1 ] == '\n' )
+            //output = new String(bytes, StandardCharsets.UTF_8);
             output = StringUtils.newStringUtf8(dec_buf);
 
         return output;
@@ -126,27 +124,23 @@ public class LifeocryptHelper {
         byte[] out = new byte[size];
 
         try {
-            Key key = Cipher_expand_key(passphrase, salt);
-            out = Cipher_encrypt_buffer(buffer, size, key, iv);
+            Key key = expandKeyHelper(passphrase, salt);
+            out = encryptBufferHelper(buffer, size, key, iv);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         byte[] buffer_out = new byte[cSALT_SIZE + cIV_SIZE + size];
-        System.arraycopy(salt, 0, buffer_out,0, cSALT_SIZE);
+        System.arraycopy(salt, 0, buffer_out, 0, cSALT_SIZE);
         System.arraycopy(iv, 0, buffer_out, cSALT_SIZE, cIV_SIZE);
         System.arraycopy(out, 0, buffer_out, cSALT_SIZE + cIV_SIZE, size);
 
         return buffer_out;
     }
 
-
-    //private static final String cCIPHER_ALGORITHM = "AES/CFB/NoPadding";
-
     private static final SecureRandom random = new SecureRandom();
 
-    private static final String cCIPHER_ALGORITHM = "AES";
-    private static final String cCIPHER_MODE = "CFB/NoPadding";
+    private static final String cCIPHER_TRANSFORM = "AES/CFB/NoPadding";
 
     private static final int cIV_SIZE = 16; // = 128 bits
     private static final int cSALT_SIZE = 16; // = 128 bits
