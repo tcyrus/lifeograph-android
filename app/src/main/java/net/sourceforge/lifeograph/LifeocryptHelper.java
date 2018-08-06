@@ -2,23 +2,25 @@ package net.sourceforge.lifeograph;
 
 import android.util.Log;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
+import java.nio.charset.StandardCharsets
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+
 import java.util.Arrays;
 
-import org.apache.commons.codec.binary.StringUtils;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 
 /**
  * Created by cyrust on 3/13/2018.
@@ -30,44 +32,42 @@ public class LifeocryptHelper {
         // OPEN MESSAGE DIGEST ALGORITHM
         MessageDigest hash = MessageDigest.getInstance(cHASH_ALGORITHM);
 
-        // RETRIVE DIGEST SIZE
-        //int hashdigestsize = hash.getDigestLength();
-
         // ADD SALT TO HASH
         hash.update(salt, 0, cSALT_SIZE);
 
         // ADD PASSPHRASE TO HASH
-        //hash.update(pass.getBytes(StandardCharsets.UTF_8));
-        hash.update(StringUtils.getBytesUtf8(passphrase));
+        hash.update(pass.getBytes(StandardCharsets.UTF_8));
 
+        // ALLOCATE MEMORY FOR KEY
+        byte[] hashresult = new byte[cKEY_SIZE];
+        
         // FETCH DIGEST (THE EXPANDED KEY)
-        // PAD KEY WITH '0' AT THE END IF DIGEST SIZE SMALLER THEN KEY SIZE?
-        byte[] hashresult = Arrays.copyOf(hash.digest(), cKEY_SIZE);
+        hash.digest(hashresult, 0, cKEY_SIZE);
 
         return new SecretKeySpec(hashresult, cHASH_ALGORITHM);
     }
 
-
-    private static byte[] encryptBufferHelper(byte[] buffer, int size, Key key, byte[] iv)
+    private static byte[] encryptBufferHelper(byte[] buffer, int size, Key key, IvParameterSpec iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
 
         Cipher cipher = Cipher.getInstance(cCIPHER_TRANSFORM);
 
         // SET KEY + INITILIZING VECTOR (IV)
-        cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
 
         // ENCRYPT (AND RETURN) BUFFER
         return cipher.doFinal(buffer, 0, size);
     }
 
-    private static byte[] decryptBufferHelper(byte[] buffer, int size, Key key, byte[] iv) {
+    private static byte[] decryptBufferHelper(byte[] buffer, int size, Key key, IvParameterSpec iv) {
         byte[] out = new byte[size];
+
         try {
             Cipher cipher = Cipher.getInstance(cCIPHER_TRANSFORM);
 
-            // SET KEY
-            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+            // SET KEY + INITILIZING VECTOR (IV)
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
 
             // DECRYPT BUFFER
             out = cipher.doFinal(buffer, 0, size);
@@ -83,7 +83,7 @@ public class LifeocryptHelper {
 
         try {
             Key key = expandKeyHelper(passphrase, salt);
-            out = decryptBufferHelper(buffer, size, key, iv);
+            out = decryptBufferHelper(buffer, size, key, new IvParameterSpec(iv));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,14 +108,15 @@ public class LifeocryptHelper {
 
         String output = "XX";
         // cannot check the '\n' due to multi-byte char case
-        if (dec_buf[0] == passphrase.codePointAt(0)) //&& buffer[ 1 ] == '\n' )
-            //output = new String(bytes, StandardCharsets.UTF_8);
-            output = StringUtils.newStringUtf8(dec_buf);
+        if (dec_buf[0] == passphrase.codePointAt(0)) // && buffer[ 1 ] == '\n')
+            output = new String(bytes, StandardCharsets.UTF_8);
 
         return output;
     }
 
     public static byte[] encryptBuffer(String passphrase, byte[] buffer, int size) {
+        SecureRandom random = new SecureRandom();
+
         byte[] iv = new byte[cIV_SIZE];
         random.nextBytes(iv);
         byte[] salt = new byte[cSALT_SIZE];
@@ -125,7 +126,7 @@ public class LifeocryptHelper {
 
         try {
             Key key = expandKeyHelper(passphrase, salt);
-            out = encryptBufferHelper(buffer, size, key, iv);
+            out = encryptBufferHelper(buffer, size, key, new IvParameterSpec(iv));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,9 +139,7 @@ public class LifeocryptHelper {
         return buffer_out;
     }
 
-    private static final SecureRandom random = new SecureRandom();
-
-    private static final String cCIPHER_TRANSFORM = "AES/CFB/NoPadding";
+    private static final String cCIPHER_TRANSFORM = "AES/CFB/NoPadding"; // AES/CFB is actually AES_256/CFB
 
     private static final int cIV_SIZE = 16; // = 128 bits
     private static final int cSALT_SIZE = 16; // = 128 bits
