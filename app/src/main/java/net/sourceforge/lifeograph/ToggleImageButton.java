@@ -28,7 +28,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.Checkable;
-import android.support.v7.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 
 public class ToggleImageButton extends AppCompatImageButton implements Checkable
 {

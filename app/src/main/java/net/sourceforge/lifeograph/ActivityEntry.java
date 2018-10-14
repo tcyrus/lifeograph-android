@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Vector;
 
 import android.annotation.SuppressLint;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -58,7 +58,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.PopupMenu;
-import android.support.v7.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 import android.widget.TextView;
 
 public class ActivityEntry extends AppCompatActivity
@@ -757,21 +757,21 @@ public class ActivityEntry extends AppCompatActivity
         if( iter_end == -1 )
             iter_end = v.getText().length() - 1;
 
-        StringBuilder text = new StringBuilder( "" );
+        StringBuilder text = new StringBuilder();
         int value = 0;
         char char_lf = 't';
 
-        for( ; iter != iter_end; ++iter ) {
-            switch( v.getText().charAt( iter ) ) {
+        for (; iter != iter_end; ++iter) {
+            switch (v.getText().charAt(iter)) {
                 case '\t':
-                    if( char_lf != 't' && char_lf != '1' )
+                    if (char_lf != 't' && char_lf != '1')
                         return -1;
                     char_lf = '1';
-                    text.append( '\t' );
+                    text.append('\t');
                     break;
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':
-                    if( char_lf != '1' && char_lf != '-' )
+                    if (char_lf != '1' && char_lf != '-')
                         return -1;
                     char_lf = '-';
                     value *= 10;

@@ -1,9 +1,8 @@
 package net.sourceforge.lifeograph;
 
-import android.util.Log;
+import java.nio.charset.StandardCharsets;
 
-import java.nio.charset.StandardCharsets
-
+import java.security.DigestException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -28,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class LifeocryptHelper {
 
-    private static Key expandKeyHelper(String passphrase, byte[] salt) throws NoSuchAlgorithmException {
+    private static Key expandKeyHelper(String pass, byte[] salt) throws NoSuchAlgorithmException, DigestException {
         // OPEN MESSAGE DIGEST ALGORITHM
         MessageDigest hash = MessageDigest.getInstance(cHASH_ALGORITHM);
 
@@ -109,7 +108,7 @@ public class LifeocryptHelper {
         String output = "XX";
         // cannot check the '\n' due to multi-byte char case
         if (dec_buf[0] == passphrase.codePointAt(0)) // && buffer[ 1 ] == '\n')
-            output = new String(bytes, StandardCharsets.UTF_8);
+            output = new String(dec_buf, StandardCharsets.UTF_8);
 
         return output;
     }

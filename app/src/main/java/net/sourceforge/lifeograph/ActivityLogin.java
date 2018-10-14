@@ -26,14 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Dialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.SwitchCompat;
+import androidx.appcompat.widget.SwitchCompat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;

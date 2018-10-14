@@ -116,6 +116,7 @@
     <string-array name="pref_DIARY_STORAGE_titles">
         <item>Harici alan/SD Card</item>
         <item>Dahili alan (Program kaldrıldığında silinir)</item>
+        <item></item>
     </string-array>
 
     <string-array name="array_tag_types">

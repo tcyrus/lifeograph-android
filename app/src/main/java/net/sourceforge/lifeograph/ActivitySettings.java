@@ -55,54 +55,45 @@ public class ActivitySettings extends PreferenceActivity
         public boolean onPreferenceChange( Preference pref, Object value ) {
             String stringValue = value.toString();
 
-            if( pref.getKey().equals(
-                    Lifeograph.getStr( R.string.pref_DATE_FORMAT_ORDER_key ) ) ) {
+            if (pref.getKey().equals(Lifeograph.getStr(R.string.pref_DATE_FORMAT_ORDER_key))) {
                 LDate.s_format_order = stringValue;
-            }
-            else if( pref.getKey().equals(
-                    Lifeograph.getStr( R.string.pref_DATE_FORMAT_SEPARATOR_key ) ) ) {
-                LDate.s_format_separator = stringValue.charAt( 0 );
-            }
-            else if( pref.getKey().equals(
-                    Lifeograph.getStr( R.string.pref_DIARY_STORAGE_key ) ) ) {
+            } else if (pref.getKey().equals(Lifeograph.getStr(R.string.pref_DATE_FORMAT_SEPARATOR_key))) {
+                LDate.s_format_separator = stringValue.charAt(0);
+            } else if (pref.getKey().equals(Lifeograph.getStr(R.string.pref_DIARY_STORAGE_key))) {
                 ActivityLogin.sExternalStorage = stringValue;
-            }
-            else if( pref.getKey().equals(
-                    Lifeograph.getStr( R.string.pref_DIARY_PATH_key ) ) ) {
+            } else if (pref.getKey().equals(Lifeograph.getStr(R.string.pref_DIARY_PATH_key))) {
                 ActivityLogin.sDiaryPath = stringValue;
             }
 
-            if( pref instanceof ListPreference ) {
+            if (pref instanceof ListPreference) {
                 // For list preferences, look up the correct display value in
                 // the preference's 'entries' list.
-                ListPreference listPreference = ( ListPreference ) pref;
-                int index = listPreference.findIndexOfValue( stringValue );
+                ListPreference listPreference = (ListPreference) pref;
+                int index = listPreference.findIndexOfValue(stringValue);
 
                 // Set the summary to reflect the new value.
-                pref.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[ index ]
-                                : null );
+                pref.setSummary(index >= 0
+                                ? listPreference.getEntries()[index]
+                                : null);
 
-            }
-            else {
+            } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                pref.setSummary( stringValue );
+                pref.setSummary(stringValue);
             }
             return true;
         }
     };
 
-    private static void bindPreferenceSummaryToValue( Preference preference ) {
+    private static void bindPreferenceSummaryToValue(Preference preference) {
         // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener( sBindPreferenceSummaryToValueListener );
+        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(
                 preference,
-                PreferenceManager.getDefaultSharedPreferences( preference.getContext() )
-                                 .getString( preference.getKey(), "" ) );
+                PreferenceManager.getDefaultSharedPreferences(preference.getContext())
+                                 .getString(preference.getKey(), ""));
     }
 }

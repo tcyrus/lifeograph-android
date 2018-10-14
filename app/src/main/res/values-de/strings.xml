@@ -132,6 +132,7 @@
     <string-array name="pref_DIARY_STORAGE_titles">
         <item>External Storage/SD Card</item>
         <item>Internal Storage (Deleted on uninstall)</item>
+        <item></item>
     </string-array>
 
     <string-array name="array_tag_types">

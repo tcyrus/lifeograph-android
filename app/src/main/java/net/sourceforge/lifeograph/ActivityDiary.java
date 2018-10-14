@@ -30,16 +30,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.ActionBar;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.MenuItemCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -737,29 +737,28 @@ public class ActivityDiary extends AppCompatActivity
         public void restoreState( Parcelable state, ClassLoader loader ) {
         }
 
-        static String makeFragmentName( int index ) {
+        static String makeFragmentName(int index) {
             return "DiaryTabs.fragment" + index;
         }
 
-        void addTab( ActionBar.Tab tab, Class< ? > clss, Bundle args ) {
-            TabInfo info = new TabInfo( clss, args );
-            tab.setTag( info );
-            tab.setTabListener( this );
-            mTabs.add( info );
-            mActionBar.addTab( tab );
+        void addTab(ActionBar.Tab tab, Class<?> clss, Bundle args) {
+            TabInfo info = new TabInfo(clss, args);
+            tab.setTag(info);
+            tab.setTabListener(this);
+            mTabs.add(info);
+            mActionBar.addTab(tab);
             notifyDataSetChanged();
         }
 
-        Fragment getItem( int position ) {
-            TabInfo info = mTabs.get( position );
-            return Fragment.instantiate( mContext, info.clss.getName(), info.args );
+        Fragment getItem(int position) {
+            TabInfo info = mTabs.get(position);
+            return Fragment.instantiate(mContext, info.clss.getName(), info.args);
         }
 
-        public void onPageScrolled( int position, float positionOffset, int positionOffsetPixels ) {
-        }
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
-        public void onPageSelected( int position ) {
-            mActionBar.setSelectedNavigationItem( position );
+        public void onPageSelected(int position) {
+            mActionBar.setSelectedNavigationItem(position);
         }
 
         public void onPageScrollStateChanged( int state ) {
