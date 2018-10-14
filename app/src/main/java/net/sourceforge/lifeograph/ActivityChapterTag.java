@@ -73,47 +73,47 @@ public class ActivityChapterTag extends AppCompatActivity
         }
 
         // FILLING WIDGETS
-        mDrawerLayout = ( DrawerLayout ) findViewById( R.id.drawer_layout );
+        mDrawerLayout = findViewById( R.id.drawer_layout );
         //mInflater = ( LayoutInflater ) getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
 
-        LinearLayout layoutTagProperties = ( LinearLayout ) findViewById( R.id.tag_properties );
-        Spinner spinnerTagType = ( Spinner ) findViewById( R.id.tag_type );
-        mAtvTagUnit = ( AutoCompleteTextView ) findViewById( R.id.tag_unit );
+        LinearLayout layoutTagProperties = findViewById( R.id.tag_properties );
+        Spinner spinnerTagType = findViewById( R.id.tag_type );
+        mAtvTagUnit = findViewById( R.id.tag_unit );
 
-        mViewChart = ( ViewChart ) findViewById( R.id.chart_view_tag );
+        mViewChart = findViewById( R.id.chart_view_tag );
 
         // UI UPDATES (must come before listeners)
-        if( mElement != null )
-            switch( mElement.get_type() ) {
+        if (mElement != null)
+            switch (mElement.get_type()) {
                 case TOPIC:
                 case GROUP:
-                    mViewChart.setVisibility( View.GONE );
-                    layoutTagProperties.setVisibility( View.GONE );
+                    mViewChart.setVisibility(View.GONE);
+                    layoutTagProperties.setVisibility(View.GONE);
                     break;
                 case CHAPTER:
                 case UNTAGGED:
-                    mViewChart.setVisibility( View.VISIBLE );
-                    mViewChart.set_points( mElement.create_chart_data(), 1f );
-                    layoutTagProperties.setVisibility( View.GONE );
+                    mViewChart.setVisibility(View.VISIBLE);
+                    mViewChart.set_points(mElement.create_chart_data(), 1f);
+                    layoutTagProperties.setVisibility(View.GONE);
                     break;
                 case TAG:
-                    mViewChart.setVisibility( View.VISIBLE );
-                    mViewChart.set_points( mElement.create_chart_data(), 1f );
-                    layoutTagProperties.setVisibility( View.VISIBLE );
+                    mViewChart.setVisibility(View.VISIBLE);
+                    mViewChart.set_points(mElement.create_chart_data(), 1f);
+                    layoutTagProperties.setVisibility(View.VISIBLE);
                     switch (mElement.get_chart_type() & ChartPoints.VALUE_TYPE_MASK) {
                         case ChartPoints.BOOLEAN:
-                            spinnerTagType.setSelection( 0 );
-                            mAtvTagUnit.setVisibility( View.GONE );
+                            spinnerTagType.setSelection(0);
+                            mAtvTagUnit.setVisibility(View.GONE);
                             break;
                         case ChartPoints.CUMULATIVE:
                             spinnerTagType.setSelection(1);
                             mAtvTagUnit.setVisibility(View.VISIBLE);
-                            mAtvTagUnit.setText(((Tag) mElement).unit);
+                            mAtvTagUnit.setText(((Tag) mElement).getUnit());
                             break;
                         default:
                             spinnerTagType.setSelection(2);
                             mAtvTagUnit.setVisibility(View.VISIBLE);
-                            mAtvTagUnit.setText(((Tag) mElement).unit);
+                            mAtvTagUnit.setText(((Tag) mElement).getUnit());
                             break;
                     }
                     break;
@@ -124,17 +124,17 @@ public class ActivityChapterTag extends AppCompatActivity
         // LISTENERS
         spinnerTagType.setOnItemSelectedListener(this);
 
-        String[] units = getResources().getStringArray( R.array.array_tag_units );
-        ArrayAdapter< String > adapter_units = new ArrayAdapter< String >
-                ( this, android.R.layout.simple_dropdown_item_1line, units );
+        String[] units = getResources().getStringArray(R.array.array_tag_units);
+        ArrayAdapter<String> adapter_units = new ArrayAdapter<>
+                (this, android.R.layout.simple_dropdown_item_1line, units);
         mAtvTagUnit.setAdapter( adapter_units );
         // show all suggestions w/o entering text:
-        mAtvTagUnit.setOnClickListener( new AutoCompleteTextView.OnClickListener() {
-                                            public void onClick( View view ) {
-                                                mAtvTagUnit.showDropDown();
-                                            }
-                                        }
-        );
+        mAtvTagUnit.setOnClickListener(new AutoCompleteTextView.OnClickListener() {
+            public void onClick(View view) {
+                mAtvTagUnit.showDropDown();
+            }
+        });
+
         mAtvTagUnit.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
             }
@@ -143,21 +143,19 @@ public class ActivityChapterTag extends AppCompatActivity
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ((Tag) mElement).unit = s.toString();
+                ((Tag) mElement).setUnit(s.toString());
                 mViewChart.set_points(mElement.create_chart_data(), 1f);
             }
         } );
 
-        mViewChart.setListener( new ViewChart.Listener()
-        {
-            public void onTypeChanged( int type ) {
-                mElement.set_chart_type( type );
-                mViewChart.set_points( mElement.create_chart_data(), 1f );
+        mViewChart.setListener(new ViewChart.Listener() {
+            public void onTypeChanged(int type) {
+                mElement.set_chart_type(type);
+                mViewChart.set_points(mElement.create_chart_data(), 1f);
             }
-        } );
+        });
 
-        mDrawerLayout.setDrawerListener(new DrawerLayout.DrawerListener()
-        {
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             public void onDrawerSlide(View view, float v) {}
 
             public void onDrawerOpened(View view) {
@@ -187,14 +185,14 @@ public class ActivityChapterTag extends AppCompatActivity
     protected void onPause() {
         super.onPause();
 
-        Log.d( Lifeograph.TAG, "onPause - ActivityChapterTag" );
+        Log.d(Lifeograph.TAG, "onPause - ActivityChapterTag");
     }*/
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        Log.d( Lifeograph.TAG, "ActivityChapterTag.onStop()" );
+        Log.d(Lifeograph.TAG, "ActivityChapterTag.onStop()");
 
         Lifeograph.handleDiaryEditingActivityDestroyed();
     }
@@ -203,7 +201,7 @@ public class ActivityChapterTag extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        Log.d( Lifeograph.TAG, "onResume - ActivityChapterTag" );
+        Log.d(Lifeograph.TAG, "onResume - ActivityChapterTag");
 
         Lifeograph.sContext = this;
 
@@ -270,25 +268,25 @@ public class ActivityChapterTag extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected( MenuItem item ) {
-        switch( item.getItemId() ) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 Lifeograph.sFlagStartingDiaryEditingActivity = true;
                 finish();
                 return true;
             case R.id.filter:
-                if( mDrawerLayout.isDrawerOpen( Gravity.RIGHT ) )
-                    mDrawerLayout.closeDrawer( Gravity.RIGHT );
+                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT))
+                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
                 else
-                    mDrawerLayout.openDrawer( Gravity.RIGHT );
+                    mDrawerLayout.openDrawer(Gravity.RIGHT);
                 return true;
             case R.id.add_entry: {
                 Entry entry = Diary.diary.create_entry(
-                        ( ( Chapter ) mElement ).get_free_order(), "", false );
+                        ((Chapter) mElement).get_free_order(), "", false);
                 Lifeograph.showElem( entry );
                 return true;
             }
             case R.id.rename:
-                switch( mElement.get_type() ) {
+                switch (mElement.get_type()) {
                     case TAG:
                         rename_tag();
                         break;
@@ -305,14 +303,14 @@ public class ActivityChapterTag extends AppCompatActivity
                 showThemeDialog();
                 return true;
             case R.id.edit_date:
-                new DialogInquireText( this,
+                new DialogInquireText(this,
                                        R.string.edit_date,
                                        mElement.get_date().format_string(),
                                        R.string.apply,
-                                       this ).show();
+                                       this).show();
                 return true;
             case R.id.dismiss:
-                switch( mElement.get_type() ) {
+                switch (mElement.get_type()) {
                     case TAG:
                         dismiss_tag();
                         break;
@@ -326,42 +324,42 @@ public class ActivityChapterTag extends AppCompatActivity
                 }
                 return true;
         }
-        return super.onOptionsItemSelected( item );
+        return super.onOptionsItemSelected(item);
     }
 
     private void rename_tag() {
-        DialogInquireText dlg = new DialogInquireText( this,
+        DialogInquireText dlg = new DialogInquireText(this,
                                                        R.string.rename_tag,
                                                        mElement.m_name,
                                                        R.string.rename,
-                                                       this );
+                                                       this);
         dlg.show();
     }
 
     private void rename_chapter() {
-        DialogInquireText dlg = new DialogInquireText( this,
+        DialogInquireText dlg = new DialogInquireText(this,
                                                        R.string.rename_chapter,
                                                        mElement.m_name,
                                                        R.string.rename,
-                                                       this );
+                                                       this);
         dlg.show();
     }
 
 
     private void showThemeDialog() {
-        Dialog dialog = new DialogTheme( this, ( Tag ) mElement, this );
+        Dialog dialog = new DialogTheme(this, (Tag) mElement, this);
         dialog.show();
     }
 
     private void dismiss_chapter() {
-        Lifeograph.showConfirmationPrompt( R.string.chapter_dismiss_confirm,
+        Lifeograph.showConfirmationPrompt(R.string.chapter_dismiss_confirm,
                                            R.string.dismiss,
                                            new DialogInterface.OnClickListener()
                                            {
                                                public void onClick( DialogInterface dialog,
                                                                     int id ) {
                                                    Diary.diary.dismiss_chapter(
-                                                           ( Chapter ) mElement );
+                                                           (Chapter) mElement);
                                                    // go up:
                                                    finish();
                                                }
@@ -395,9 +393,9 @@ public class ActivityChapterTag extends AppCompatActivity
                 setTitle( mElement.get_list_str() );
                 break;
             case R.string.edit_date:
-                Date date = new Date( text );
-                if( date.m_date != Date.NOT_SET ) {
-                    if( date.is_ordinal() )
+                LDate date = new LDate(text);
+                if (date.m_date != LDate.NOT_SET) {
+                    if (date.is_ordinal())
                         break;
 
                     date.reset_order_0();
@@ -411,28 +409,28 @@ public class ActivityChapterTag extends AppCompatActivity
                 break;
         }
     }
-    public boolean onInquireTextChanged( int id, String s ) {
-        switch( id ) {
+    public boolean onInquireTextChanged(int id, String s) {
+        switch (id) {
             case R.string.rename_tag:
-                return !Diary.diary.m_tags.containsKey( s );
+                return !Diary.diary.m_tags.containsKey(s);
             case R.string.rename_chapter:
-                return( mElement.m_name.compareTo( s ) != 0 );
+                return (mElement.m_name.compareTo(s) != 0);
             case R.string.edit_date:
-                Date date = new Date( s );
-                if( date.m_date == Date.NOT_SET )
+                LDate date = new LDate(s);
+                if (date.m_date == LDate.NOT_SET)
                     return false;
-                else if( date.is_ordinal() )
+                else if (date.is_ordinal())
                     return false;
-                return !Diary.diary.m_ptr2chapter_ctg_cur.getMap().containsKey( date.m_date );
+                return !Diary.diary.m_ptr2chapter_ctg_cur.getMap().containsKey(date.m_date);
             default:
                 return true;
         }
     }
 
     // ToDoObject INTERFACE METHODS
-    public void setTodoStatus( int s ) {
-        if( mElement != null ) {
-            switch( mElement.get_type() ) {
+    public void setTodoStatus(int s) {
+        if (mElement != null) {
+            switch (mElement.get_type()) {
                 case CHAPTER:
                 case TOPIC:
                 case GROUP:
@@ -503,7 +501,7 @@ public class ActivityChapterTag extends AppCompatActivity
 
     // Spinner INTERFACE METHODS
     public void onItemSelected( AdapterView<?> parent, View view, int pos, long id ) {
-        switch( pos ) {
+        switch (pos) {
             case 0:
                 mElement.set_chart_type(ChartPoints.BOOLEAN);
                 mAtvTagUnit.setVisibility( View.GONE );
@@ -519,7 +517,7 @@ public class ActivityChapterTag extends AppCompatActivity
         }
         mViewChart.set_points( mElement.create_chart_data(), 1f );
     }
-    public void onNothingSelected( AdapterView<?> parent ) {
+    public void onNothingSelected(AdapterView<?> parent) {
         // do nothing?
     }
 

@@ -58,16 +58,16 @@ class DialogPassword extends Dialog
         setCancelable( true );
 
         // mButtonOk must come before mInput as it is referenced there
-        mButtonOk = ( Button ) findViewById( R.id.passwordButtonPositive );
+        mButtonOk = findViewById( R.id.passwordButtonPositive );
         mButtonOk.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) { go(); }
         } );
 
-        mInput1 = ( EditText ) findViewById( R.id.edit_password_1 );
-        mInput2 = ( EditText ) findViewById( R.id.edit_password_2 );
+        mInput1 = findViewById( R.id.edit_password_1 );
+        mInput2 = findViewById( R.id.edit_password_2 );
 
-        mImage1 = ( ImageView ) findViewById( R.id.image_password_1 );
-        mImage2 = ( ImageView ) findViewById( R.id.image_password_2 );
+        mImage1 = findViewById( R.id.image_password_1 );
+        mImage2 = findViewById( R.id.image_password_2 );
 
         switch( mAction ) {
             case DPA_LOGIN:
@@ -129,7 +129,7 @@ class DialogPassword extends Dialog
             }
         } );
 
-        Button buttonNegative = ( Button ) findViewById( R.id.passwordButtonNegative );
+        Button buttonNegative = findViewById( R.id.passwordButtonNegative );
         buttonNegative.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {

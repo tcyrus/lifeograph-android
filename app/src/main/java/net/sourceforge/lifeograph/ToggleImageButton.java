@@ -87,8 +87,7 @@ public class ToggleImageButton extends AppCompatImageButton implements Checkable
         this.onCheckedChangeListener = onCheckedChangeListener;
     }
 
-    public static interface OnCheckedChangeListener
-    {
-        public void onCheckedChanged( ToggleImageButton buttonView, boolean isChecked );
+    public interface OnCheckedChangeListener {
+        void onCheckedChanged( ToggleImageButton buttonView, boolean isChecked );
     }
 }

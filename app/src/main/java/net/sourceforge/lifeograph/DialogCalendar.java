@@ -35,8 +35,7 @@ import android.widget.GridView;
 import android.widget.NumberPicker;
 
 
-class DialogCalendar extends Dialog
-{
+class DialogCalendar extends Dialog {
     DialogCalendar( Listener listener, boolean allowCreation ) {
         super( listener.getActivity(), R.style.FullHeightDialog );
         mListener = listener;
@@ -51,14 +50,14 @@ class DialogCalendar extends Dialog
 
         setTitle( R.string.calendar );
 
-        mDate = new Date( Date.get_today( 0 ) );
+        mDate = new LDate( LDate.get_today( 0 ) );
 
-        GridView gridCalendar = ( GridView ) this.findViewById( R.id.gridViewCalendar );
+        GridView gridCalendar = this.findViewById( R.id.gridViewCalendar );
         mAdapter = new GridCalAdapter( Lifeograph.sContext, mDate );
-        mNumberPickerMonth = ( NumberPicker ) findViewById( R.id.numberPickerMonth );
-        mNumberPickerYear = ( NumberPicker ) findViewById( R.id.numberPickerYear );
-        Button buttonCreateEntry = ( Button ) findViewById( R.id.buttonCreateEntry );
-        mButtonCreateChapter = ( Button ) findViewById( R.id.buttonCreateChapter );
+        mNumberPickerMonth = findViewById( R.id.numberPickerMonth );
+        mNumberPickerYear = findViewById( R.id.numberPickerYear );
+        Button buttonCreateEntry = findViewById( R.id.buttonCreateEntry );
+        mButtonCreateChapter = findViewById( R.id.buttonCreateChapter );
 
         mAdapter.notifyDataSetChanged();
         gridCalendar.setAdapter( mAdapter );
@@ -88,8 +87,8 @@ class DialogCalendar extends Dialog
                 } );
         mNumberPickerMonth.setMinValue( 1 );
         mNumberPickerMonth.setMaxValue( 12 );
-        mNumberPickerYear.setMinValue( ( int ) Date.YEAR_MIN );
-        mNumberPickerYear.setMaxValue( ( int ) Date.YEAR_MAX );
+        mNumberPickerYear.setMinValue( ( int ) LDate.YEAR_MIN );
+        mNumberPickerYear.setMaxValue( ( int ) LDate.YEAR_MAX );
 
         mNumberPickerMonth.setValue( mDate.get_month() );
         mNumberPickerYear.setValue( mDate.get_year() );
@@ -112,7 +111,7 @@ class DialogCalendar extends Dialog
                 !Diary.diary.m_ptr2chapter_ctg_cur.mMap.containsKey( mDate.m_date ) );
         mButtonCreateChapter.setVisibility( mAllowChapterCreation ? View.VISIBLE : View.INVISIBLE );
 
-        getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN );
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void createEntry() {
@@ -149,7 +148,7 @@ class DialogCalendar extends Dialog
     }
 
     private GridCalAdapter mAdapter = null;
-    private Date mDate;
+    private LDate mDate;
     private NumberPicker mNumberPickerMonth = null;
     private NumberPicker mNumberPickerYear = null;
     private Button mButtonCreateChapter = null;

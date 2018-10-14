@@ -57,13 +57,13 @@ public class DialogInquireText extends Dialog
         // setMessage( mMessage );
 
         // mButtonOk must come before mInput as it is referenced there
-        mButtonOk = ( Button ) findViewById( R.id.inquireTextButtonPositive );
+        mButtonOk = findViewById( R.id.inquireTextButtonPositive );
         mButtonOk.setText( mActName );
         mButtonOk.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) { go(); }
         } );
 
-        mInput = ( EditText ) findViewById( R.id.inquireTextEdit );
+        mInput = findViewById( R.id.inquireTextEdit );
 
         if( Lifeograph.getScreenHeight() >= Lifeograph.MIN_HEIGHT_FOR_NO_EXTRACT_UI )
             mInput.setImeOptions( EditorInfo.IME_FLAG_NO_EXTRACT_UI );
@@ -94,7 +94,7 @@ public class DialogInquireText extends Dialog
         mInput.setText( mDefName );
         mInput.selectAll();
 
-        Button buttonNegative = ( Button ) findViewById( R.id.inquireTextButtonNegative );
+        Button buttonNegative = findViewById( R.id.inquireTextButtonNegative );
         buttonNegative.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {

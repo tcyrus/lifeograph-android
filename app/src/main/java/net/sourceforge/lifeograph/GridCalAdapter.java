@@ -37,21 +37,21 @@ class GridCalAdapter extends BaseAdapter
 {
     final Context mContext;
     int mDaysInMonth;
-    Date mDateCurrent;
+    LDate mDateCurrent;
     public List< Long > mListDays;
 
     // Days in Current Month
-    public GridCalAdapter( Context context, Date date ) {
+    public GridCalAdapter( Context context, LDate date ) {
         super();
         this.mContext = context;
-        mListDays = new ArrayList< Long >();
+        mListDays = new ArrayList<>();
 
         showMonth( date );
     }
     public GridCalAdapter( Context context ) {
         super();
         this.mContext = context;
-        mListDays = new ArrayList< Long >();
+        mListDays = new ArrayList<>();
     }
 
     // @Override
@@ -64,8 +64,8 @@ class GridCalAdapter extends BaseAdapter
         return mListDays.size();
     }
 
-    protected void showMonth( Date date ) {
-        mDateCurrent = new Date( date.m_date );
+    protected void showMonth( LDate date ) {
+        mDateCurrent = new LDate( date.m_date );
 
         mListDays.clear();
         notifyDataSetChanged();
@@ -76,27 +76,27 @@ class GridCalAdapter extends BaseAdapter
         }
 
         mDaysInMonth = date.get_days_in_month();
-        Date date2 = new Date( date.m_date );
+        LDate date2 = new LDate( date.m_date );
         date2.set_day( 1 );
         final int numSlotBefore = date2.get_weekday();
 
-        Date prevMonth = new Date( date2.m_date );
+        LDate prevMonth = new LDate( date2.m_date );
         prevMonth.backward_month();
         int prevMonthLength = prevMonth.get_days_in_month();
         prevMonth.set_day( prevMonthLength - numSlotBefore );
 
-        Date nextMonth = new Date( date2.m_date );
+        LDate nextMonth = new LDate( date2.m_date );
         nextMonth.forward_months( 1 );
         nextMonth.set_day( 0 );
 
         // Prev Month days
         for( int i = 1; i <= numSlotBefore; i++ ) {
-            mListDays.add( prevMonth.m_date + Date.make_day( i ) );
+            mListDays.add( prevMonth.m_date + LDate.make_day( i ) );
         }
 
         // Current Month Days
         for( int i = 0; i < mDaysInMonth; i++ ) {
-            mListDays.add( date2.m_date + Date.make_day( i ) );
+            mListDays.add( date2.m_date + LDate.make_day( i ) );
         }
 
         // Next Month days
@@ -104,7 +104,7 @@ class GridCalAdapter extends BaseAdapter
         // always use 6 rows:
         final int numSlotAfter = 42 - ( numSlotBefore + mDaysInMonth );
         for( int i = 1; i <= numSlotAfter; i++ ) {
-            mListDays.add( nextMonth.m_date + Date.make_day( i ) );
+            mListDays.add( nextMonth.m_date + LDate.make_day( i ) );
         }
     }
 
@@ -121,17 +121,17 @@ class GridCalAdapter extends BaseAdapter
             row = inflater.inflate( R.layout.cal_day, parent, false );
         }
 
-        TextView tvDayNo = ( TextView ) row.findViewById( R.id.calendar_day_gridcell );
+        TextView tvDayNo = row.findViewById( R.id.calendar_day_gridcell );
         //TextView num_events_per_day = ( TextView ) row.findViewById( R.id.num_events_per_day );
         //num_events_per_day.setTextColor( Color.GREEN );
 
         if( position < 7 ) {
-            tvDayNo.setText( Date.WEEKDAYSSHORT[ position+1 ] );
+            tvDayNo.setText( LDate.WEEKDAYSSHORT[ position+1 ] );
             tvDayNo.setTextColor( mContext.getResources().getColor( R.color.t_mid ) );
             tvDayNo.setTextScaleX( 0.65f );
         }
         else {
-            Date date = new Date( mListDays.get( position ) + 1 );
+            LDate date = new LDate( mListDays.get( position ) + 1 );
 
             tvDayNo.setText( String.valueOf( date.get_day() ) );
 

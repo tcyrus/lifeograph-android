@@ -33,10 +33,9 @@ import android.widget.Button;
 import yuku.ambilwarna.AmbilWarnaDialog;
 
 
-class DialogTheme extends Dialog
-{
-    DialogTheme( Context context, Tag tag, DialogThemeHost host ) {
-        super( context );
+class DialogTheme extends Dialog {
+    DialogTheme(Context context, Tag tag, DialogThemeHost host) {
+        super(context);
         mTag = tag;
         mHost = host;
     }
@@ -48,13 +47,13 @@ class DialogTheme extends Dialog
 
         setTitle( mTag.get_name() );
 
-        mButtonTextColor = ( Button ) findViewById( R.id.button_text_color );
-        mButtonBaseColor = ( Button ) findViewById( R.id.button_base_color );
-        mButtonHeadingColor = ( Button ) findViewById( R.id.button_heading_color );
-        mButtonSubheadingColor = ( Button ) findViewById( R.id.button_subheading_color );
-        mButtonHighlightColor = ( Button ) findViewById( R.id.button_highlight_color );
+        mButtonTextColor = findViewById( R.id.button_text_color );
+        mButtonBaseColor = findViewById( R.id.button_base_color );
+        mButtonHeadingColor = findViewById( R.id.button_heading_color );
+        mButtonSubheadingColor = findViewById( R.id.button_subheading_color );
+        mButtonHighlightColor = findViewById( R.id.button_highlight_color );
 
-        mButtonReset = ( Button ) findViewById( R.id.button_theme_reset );
+        mButtonReset = findViewById( R.id.button_theme_reset );
 
         updateButtonColors();
 
@@ -151,7 +150,7 @@ class DialogTheme extends Dialog
 
     private void resetTheme() {
         mTag.reset_theme();
-        mButtonReset.setEnabled( false );
+        mButtonReset.setEnabled(false);
         updateButtonColors();
     }
 
@@ -171,9 +170,9 @@ class DialogTheme extends Dialog
     }
 
     // from: https://stackoverflow.com/a/13030061
-    private static int getContrastColor( int color ) {
-        double y = ( 299 * Color.red( color ) + 587 * Color.green( color ) + 114 * Color.blue(
-                color ) ) / 1000;
+    private static int getContrastColor(int color) {
+        double y = (299 * Color.red(color) + 587 * Color.green(color) + 114 * Color.blue(
+                color)) / 1000;
         return y >= 128 ? Color.BLACK : Color.WHITE;
     }
 
@@ -188,8 +187,7 @@ class DialogTheme extends Dialog
     private Button mButtonReset;
 
     // INTERFACE WITH THE HOST ACTIVITY ============================================================
-    interface DialogThemeHost
-    {
+    interface DialogThemeHost {
         void onDialogThemeClose();
     }
 

@@ -32,6 +32,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ViewEntryTags extends View implements GestureDetector.OnGestureListener
 {
@@ -199,10 +202,10 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
 
     //override the onTouchEvent
     @Override
-    public boolean onTouchEvent( MotionEvent event ) {
-        this.mGestureDetector.onTouchEvent( event );
+    public boolean onTouchEvent(MotionEvent event) {
+        this.mGestureDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
-        return super.onTouchEvent( event );
+        return super.onTouchEvent(event);
     }
 
     // GestureDetector.OnGestureListener INTERFACE METHODS
@@ -271,7 +274,7 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
         boolean hovered = false;
     }
 
-    private java.util.List< TagItem > m_items = new java.util.ArrayList< TagItem >();
+    private List<TagItem> m_items = new ArrayList<>();
 
     // GEOMETRICAL VARIABLES
     private int m_width = 0;
@@ -283,7 +286,7 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
     private Paint mPaint;
     private Path mPath;
 
-    boolean m_flag_editable = ! Diary.diary.is_read_only();
+    boolean m_flag_editable = !Diary.diary.is_read_only();
 
     private GestureDetector mGestureDetector;
     private Listener mListener = null;

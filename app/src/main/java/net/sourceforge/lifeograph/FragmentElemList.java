@@ -39,9 +39,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
-public class FragmentElemList extends ListFragment
-{
+public class FragmentElemList extends ListFragment {
     @Override
     public View onCreateView( LayoutInflater inflater,
                               ViewGroup container,
@@ -70,17 +70,20 @@ public class FragmentElemList extends ListFragment
     }
 
     @Override
-    public void onAttach( Activity activity ) {
-        super.onAttach( activity );
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        Log.d( Lifeograph.TAG, "FragmentElemList.onAttach() - " + activity.toString() );
+        Log.d(Lifeograph.TAG, "FragmentElemList.onAttach() - " + context.toString());
 
-        if( DiaryManager.class.isInstance( activity ) )
-            mDiaryManager = ( DiaryManager ) activity;
-        else
-            throw new ClassCastException( activity.toString() + " must be a DiaryManager" );
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            if (DiaryManager.class.isInstance(activity))
+                mDiaryManager = (DiaryManager) activity;
+            else
+                throw new ClassCastException(context.toString() + " must be a DiaryManager");
+        }
 
-        mDiaryManager.addFragment( this );
+        mDiaryManager.addFragment(this);
     }
 
     @Override
@@ -95,14 +98,14 @@ public class FragmentElemList extends ListFragment
     @Override
     public void onListItemClick( ListView l, View v, int pos, long id ) {
         super.onListItemClick( l, v, pos, id );
-        switch( mElems.get( pos ).get_type() ) {
+        switch (mElems.get(pos).get_type()) {
             case ENTRY:
             case TAG:
             case UNTAGGED:
             case CHAPTER:
             case TOPIC:
             case GROUP:
-                Lifeograph.showElem( mElems.get( pos ) );
+                Lifeograph.showElem(mElems.get(pos));
                 break;
         }
     }
@@ -111,10 +114,10 @@ public class FragmentElemList extends ListFragment
         mAdapterEntries.clear();
         mElems.clear();
 
-        switch( mDiaryManager.getElement().get_type() ) {
+        switch (mDiaryManager.getElement().get_type()) {
             case DIARY:
                 // ALL ENTRIES
-                if( mCurTabIndex == 0 ) {
+                if (mCurTabIndex == 0) {
                     Log.d( Lifeograph.TAG, "FragmentElemList.updateList()::ALL ENTRIES" );
                     for( Entry e : Diary.diary.m_entries.values() ) {
                         if( !e.get_filtered_out() )
@@ -130,30 +133,24 @@ public class FragmentElemList extends ListFragment
                     // FREE CHAPTERS
                     if( !Diary.diary.m_groups.mMap.isEmpty() ) {
                         mElems.add( new HeaderElem( R.string.free_chapters ) );
-                        for( Chapter c : Diary.diary.m_groups.mMap.descendingMap().values() ) {
-                            mElems.add( c );
-                        }
+                        mElems.addAll(Diary.diary.m_groups.mMap.descendingMap().values());
                     }
                     // NUMBERED CHAPTERS
-                    if( !Diary.diary.m_topics.mMap.isEmpty() ) {
-                        mElems.add( new HeaderElem( R.string.numbered_chapters ) );
-                        for( Chapter c : Diary.diary.m_topics.mMap.descendingMap().values() ) {
-                            mElems.add( c );
-                        }
+                    if (!Diary.diary.m_topics.mMap.isEmpty()) {
+                        mElems.add(new HeaderElem(R.string.numbered_chapters));
+                        mElems.addAll(Diary.diary.m_topics.mMap.descendingMap().values());
                     }
                     // DATED CHAPTERS
                     if( Diary.diary.m_chapter_categories.size() == 1 &&
                         !Diary.diary.m_ptr2chapter_ctg_cur.mMap.isEmpty() )
                         mElems.add( new HeaderElem( R.string.dated_chapters ) );
 
-                    for( Chapter.Category cc : Diary.diary.m_chapter_categories.values() ) {
+                    for (Chapter.Category cc : Diary.diary.m_chapter_categories.values()) {
                         if( Diary.diary.m_chapter_categories.size() > 1 )
                             mElems.add( cc );
 
-                        if( cc == Diary.diary.m_ptr2chapter_ctg_cur ) {
-                            for( Chapter c : cc.mMap.values() ) {
-                                mElems.add( c );
-                            }
+                        if (cc == Diary.diary.m_ptr2chapter_ctg_cur) {
+                            mElems.addAll(cc.mMap.values());
                         }
                     }
                     // ORPHANED ENTRIES VIRTUAL CHAPTER
@@ -165,7 +162,7 @@ public class FragmentElemList extends ListFragment
                 }
 
                 // TAGS
-                else if( mCurTabIndex == 2 ) {
+                else if (mCurTabIndex == 2) {
                     Log.d( Lifeograph.TAG, "FragmentElemList.updateList()::TAGS" );
                     // ROOT TAGS
                     for (Tag t : Diary.diary.m_tags.values()) {
@@ -173,11 +170,10 @@ public class FragmentElemList extends ListFragment
                             mElems.add(t);
                     }
                     // CATEGORIES
-                    for( Tag.Category c : Diary.diary.m_tag_categories.values() ) {
-                        mElems.add( c );
+                    for (Tag.Category c : Diary.diary.m_tag_categories.values()) {
+                        mElems.add(c);
                         if (c.getExpanded()) {
-                            for (Tag t : c.mTags)
-                                mElems.add(t);
+                            mElems.addAll(c.mTags);
                         }
                     }
                     // UNTAGGED META TAG
@@ -192,7 +188,7 @@ public class FragmentElemList extends ListFragment
             case UNTAGGED: {
                 Log.d( Lifeograph.TAG, "FragmentElemList.updateList()::TAG ENTRIES" );
                 Tag t = ( Tag ) mDiaryManager.getElement();
-                for( Entry e : t.mEntries.keySet() ) {
+                for (Entry e : t.mEntries.keySet()) {
                     if( !e.get_filtered_out() )
                         mElems.add( e );
                 }
@@ -204,13 +200,13 @@ public class FragmentElemList extends ListFragment
             case TOPIC:
             case GROUP: {
                 Log.d( Lifeograph.TAG, "FragmentElemList.updateList()::CHAPTER ENTRIES" );
-                Chapter c = ( Chapter ) mDiaryManager.getElement();
-                for( Entry e : c.mEntries ) {
-                    if( !e.get_filtered_out() )
-                        mElems.add( e );
+                Chapter c = (Chapter) mDiaryManager.getElement();
+                for (Entry e : c.mEntries) {
+                    if (!e.get_filtered_out())
+                        mElems.add(e);
                 }
 
-                Collections.sort( mElems, compareElems );
+                Collections.sort(mElems, compareElems);
                 break;
             }
         }
@@ -224,36 +220,33 @@ public class FragmentElemList extends ListFragment
         DiaryElement getElement();
     }
 
-    private java.util.List< DiaryElement > mElems = new ArrayList< DiaryElement >();
+    private List<DiaryElement> mElems = new ArrayList<>();
     private DiaryElemAdapter mAdapterEntries = null;
     DiaryManager mDiaryManager;
     private int mCurTabIndex = 0;
 
     // ELEMENT LIST INTERFACE ======================================================================
-    public interface ListOperations
-    {
-        public void updateList();
+    public interface ListOperations {
+        void updateList();
     }
 
     // COMPARATOR ==================================================================================
-    static class CompareListElems implements Comparator< DiaryElement >
-    {
-        public int compare( DiaryElement elem_l, DiaryElement elem_r ) {
+    static class CompareListElems implements Comparator<DiaryElement> {
+        public int compare(DiaryElement elem_l, DiaryElement elem_r) {
             // NOTE: this function assumes only similar elements are listed at a time
 
-            // SORT BY NAME
-            if( elem_l.get_date_t() == Date.NOT_APPLICABLE ) {
+            if (elem_l.get_date_t() == LDate.NOT_APPLICABLE) {
+                // SORT BY NAME
                 return 0;
-            }
-            // SORT BY DATE
-            else {
+            } else {
+                // SORT BY DATE
                 int direction =
                         ( elem_l.get_date().is_ordinal() && elem_r.get_date().is_ordinal() ) ?
                                 -1 : 1;
 
-                if( elem_l.get_date_t() > elem_r.get_date_t() )
+                if (elem_l.get_date_t() > elem_r.get_date_t())
                     return -direction;
-                else if( elem_l.get_date_t() < elem_r.get_date_t() )
+                else if (elem_l.get_date_t() < elem_r.get_date_t())
                     return direction;
                 else
                     return 0;
@@ -264,10 +257,9 @@ public class FragmentElemList extends ListFragment
     static final CompareListElems compareElems = new CompareListElems();
 
     // HEADER PSEUDO ELEMENT CLASS =================================================================
-    class HeaderElem extends DiaryElement
-    {
-        public HeaderElem( int nameRsc ) {
-            super( null, Lifeograph.getStr( nameRsc ), ES_VOID );
+    class HeaderElem extends DiaryElement {
+        public HeaderElem(int nameRsc) {
+            super( null, Lifeograph.getStr(nameRsc), ES_VOID );
         }
 
         @Override
@@ -292,22 +284,21 @@ public class FragmentElemList extends ListFragment
     }
 
     // DIARY ELEMENT ADAPTER CLASS =================================================================
-    class DiaryElemAdapter extends ArrayAdapter< DiaryElement >
-    {
-        public DiaryElemAdapter( Context context,
-                                 int resource,
-                                 int textViewResourceId,
-                                 java.util.List< DiaryElement > objects,
-                                 LayoutInflater inflater ) {
-            super( context, resource, textViewResourceId, objects );
+    class DiaryElemAdapter extends ArrayAdapter<DiaryElement> {
+        public DiaryElemAdapter(Context context,
+                                int resource,
+                                int textViewResourceId,
+                                List<DiaryElement> objects,
+                                LayoutInflater inflater) {
+            super(context, resource, textViewResourceId, objects);
             mInflater = inflater;
         }
 
-        private ViewHolder setHolder( DiaryElement elem, ViewGroup par ) {
+        private ViewHolder setHolder(DiaryElement elem, ViewGroup par) {
             View view;
             ViewHolder holder;
 
-            switch( elem.get_type() ) {
+            switch (elem.get_type()) {
                 case TAG_CTG:
                     view = mInflater.inflate( R.layout.list_section_tag_ctg, par, false );
                     holder = new ViewHolder( view, DiaryElement.LayoutType.HEADER_TAG_CTG );
@@ -330,9 +321,9 @@ public class FragmentElemList extends ListFragment
             return holder;
         }
 
-        public void handleCollapse( DiaryElement elem ) {
-            Log.d( Lifeograph.TAG, "handle collapse " + elem.get_name() );
-            switch( elem.get_type().layout_type ) {
+        public void handleCollapse(DiaryElement elem) {
+            Log.d(Lifeograph.TAG, "handle collapse " + elem.get_name());
+            switch (elem.get_type().layout_type) {
                 case HEADER_TAG_CTG:
                     Tag.Category tc = ( Tag.Category ) elem;
                     tc.setExpanded(!tc.getExpanded());
@@ -455,42 +446,42 @@ public class FragmentElemList extends ListFragment
 
             public TextView getName() {
                 if( mTitle == null ) {
-                    mTitle = ( TextView ) mRow.findViewById( R.id.title );
+                    mTitle = mRow.findViewById( R.id.title );
                 }
                 return mTitle;
             }
 
             public TextView getDetail() {
                 if( mDetail == null ) {
-                    mDetail = ( TextView ) mRow.findViewById( R.id.detail );
+                    mDetail = mRow.findViewById( R.id.detail );
                 }
                 return mDetail;
             }
 
             public ImageView getIcon() {
                 if( mIcon == null ) {
-                    mIcon = ( ImageView ) mRow.findViewById( R.id.icon );
+                    mIcon = mRow.findViewById( R.id.icon );
                 }
                 return mIcon;
             }
 
             public ImageView getIcon2() {
                 if( mIcon2 == null ) {
-                    mIcon2 = ( ImageView ) mRow.findViewById( R.id.icon2 );
+                    mIcon2 = mRow.findViewById( R.id.icon2 );
                 }
                 return mIcon2;
             }
 
             public ImageButton getIconCollapse() {
                 if( mIconCollapse == null ) {
-                    mIconCollapse = ( ImageButton ) mRow.findViewById( R.id.icon_collapse );
+                    mIconCollapse = mRow.findViewById( R.id.icon_collapse );
                 }
                 return mIconCollapse;
             }
 
             public ImageButton getIconOptions() {
                 if( mIconOptions == null ) {
-                    mIconOptions = ( ImageButton ) mRow.findViewById( R.id.icon_options );
+                    mIconOptions = mRow.findViewById( R.id.icon_options );
                 }
                 return mIconOptions;
             }

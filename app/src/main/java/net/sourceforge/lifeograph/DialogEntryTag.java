@@ -51,13 +51,13 @@ public class DialogEntryTag extends Dialog
         setCancelable( true );
 
         // mButtonAction must come before mInput as it is referenced there
-        mButtonAction = ( Button ) findViewById( R.id.entry_tag_action );
+        mButtonAction = findViewById( R.id.entry_tag_action );
         mButtonAction.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) { go(); }
         } );
 
-        mButtonTheme = ( Button ) findViewById( R.id.entry_set_theme );
+        mButtonTheme = findViewById( R.id.entry_set_theme );
         mButtonTheme.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
@@ -68,7 +68,7 @@ public class DialogEntryTag extends Dialog
             }
         } );
 
-        mInput1 = ( AutoCompleteTextView ) findViewById( R.id.entry_tag_edit );
+        mInput1 = findViewById( R.id.entry_tag_edit );
         if (mTag != null) // add new tag case
             mInput1.setText( mTag.get_name_and_value( mEntry, true, true ) );
 

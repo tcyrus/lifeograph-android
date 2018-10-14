@@ -66,26 +66,26 @@ public class Diary extends DiaryElementChart {
     enum SetPathType { NORMAL, READ_ONLY, NEW }
 
     public Diary() {
-        super( null, DiaryElement.DEID_DIARY, ES_VOID );
+        super(null, DiaryElement.DEID_DIARY, ES_VOID);
         m_current_id = DiaryElement.DEID_FIRST;
         m_force_id = DiaryElement.DEID_UNSET;
     }
 
-    Result init_new( String path ) {
+    Result init_new(String path) {
         clear();
-        Result result = set_path( path, SetPathType.NEW );
+        Result result = set_path(path, SetPathType.NEW);
 
-        if( result != Result.SUCCESS ) {
+        if (result != Result.SUCCESS) {
             clear();
             return result;
         }
 
         // every diary must at least have one chapter category:
-        m_ptr2chapter_ctg_cur = create_chapter_ctg( "Default" );
+        m_ptr2chapter_ctg_cur = create_chapter_ctg("Default");
 
         add_today(); // must come after m_ptr2chapter_ctg_cur is set
 
-        Theme theme = Diary.diary.create_tag( "calm", null ).getOwnTheme();
+        Theme theme = Diary.diary.create_tag("calm", null).getOwnTheme();
         theme.font = "Sans 11";
         theme.color_base = Color.parseColor("#D1E188");
         theme.color_text = Color.parseColor("#001100");
@@ -121,7 +121,7 @@ public class Diary extends DiaryElementChart {
         m_current_id = DiaryElement.DEID_FIRST;
         m_force_id = DiaryElement.DEID_UNSET;
         m_ids.clear();
-        m_ids.put( DiaryElement.DEID_DIARY, this );
+        m_ids.put(DiaryElement.DEID_DIARY, this);
 
         m_entries.clear();
         m_tags.clear();
@@ -133,7 +133,7 @@ public class Diary extends DiaryElementChart {
         m_topics.mMap.clear();
         m_groups.mMap.clear();
         m_orphans.clear();
-        m_orphans.set_date( Date.DATE_MAX );
+        m_orphans.set_date(LDate.DATE_MAX);
 
         m_startup_elem_id = DiaryElement.HOME_CURRENT_ELEM;
         m_last_elem_id = DiaryElement.DEID_DIARY;
@@ -171,16 +171,16 @@ public class Diary extends DiaryElementChart {
 
     @Override
     public String get_info_str() {
-        return( get_size() + " entries" );
+        return (get_size() + " entries");
     }
 
     @Override
     public ChartPoints create_chart_data() {
-        if( m_entries.isEmpty() )
+        if (m_entries.isEmpty())
             return null;
 
-        ChartPoints cp = new ChartPoints( m_chart_type );
-        Date d_last = new Date( Date.NOT_SET );
+        ChartPoints cp = new ChartPoints(m_chart_type);
+        LDate d_last = new LDate(LDate.NOT_SET);
 
         for (Entry entry : m_entries.descendingMap().values())
             cp.addPlain(d_last, entry.get_date());
@@ -199,7 +199,7 @@ public class Diary extends DiaryElementChart {
             retval = m_force_id;
             m_force_id = DiaryElement.DEID_UNSET;
         }
-        m_ids.put( retval, element );
+        m_ids.put(retval, element);
 
         while (m_ids.containsKey(m_current_id))
             m_current_id++;
@@ -208,13 +208,13 @@ public class Diary extends DiaryElementChart {
     }
 
     public boolean set_force_id(int id) {
-        if (m_ids.get( id ) != null || id <= DiaryElement.DEID_DIARY)
+        if (m_ids.get(id) != null || id <= DiaryElement.DEID_DIARY)
             return false;
         m_force_id = id;
         return true;
     }
 
-    public boolean make_free_entry_order(Date date) {
+    public boolean make_free_entry_order(LDate date) {
         date.reset_order_1();
         while (m_entries.get(date.m_date) != null)
             date.m_date += 1;
@@ -232,7 +232,7 @@ public class Diary extends DiaryElementChart {
     }
 
     // MEMBER RELATED FUNCS ========================================================================
-    public boolean set_passphrase( String passphrase ) {
+    public boolean set_passphrase(String passphrase) {
         if (passphrase.length() >= PASSPHRASE_MIN_SIZE) {
             m_passphrase = passphrase;
             return true;
@@ -240,24 +240,24 @@ public class Diary extends DiaryElementChart {
             return false;
     }
 
-    public boolean compare_passphrase( String passphrase ) {
-        return m_passphrase.equals( passphrase );
+    public boolean compare_passphrase(String passphrase) {
+        return m_passphrase.equals(passphrase);
     }
 
     public boolean is_encrypted() {
-        return( !m_passphrase.isEmpty() );
+        return !m_passphrase.isEmpty();
     }
 
     public String get_lang() {
         return m_language;
     }
 
-//    public void set_lang( String lang ) {
+//    public void set_lang(String lang) {
 //        m_language = lang;
 //    }
 
-    public DiaryElement get_element( int id ) {
-        return m_ids.get( id );
+    public DiaryElement get_element(int id) {
+        return m_ids.get(id);
     }
 
     public boolean is_read_only() {
@@ -266,7 +266,7 @@ public class Diary extends DiaryElementChart {
 
     // not part of c++
     public boolean is_virtual() {
-        return m_path.equals( sExampleDiaryPath );
+        return m_path.equals(sExampleDiaryPath);
     }
 
 // NOT USED NOW
@@ -319,109 +319,109 @@ public class Diary extends DiaryElementChart {
     }
 
     public Entry get_entry_today() {
-        return m_entries.get( Date.get_today( 1 ) ); // 1 is the order
+        return m_entries.get(LDate.get_today(1)); // 1 is the order
     }
 
-    public Entry create_entry( Date dateObj, String content, boolean flag_favorite ) {
+    public Entry create_entry(LDate dateObj, String content, boolean flag_favorite) {
         // make it the last entry of its day:
         dateObj.reset_order_1();
         long date = dateObj.m_date;
-        while( m_entries.get( date ) != null )
+        while (m_entries.get(date) != null)
             ++date;
 
-        Entry entry = new Entry( this, date, content, flag_favorite );
+        Entry entry = new Entry(this, date, content, flag_favorite);
 
-        m_entries.put( date, entry );
+        m_entries.put(date, entry);
 
-        add_entry_to_related_chapter( entry );
+        add_entry_to_related_chapter(entry);
 
-        m_untagged.add_entry( entry );
+        m_untagged.add_entry(entry);
 
-        return( entry );
+        return entry;
     }
 
     // adds a new entry to today even if there is already one or more:
     public Entry add_today() {
-        Date date = new Date( Date.get_today( 0 ) );
-        return create_entry( date, "", false );
+        LDate date = new LDate(LDate.get_today(0));
+        return create_entry(date, "", false);
     }
 
-    public boolean dismiss_entry( Entry entry ) {
+    public boolean dismiss_entry(Entry entry) {
         long date = entry.m_date.m_date;
 
         // fix startup element
-        if( m_startup_elem_id == entry.get_id() )
+        if (m_startup_elem_id == entry.get_id())
             m_startup_elem_id = DiaryElement.DEID_DIARY;
 
         // remove from tags:
-        for( Tag tag : entry.m_tags )
-            tag.mEntries.remove( entry );
+        for (Tag tag : entry.m_tags)
+            tag.mEntries.remove(entry);
 
         // remove from untagged:
-        m_untagged.remove_entry( entry );
+        m_untagged.remove_entry(entry);
 
         // remove from chapters:
-        remove_entry_from_chapters( entry );
+        remove_entry_from_chapters(entry);
 
         // remove from filters:
-        if( m_filter_active.is_entry_filtered( entry ) )
-            m_filter_active.remove_entry( entry );
-        if( m_filter_default.is_entry_filtered( entry ) )
-            m_filter_default.remove_entry( entry );
+        if (m_filter_active.is_entry_filtered(entry))
+            m_filter_active.remove_entry(entry);
+        if (m_filter_default.is_entry_filtered(entry ))
+            m_filter_default.remove_entry(entry);
 
         // erase entry from map:
-        m_entries.remove( date );
+        m_entries.remove(date);
 
         // fix entry order:
         int i = 1;
-        for( Entry e = m_entries.get( date + i ); e != null; e = m_entries.get( date + i ) ) {
-            m_entries.remove( e.m_date.m_date );
+        for (Entry e = m_entries.get(date + i); e != null; e = m_entries.get(date + i)) {
+            m_entries.remove(e.m_date.m_date);
             e.m_date.m_date--;
-            m_entries.put( e.m_date.m_date, e );
+            m_entries.put(e.m_date.m_date, e);
             ++i;
         }
 
         return true;
     }
 
-    public void set_entry_date( Entry entry, Date date ) {
+    public void set_entry_date(Entry entry, LDate date) {
         long d = entry.m_date.m_date;
-        m_entries.remove( d );
+        m_entries.remove(d);
 
-        for( Entry entry_shift = m_entries.get( ++d );
+        for (Entry entry_shift = m_entries.get(++d);
              entry_shift != null;
-             entry_shift = m_entries.get( ++d ) ) {
-            m_entries.remove( d );
-            entry_shift.set_date( d-1 );
-            m_entries.put( d - 1, entry_shift );
+             entry_shift = m_entries.get(++d)) {
+            m_entries.remove(d);
+            entry_shift.set_date(d-1);
+            m_entries.put(d - 1, entry_shift);
         }
 
         // find the last entry in the date/order
         d = date.m_date;
         boolean flag_replace = false;
-        while( m_entries.get( d ) != null ) {
+        while (m_entries.get(d) != null) {
             flag_replace = true;
             d++;
         }
 
-        if( flag_replace ) {
-            for( Entry entry_shift = m_entries.get( --d );
+        if (flag_replace) {
+            for (Entry entry_shift = m_entries.get(--d);
                  d >= date.m_date;
-                 entry_shift = m_entries.get( --d ) ) {
-                m_entries.remove( d );
-                entry_shift.set_date( d+1 );
-                m_entries.put( d + 1, entry_shift );
+                 entry_shift = m_entries.get(--d)) {
+                m_entries.remove(d);
+                entry_shift.set_date(d+1);
+                m_entries.put(d + 1, entry_shift);
             }
         }
 
-        entry.set_date( date.m_date );
-        m_entries.put( date.m_date, entry );
+        entry.set_date(date.m_date);
+        m_entries.put(date.m_date, entry);
         update_entries_in_chapters(); // date changes require full update
     }
 
-    public boolean get_day_has_multiple_entries( Date date_impure ) {
+    public boolean get_day_has_multiple_entries(LDate date_impure) {
         long date = date_impure.get_pure();
-        return( m_entries.get( date + 2 ) != null );
+        return (m_entries.get(date + 2) != null);
         // TODO:
         // if( iter == null || iter == m_entries.begin() )
         // return false;
@@ -468,10 +468,10 @@ public class Diary extends DiaryElementChart {
     }
 
     // in C++ this method is in PoolTagCategories class which does not exist in Java
-    public boolean rename_tag_ctg( Tag.Category ctg, String new_name ) {
-        m_tag_categories.remove( ctg.m_name );
+    public boolean rename_tag_ctg(Tag.Category ctg, String new_name) {
+        m_tag_categories.remove(ctg.m_name);
         ctg.m_name = new_name;
-        return( m_tag_categories.put( new_name, ctg ) != null );
+        return (m_tag_categories.put( new_name, ctg ) != null);
     }
 
     public void dismiss_tag_ctg(Tag.Category ctg, boolean flag_dismiss_contained) {
@@ -607,7 +607,7 @@ public class Diary extends DiaryElementChart {
             for( Chapter chpt = chapter; chpt != null; )
             {
                 boolean flag_neighbor = ( chpt.get_date_t() == chapter.get_date_t()
-                    + Date.ORDINAL_STEP  );
+                    + LDate.ORDINAL_STEP  );
 
                 for( Entry entry : chpt.mEntries )
                 {
@@ -619,7 +619,7 @@ public class Diary extends DiaryElementChart {
                         if( !flag_dismiss_contained && ( flag_neighbor || flag_erasing_oldest_cpt ) )
                             entry.set_date( entry.get_date().get_order() + last_entry_date );
                         else
-                            entry.set_date( entry.get_date_t() - Date.ORDINAL_STEP );
+                            entry.set_date( entry.get_date_t() - LDate.ORDINAL_STEP );
                         m_entries.put( entry.get_date_t(), entry );
                     }
                 }
@@ -637,7 +637,7 @@ public class Diary extends DiaryElementChart {
             // SHIFT OTHER CHAPTERS
             for( Chapter chpt = chapter_next; chpt != null; ) {
                 ptr2ctg.mMap.remove( chpt.get_date_t() );
-                chpt.set_date( chpt.get_date_t() - Date.ORDINAL_STEP );
+                chpt.set_date( chpt.get_date_t() - LDate.ORDINAL_STEP );
                 ptr2ctg.mMap.put( chpt.get_date_t(), chpt );
 
                 if( ptr2ctg.mMap.lowerKey( chpt.m_date_begin.m_date ) != null )
@@ -677,16 +677,16 @@ public class Diary extends DiaryElementChart {
         update_entries_in_chapters();
     }
 
-    // Date get_free_chapter_order_temporal();
+    // LDate get_free_chapter_order_temporal();
 
-    // Date get_free_chapter_order_ordinal();
+    // LDate get_free_chapter_order_ordinal();
 
-    // boolean make_free_entry_order( Date date );
+    // boolean make_free_entry_order( LDate date );
 
     // FUNCTIONS TO GET NEAREST CHAPTERS / TOPICS
 //    public Chapter getPrevChapter( Chapter chapter ) {
 //        if( chapter.is_ordinal() ) {
-//            long d_chapter_prev = chapter.m_date_begin.m_date - Date.ORDINAL_STEP;
+//            long d_chapter_prev = chapter.m_date_begin.m_date - LDate.ORDINAL_STEP;
 //            return m_topics.mMap.get( d_chapter_prev );
 //        }
 //        else
@@ -695,7 +695,7 @@ public class Diary extends DiaryElementChart {
 
 //    public Chapter getNextChapter( Chapter chapter ) {
 //        if( chapter.is_ordinal() ) {
-//            long d_chapter_next = chapter.m_date_begin.m_date + Date.ORDINAL_STEP;
+//            long d_chapter_next = chapter.m_date_begin.m_date + LDate.ORDINAL_STEP;
 //            return m_topics.mMap.get( d_chapter_next );
 //        }
 //        else
@@ -740,7 +740,7 @@ public class Diary extends DiaryElementChart {
             }
         }
         else
-            m_orphans.set_date( Date.DATE_MAX );
+            m_orphans.set_date( LDate.DATE_MAX );
     }
 
     public void add_entry_to_related_chapter( Entry entry ) {
@@ -811,11 +811,11 @@ public class Diary extends DiaryElementChart {
     }
 
     private long fix_pre_1020_date( long d ) {
-        if( Date.is_ordinal( d ) ) {
-            if( ( d & Date.VISIBLE_FLAG ) != 0 )
-                d -= Date.VISIBLE_FLAG;
+        if( LDate.is_ordinal( d ) ) {
+            if( ( d & LDate.VISIBLE_FLAG ) != 0 )
+                d -= LDate.VISIBLE_FLAG;
             else
-                d |= Date.VISIBLE_FLAG;
+                d |= LDate.VISIBLE_FLAG;
         }
 
         return d;
@@ -881,20 +881,19 @@ public class Diary extends DiaryElementChart {
         Tag ptr2tag = null;
         boolean flag_first_paragraph = false;
 
-        try
-        {
+        try {
             // TAG DEFINITIONS & CHAPTERS
-            while( ( line = mBufferedReader.readLine() ) != null ) {
-                if( line.length() < 1 ) // end of section
+            while ((line = mBufferedReader.readLine()) != null) {
+                if (line.length() < 1) // end of section
                     break;
-                else if( line.length() >= 3 ) {
-                    switch( line.charAt( 0 ) ) {
+                else if (line.length() >= 3) {
+                    switch (line.charAt(0)) {
                         case 'I':
-                            set_force_id( Integer.parseInt( line.substring( 2 ) ) );
+                            set_force_id(Integer.parseInt(line.substring(2)));
                             break;
                         case 'T': // tag category
-                            ptr2tag_ctg = create_tag_ctg( line.substring( 2 ) );
-                            ptr2tag_ctg.setExpanded( line.charAt( 1 ) == 'e' );
+                            ptr2tag_ctg = create_tag_ctg(line.substring(2));
+                            ptr2tag_ctg.setExpanded(line.charAt(1) == 'e');
                             break;
                         case 't': // tag
                             switch (line.charAt(1)) {
@@ -908,20 +907,20 @@ public class Diary extends DiaryElementChart {
                                     break;
                                 case 'u':
                                     if (ptr2tag != null)
-                                        ptr2tag.unit = line.substring(2);
+                                        ptr2tag.setUnit(line.substring(2));
                                     break;
                             }
                             break;
                         case 'u': // untagged
                             ptr2tag = m_untagged;
                             if (line.charAt(1) == 'c') {
-                                ptr2tag.set_chart_type( Integer.parseInt( line.substring( 2 ) ) );
+                                ptr2tag.set_chart_type(Integer.parseInt(line.substring(2)));
                                 break;
                             }
                             // no break
                         case 'm':
                             if (ptr2tag == null) {
-                                Log.e( Lifeograph.TAG, "No tag declared for theme" );
+                                Log.e(Lifeograph.TAG, "No tag declared for theme");
                                 break;
                             }
                             switch (line.charAt(1)) {
@@ -991,14 +990,14 @@ public class Diary extends DiaryElementChart {
                             }
                             break;
                         case 'C': // chapters...
-                            switch( line.charAt( 1 ) ) {
+                            switch (line.charAt(1)) {
                                 case 'C':   // chapter category
                                     ptr2chapter_ctg = create_chapter_ctg( line.substring( 3 ) );
                                     if( line.charAt( 2 ) == 'c' )
                                         m_ptr2chapter_ctg_cur = ptr2chapter_ctg;
                                     break;
                                 case 'c':   // chapter color
-                                    if( ptr2chapter == null ) {
+                                    if (ptr2chapter == null) {
                                         Log.e( Lifeograph.TAG, "No chapter defined" );
                                         break;
                                     }
@@ -1051,22 +1050,22 @@ public class Diary extends DiaryElementChart {
             }
 
             // ENTRIES
-            while( ( line = mBufferedReader.readLine() ) != null ) {
-                if( line.length() < 2 )
+            while ((line = mBufferedReader.readLine()) != null) {
+                if (line.length() < 2)
                     continue;
-                else if( line.charAt( 0 ) != 'I' && line.charAt( 0 ) != 'E' &&
-                         line.charAt( 0 ) != 'e' && entry_new == null ) {
+                else if (line.charAt(0) != 'I' && line.charAt(0) != 'E' &&
+                         line.charAt(0) != 'e' && entry_new == null) {
                     Log.e( Lifeograph.TAG, "No entry declared for the attribute" );
                     continue;
                 }
 
-                switch( line.charAt( 0 ) ) {
+                switch (line.charAt(0)) {
                     case 'I':
                         set_force_id( Integer.parseInt( line.substring( 2 ) ) );
                         break;
                     case 'E':   // new entry
                     case 'e':   // trashed
-                        if( line.length() < 5 )
+                        if (line.length() < 5)
                             continue;
 
                         long date = Long.parseLong( line.substring( 4 ) );
@@ -1361,23 +1360,23 @@ public class Diary extends DiaryElementChart {
                         }
                         break;
                     case 'l':   // language
-                        if( entry_new == null )
+                        if (entry_new == null)
                             Log.e( Lifeograph.TAG, "No entry declared" );
                         else
                             entry_new.set_lang( line.substring( 2 ) );
                         break;
                     case 'P':    // paragraph
-                        if( entry_new == null ) {
+                        if (entry_new == null) {
                             Log.e( Lifeograph.TAG, "No entry declared" );
                             break;
                         }
-                        if( flag_first_paragraph ) {
-                            if( line.length() > 2 )
-                                entry_new.m_text = line.substring( 2 );
+
+                        if (flag_first_paragraph) {
+                            if (line.length() > 2)
+                                entry_new.m_text = line.substring(2);
                             entry_new.m_name = entry_new.m_text;
                             flag_first_paragraph = false;
-                        }
-                        else {
+                        } else {
                             entry_new.m_text += "\n";
                             entry_new.m_text += line.substring( 2 );
                         }
@@ -1388,9 +1387,7 @@ public class Diary extends DiaryElementChart {
                         return Result.CORRUPT_FILE;
                 }
             }
-        }
-        catch( IOException e )
-        {
+        } catch (IOException e) {
             return Result.CORRUPT_FILE;
         }
 
@@ -1407,7 +1404,7 @@ public class Diary extends DiaryElementChart {
         String line;
         Entry entry_new = null;
         Chapter.Category ptr2chapter_ctg = null;
-        Chapter ptr2chapter = null;
+        Chapter ptr2chapter;
         Tag.Category ptr2tag_ctg = null;
         Theme ptr2theme = null;
         Theme ptr2default_theme = null;
@@ -1418,8 +1415,7 @@ public class Diary extends DiaryElementChart {
 
         // TAG DEFINITIONS & CHAPTERS
         try {
-            while( ( line = mBufferedReader.readLine() ) != null )
-            {
+            while ((line = mBufferedReader.readLine() ) != null) {
                 if( line.length() < 1 ) // end of section
                     break;
                 else if( line.length() >= 3 ) {
@@ -1676,22 +1672,22 @@ public class Diary extends DiaryElementChart {
         }
     }
 
-    private void create_db_tag_text( Tag tag ) throws IOException {
+    private void create_db_tag_text(Tag tag) throws IOException {
         char type = 'm';
-        if( tag.get_type() == Type.UNTAGGED ) {
-            mBufferedWriter.append( "uc" );
+        if (tag.get_type() == Type.UNTAGGED) {
+            mBufferedWriter.append("uc");
             type = 'u';
+        } else {
+            mBufferedWriter.append("ID")
+                    .append(Integer.toString(tag.get_id()))
+                    .append("\nt ")
+                    .append(tag.get_name())
+                    .append("\ntc");
         }
-        else
-            mBufferedWriter.append( "ID" )
-                           .append( Integer.toString( tag.get_id() ) )
-                           .append( "\nt " )
-                           .append( tag.get_name() )
-                           .append( "\ntc" );
-        mBufferedWriter.append( Integer.toString( tag.get_chart_type() ) ).append( '\n' );
+        mBufferedWriter.append(Integer.toString(tag.get_chart_type())).append( '\n' );
 
-        if (!tag.isBoolean() && !tag.unit.isEmpty())
-            mBufferedWriter.append("tu").append(tag.unit).append('\n');
+        if (!tag.isBoolean() && !tag.getUnit().isEmpty())
+            mBufferedWriter.append("tu").append(tag.getUnit()).append('\n');
 
         if (tag.getHasOwnTheme()) {
             Theme theme = tag.getTheme();
@@ -1887,7 +1883,7 @@ public class Diary extends DiaryElementChart {
                 mBufferedReader = null;
             }
         } catch (IOException e) {
-            Log.e( Lifeograph.TAG, e.getMessage() );
+            Log.e(Lifeograph.TAG, e.getMessage());
         }
     }
 
@@ -1899,19 +1895,19 @@ public class Diary extends DiaryElementChart {
         close_file();
 
         try {
-            RandomAccessFile file = new RandomAccessFile( m_path, "r" );
+            RandomAccessFile file = new RandomAccessFile(m_path, "r");
             file.readLine(); // LIFEOGRAPHDB
             file.readLine(); // V
             file.readLine(); // E
             file.readLine(); // 0
 
             // allocate memory for salt and iv
-            byte[] salt = new byte[ cSALT_SIZE ];
-            byte[] iv = new byte[ cIV_SIZE ];
+            byte[] salt = new byte[cSALT_SIZE];
+            byte[] iv = new byte[cIV_SIZE];
 
             // read salt and iv
-            file.read( salt );
-            file.read( iv );
+            file.read(salt);
+            file.read(iv);
 
             // calculate bytes of data in file
             int size = (int) (file.length() - file.getFilePointer());
@@ -1919,6 +1915,7 @@ public class Diary extends DiaryElementChart {
                 clear();
                 return Result.CORRUPT_FILE;
             }
+
             byte[] buffer = new byte[size];
             file.readFully(buffer);
             file.close();
@@ -1931,7 +1928,7 @@ public class Diary extends DiaryElementChart {
                 return Result.WRONG_PASSWORD;
             }
 
-            mBufferedReader = new BufferedReader( new StringReader( output ) );
+            mBufferedReader = new BufferedReader(new StringReader(output));
         } catch (FileNotFoundException ex) {
             return Result.FILE_NOT_FOUND;
         } catch (IOException ex) {
@@ -1955,7 +1952,7 @@ public class Diary extends DiaryElementChart {
 
             return Result.SUCCESS;
         } catch (IOException ex) {
-            Log.e( Lifeograph.TAG, "Failed to save diary: " + ex.getMessage() );
+            Log.e(Lifeograph.TAG, "Failed to save diary: " + ex.getMessage());
 
             mBufferedWriter = null;
 
@@ -2300,9 +2297,9 @@ public class Diary extends DiaryElementChart {
     TreeMap<String, Chapter.Category> m_chapter_categories =
             new TreeMap<>(DiaryElement.compare_names);
     Chapter.Category m_ptr2chapter_ctg_cur = null;
-    Chapter.Category m_topics = new Chapter.Category(this, Date.TOPIC_MIN);
-    Chapter.Category m_groups = new Chapter.Category(this, Date.GROUP_MIN);
-    Chapter m_orphans = new Chapter(null, "<Other Entries>", Date.DATE_MAX);
+    Chapter.Category m_topics = new Chapter.Category(this, LDate.TOPIC_MIN);
+    Chapter.Category m_groups = new Chapter.Category(this, LDate.GROUP_MIN);
+    Chapter m_orphans = new Chapter(null, "<Other Entries>", LDate.DATE_MAX);
 
     private int m_startup_elem_id; // DEID
     private int m_last_elem_id; // DEID

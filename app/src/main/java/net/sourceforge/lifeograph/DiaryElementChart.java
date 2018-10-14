@@ -23,8 +23,7 @@
 package net.sourceforge.lifeograph;
 
 
-public abstract class DiaryElementChart extends DiaryElement
-{
+public abstract class DiaryElementChart extends DiaryElement {
     DiaryElementChart( Diary diary, String name, int status ) {
         super( diary, name, status );
     }

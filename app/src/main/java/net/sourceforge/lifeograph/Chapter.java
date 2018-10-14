@@ -81,7 +81,7 @@ public class Chapter extends DiaryElementChart {
             assert (!chapter.is_ordinal());
             assert (!mMap.containsKey(date));
 
-            if (chapter.m_date_begin.m_date != Date.NOT_SET) {
+            if (chapter.m_date_begin.m_date != LDate.NOT_SET) {
                 // fix time span
                 boolean flagChapterFound = false;
                 for (Chapter c : mMap.values()) {
@@ -113,7 +113,7 @@ public class Chapter extends DiaryElementChart {
             if (mMap.isEmpty())
                 return m_date_min;
 
-            Date d = new Date((Long) mMap.keySet().toArray()[0]);
+            LDate d = new LDate((Long) mMap.keySet().toArray()[0]);
             d.forward_ordinal_order();
             return d.m_date;
         }
@@ -179,7 +179,7 @@ public class Chapter extends DiaryElementChart {
 
     public Chapter(Diary diary, String name, long date) {
         super(diary, name, ES_CHAPTER_DEFAULT );
-        m_date_begin = new Date(date);
+        m_date_begin = new LDate(date);
         update_type();
     }
 
@@ -213,7 +213,7 @@ public class Chapter extends DiaryElementChart {
     }
 
     @Override
-    public Date get_date() {
+    public LDate get_date() {
         return m_date_begin;
     }
 
@@ -279,8 +279,8 @@ public class Chapter extends DiaryElementChart {
         update_type();
     }
 
-    public Date get_free_order() {
-        Date date = new Date(m_date_begin.m_date);
+    public LDate get_free_order() {
+        LDate date = new LDate(m_date_begin.m_date);
         Diary.diary.make_free_entry_order(date);
         return date;
     }
@@ -308,7 +308,7 @@ public class Chapter extends DiaryElementChart {
             return null;
 
         ChartPoints cp = new ChartPoints(m_chart_type);
-        Date d_last = new Date(Date.NOT_SET);
+        LDate d_last = new LDate(LDate.NOT_SET);
 
         for (Entry entry : mEntries.descendingSet())
             cp.addPlain(d_last, entry.get_date());
@@ -319,7 +319,7 @@ public class Chapter extends DiaryElementChart {
     }
 
     // DATA
-    Date m_date_begin;
+    LDate m_date_begin;
     int m_time_span = 0;
     Type m_type;
     TreeSet<Entry> mEntries = new TreeSet<>(DiaryElement.compare_elems_by_date);

@@ -51,7 +51,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
 public class ActivityDiary extends AppCompatActivity
@@ -72,7 +71,7 @@ public class ActivityDiary extends AppCompatActivity
         if( Lifeograph.getScreenWidth() >= 4.0 ) {
             setContentView( R.layout.diary_wide );
 
-            mButtonCalendar = ( Button ) findViewById( R.id.button_calendar );
+            mButtonCalendar = findViewById( R.id.button_calendar );
             mButtonCalendar.setOnClickListener( new View.OnClickListener()
             {
                 public void onClick( View view ) {
@@ -80,7 +79,7 @@ public class ActivityDiary extends AppCompatActivity
                 }
             } );
 
-            ViewPager pagerCalendar = ( ViewPager ) findViewById( R.id.pager_calendar );
+            ViewPager pagerCalendar = findViewById( R.id.pager_calendar );
             mCalPagerAdapter = new PagerAdapterCalendar( pagerCalendar );
         }
         else {
@@ -89,18 +88,17 @@ public class ActivityDiary extends AppCompatActivity
         }
 
         // FILLING WIDGETS
-        mDrawerLayout = ( DrawerLayout ) findViewById( R.id.drawer_layout );
+        mDrawerLayout = findViewById( R.id.drawer_layout );
         //mInflater = ( LayoutInflater ) getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
 
         // LISTENERS
-        mDrawerLayout.setDrawerListener( new DrawerLayout.DrawerListener()
-        {
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             public void onDrawerSlide( View view, float v ) { }
 
             public void onDrawerOpened( View view ) {
 
-                for( FragmentElemList fragment : mDiaryFragments ) {
-                    if( fragment.isVisible() )
+                for (FragmentElemList fragment : mDiaryFragments) {
+                    if (fragment.isVisible())
                         fragment.getListView().setEnabled( false );
                 }
 
@@ -114,27 +112,27 @@ public class ActivityDiary extends AppCompatActivity
 //                }
             }
 
-            public void onDrawerClosed( View view ) {
-                for( FragmentElemList fragment : mDiaryFragments ) {
-                    if( fragment.isVisible() )
-                        fragment.getListView().setEnabled( true );
+            public void onDrawerClosed(View view) {
+                for (FragmentElemList fragment : mDiaryFragments) {
+                    if (fragment.isVisible())
+                        fragment.getListView().setEnabled(true);
                 }
             }
 
-            public void onDrawerStateChanged( int i ) { }
-        } );
+            public void onDrawerStateChanged(int i) {}
+        });
 
         // ACTIONBAR
         ActionBar mActionBar = getSupportActionBar();
-        if( mActionBar != null ) {
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled( true );
-            mActionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_TABS );
+            mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             //mActionBar.setIcon( R.drawable.ic_diary );
             setTitle( Diary.diary.get_title_str() );
             mActionBar.setSubtitle( Diary.diary.get_info_str() );
         }
 
-        mPager = ( ViewPager ) findViewById( R.id.pager );
+        mPager = findViewById(R.id.pager);
         TabsAdapter mTabsAdapter = new TabsAdapter( this, mPager );
 
         Bundle args = new Bundle();
@@ -151,7 +149,7 @@ public class ActivityDiary extends AppCompatActivity
                              FragmentElemList.class, args );
 
         // CHART
-        mViewChart = ( ViewChart ) findViewById( R.id.chart_view_diary );
+        mViewChart = findViewById( R.id.chart_view_diary );
         mViewChart.set_points( Diary.diary.create_chart_data(), 1f );
         mViewChart.setListener( new ViewChart.Listener()
         {
@@ -161,7 +159,7 @@ public class ActivityDiary extends AppCompatActivity
             }
         } );
 
-        if( savedInstanceState != null ) {
+        if (savedInstanceState != null) {
             mActionBar.setSelectedNavigationItem( savedInstanceState.getInt( "tab", 0 ) );
         }
 
@@ -451,7 +449,7 @@ public class ActivityDiary extends AppCompatActivity
 //                    cal.setTimeInMillis( cursor.getLong( idx ) );
 //            }
 //
-//            Diary.diary.create_entry( new Date( cal.get( Calendar.YEAR ),
+//            Diary.diary.create_entry( new LDate( cal.get( Calendar.YEAR ),
 //                                                cal.get( Calendar.MONTH ) + 1,
 //                                                cal.get( Calendar.DAY_OF_MONTH ) ), body, false );
 //        }
@@ -614,7 +612,7 @@ public class ActivityDiary extends AppCompatActivity
     //private LayoutInflater mInflater;
     protected ViewPager mPager;
     private PagerAdapterCalendar mCalPagerAdapter = null;
-    private List< FragmentElemList > mDiaryFragments = new java.util.ArrayList< FragmentElemList >();
+    private List<FragmentElemList> mDiaryFragments = new ArrayList<>();
 
     private Button mButtonCalendar;
 
@@ -630,22 +628,20 @@ public class ActivityDiary extends AppCompatActivity
     // TABS ADAPTER ================================================================================
     // partly based on Support Library FragmentPagerAdapter implementation
     public static class TabsAdapter extends PagerAdapter
-            implements ActionBar.TabListener, ViewPager.OnPageChangeListener
-    {
+            implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
         private final Context mContext;
         private final ActionBar mActionBar;
         private final ViewPager mViewPager;
-        private final ArrayList< TabInfo > mTabs = new ArrayList< TabInfo >();
+        private final ArrayList<TabInfo> mTabs = new ArrayList<>();
         private final FragmentManager mFragMan;
         private FragmentTransaction mCurTransaction = null;
         private Fragment mCurrentPrimaryItem = null;
 
-        static final class TabInfo
-        {
-            private final Class< ? > clss;
+        static final class TabInfo {
+            private final Class<?> clss;
             private final Bundle args;
 
-            TabInfo( Class< ? > _class, Bundle _args ) {
+            TabInfo(Class<?> _class, Bundle _args) {
                 clss = _class;
                 args = _args;
             }
@@ -657,12 +653,12 @@ public class ActivityDiary extends AppCompatActivity
             mFragMan = activity.getSupportFragmentManager();
             mViewPager = pager;
             mViewPager.setAdapter( this );
-            mViewPager.setOnPageChangeListener( this );
+            mViewPager.addOnPageChangeListener( this );
         }
 
         @Override
-        public boolean isViewFromObject( View view, Object object ) {
-            return( ( Fragment ) object).getView() == view;
+        public boolean isViewFromObject(View view, Object object) {
+            return ((Fragment) object).getView() == view;
         }
 
         @Override
@@ -671,24 +667,24 @@ public class ActivityDiary extends AppCompatActivity
         }
 
         @Override
-        public Object instantiateItem( ViewGroup container, int position ) {
-            if( mCurTransaction == null )
+        public Object instantiateItem(ViewGroup container, int position) {
+            if (mCurTransaction == null)
                 mCurTransaction = mFragMan.beginTransaction();
 
-            String name = makeFragmentName( position );
-            Fragment fragment = mFragMan.findFragmentByTag( name );
-            if( fragment != null ) {
+            String name = makeFragmentName(position);
+            Fragment fragment = mFragMan.findFragmentByTag(name);
+
+            if (fragment != null) {
                 Log.d( Lifeograph.TAG, "Attaching item #" + position + ": f=" + fragment );
-                mCurTransaction.attach( fragment );
+                mCurTransaction.attach(fragment);
+            } else {
+                fragment = getItem(position);
+                Log.d(Lifeograph.TAG, "Adding item #" + position + ": f=" + fragment);
+                mCurTransaction.add(container.getId(), fragment, makeFragmentName(position));
             }
-            else {
-                fragment = getItem( position );
-                Log.d( Lifeograph.TAG, "Adding item #" + position + ": f=" + fragment );
-                mCurTransaction.add( container.getId(), fragment,
-                                     makeFragmentName( position ) );
-            }
-            if( fragment != mCurrentPrimaryItem ) {
-                fragment.setMenuVisibility( false );
+
+            if (fragment != mCurrentPrimaryItem) {
+                fragment.setMenuVisibility(false);
             }
 
             return fragment;
@@ -705,13 +701,13 @@ public class ActivityDiary extends AppCompatActivity
         }
 
         @Override
-        public void setPrimaryItem( View container, int position, Object object ) {
-            Fragment fragment = ( Fragment ) object;
-            if( fragment != mCurrentPrimaryItem ) {
-                if( mCurrentPrimaryItem != null ) {
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            Fragment fragment = (Fragment) object;
+            if (fragment != mCurrentPrimaryItem) {
+                if (mCurrentPrimaryItem != null) {
                     mCurrentPrimaryItem.setMenuVisibility( false );
                 }
-                if( fragment != null ) {
+                if (fragment != null) {
                     fragment.setMenuVisibility( true );
                 }
                 mCurrentPrimaryItem = fragment;
@@ -719,13 +715,13 @@ public class ActivityDiary extends AppCompatActivity
         }
 
         @Override
-        public void startUpdate( View container ) {
+        public void startUpdate(ViewGroup container) {
         }
 
         @Override
-        public void finishUpdate( View container ) {
-            if( mCurTransaction != null ) {
-                Log.d( Lifeograph.TAG, "Commiting item transactions" );
+        public void finishUpdate(ViewGroup container) {
+            if (mCurTransaction != null) {
+                Log.d(Lifeograph.TAG, "Commiting item transactions");
                 mCurTransaction.commitAllowingStateLoss();
                 mCurTransaction = null;
                 mFragMan.executePendingTransactions();
@@ -771,7 +767,7 @@ public class ActivityDiary extends AppCompatActivity
 
         public void onTabSelected( ActionBar.Tab tab, FragmentTransaction ft ) {
             Object tag = tab.getTag();
-            for( int i = 0; i < mTabs.size(); i++ ) {
+            for (int i = 0; i < mTabs.size(); i++) {
                 if( mTabs.get( i ) == tag ) {
                     mViewPager.setCurrentItem( i );
                 }
@@ -789,19 +785,19 @@ public class ActivityDiary extends AppCompatActivity
     public class PagerAdapterCalendar extends PagerAdapter
             implements ViewPager.OnPageChangeListener
     {
-        PagerAdapterCalendar( ViewPager pager ) {
+        PagerAdapterCalendar(ViewPager pager) {
             mViewPager = pager;
-            mViewPager.setAdapter( this );
-            mViewPager.setOnPageChangeListener( this );
+            mViewPager.setAdapter(this);
+            mViewPager.addOnPageChangeListener(this);
 
-            mViewPager.setCurrentItem( 1, false );
+            mViewPager.setCurrentItem(1, false);
 
             initGVs();
             updateGVs();
         }
 
         private void initGVs() {
-            for( int i = 0; i < 3; i++ ) {
+            for (int i = 0; i < 3; i++) {
                 mGVs[ i ] = new GridView( ActivityDiary.this );
                 mGridAdapters[ i ] = new GridCalAdapter( ActivityDiary.this );
                 mGVs[ i ].setAdapter( mGridAdapters[ i ] );
@@ -811,28 +807,27 @@ public class ActivityDiary extends AppCompatActivity
                 mGVs[ i ].setSelector( R.drawable.themed_selector );
             }
 
-            mGVs[ 1 ].setOnItemLongClickListener( new AdapterView.OnItemLongClickListener()
-            {
-                public boolean onItemLongClick( AdapterView< ? > arg0, View view,
-                                                int pos, long arg3 ) {
+            mGVs[ 1 ].setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                public boolean onItemLongClick(AdapterView<?> arg0, View view,
+                                                int pos, long arg3) {
                     mGridAdapters[ 1 ].mDateCurrent =
-                            new Date( mGridAdapters[ 1 ].mListDays.get( pos ) );
+                            new LDate( mGridAdapters[ 1 ].mListDays.get( pos ) );
                     view.setSelected( true );
 
-                    if( mActionMode != null )
+                    if (mActionMode != null)
                         mActionMode.finish();
 
                     mActionMode = ActivityDiary.this.startActionMode( ActivityDiary.this );
 
                     return false;
                 }
-            } );
+            });
         }
 
         private void updateGVs() {
-            Date datePrev = new Date( mDateCur.m_date );
+            LDate datePrev = new LDate( mDateCur.m_date );
             datePrev.backward_month();
-            Date dateNext = new Date( mDateCur.m_date );
+            LDate dateNext = new LDate( mDateCur.m_date );
             dateNext.forward_months( 1 );
 
             mGridAdapters[ 0 ].showMonth( datePrev );
@@ -842,17 +837,17 @@ public class ActivityDiary extends AppCompatActivity
             mButtonCalendar.setText( mDateCur.format_string_ym() );
         }
 
-        Date getSelectedDate() {
+        LDate getSelectedDate() {
             return mGridAdapters[ 1 ].mDateCurrent;
         }
 
         @Override
-        public Object instantiateItem( ViewGroup container, int position ) {
-            Log.d( Lifeograph.TAG, "pager adapter calendar instantiate item: " + position );
+        public Object instantiateItem(ViewGroup container, int position) {
+            Log.d(Lifeograph.TAG, "pager adapter calendar instantiate item: " + position);
 
-            container.addView( mGVs[ position ] );
+            container.addView(mGVs[position]);
 
-            return mGVs[ position ];
+            return mGVs[position];
         }
 
         @Override
@@ -876,14 +871,14 @@ public class ActivityDiary extends AppCompatActivity
             mPosCur = position;
         }
         public void onPageScrollStateChanged( int state ) {
-            if( state == ViewPager.SCROLL_STATE_IDLE ) {
+            if (state == ViewPager.SCROLL_STATE_IDLE) {
                 Log.d( Lifeograph.TAG, "PagerAdapterCalendar.onPageScrollStateChanged()" );
 
                 // go back:
-                if( mPosCur == 0 )
+                if (mPosCur == 0)
                     mDateCur.backward_month();
                 // go forward:
-                else if( mPosCur == 2 )
+                else if (mPosCur == 2)
                     mDateCur.forward_months( 1 );
 
                 updateGVs();
@@ -893,7 +888,7 @@ public class ActivityDiary extends AppCompatActivity
         }
 
         final ViewPager mViewPager;
-        Date mDateCur = new Date( Date.get_today( 0 ) );
+        LDate mDateCur = new LDate( LDate.get_today( 0 ) );
         int mPosCur = 1;
 
         GridView[] mGVs = new GridView[ 3 ];

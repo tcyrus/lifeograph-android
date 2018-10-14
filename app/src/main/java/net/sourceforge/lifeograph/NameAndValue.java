@@ -25,28 +25,38 @@ package net.sourceforge.lifeograph;
 
 import android.util.Log;
 
-class NameAndValue
-{
+class NameAndValue {
     final static int HAS_NAME = 0x1;
     final static int HAS_VALUE = 0x2;
     final static int HAS_UNIT = 0x4;
     final static int HAS_EQUAL = 0x8;
 
     NameAndValue() {
+        this("", 0.0);
     }
 
-    NameAndValue( String n, Double v ) {
+    NameAndValue(String n, Double v) {
+        this(n, v, "", 0);
+    }
+
+    NameAndValue(String n, Double v, String u, int s) {
         name = n;
         value = v;
+        unit = u;
+        status = s;
     }
 
-    String name = "";
-    Double value = 0.0;
-    String unit = "";
-    int status = 0;
+    String name;
+    Double value;
+    String unit;
+    int status;
 
-    static NameAndValue parse( String text ) {
-        NameAndValue nav = new NameAndValue();
+    static NameAndValue parse(String text) {
+        StringBuilder name = new StringBuilder();
+        StringBuilder unit = new StringBuilder();
+        Double value = 0.0;
+        int status = 0;
+
         char lf = '='; // =, \, #, $(unit)
         int divider = 0;
         int trim_length = 0;
@@ -54,76 +64,69 @@ class NameAndValue
         boolean negative = false;
         char c;
 
-        for( int i = 0; i < text.length(); i++ ) {
-            c = text.charAt( i );
-            switch( c ) {
+        for (int i = 0; i < text.length(); i++) {
+            c = text.charAt(i);
+            switch (c) {
                 case '\\':
-                    if( lf == '#' || lf == '$' ) {
-                        nav.unit += c;
+                    if (lf == '#' || lf == '$') {
+                        unit.append(c);
                         trim_length_unit = 0;
                         lf = '$';
-                    }
-                    else if( lf == '\\' ) {
-                        nav.name += c;
+                    } else if (lf == '\\') {
+                        name.append(c);
                         trim_length = 0;
                         lf = '=';
-                    }
-                    else // i.e. ( lf == '=' )
+                    } else // i.e. (lf == '=')
                         lf = '\\';
                     break;
                 case '=':
-                    if( nav.name.isEmpty() || lf == '\\' ) {
-                        nav.name += c;
+                    if (name.length() == 0 || lf == '\\') {
+                        name.append(c);
                         trim_length = 0;
                         lf = '=';
-                    }
-                    else if( lf == '#' || lf == '$' ) {
-                        nav.unit += c;
+                    } else if (lf == '#' || lf == '$') {
+                        unit.append(c);
                         trim_length_unit = 0;
                         lf = '$';
-                    }
-                    else // i.e. ( lf == '=' )
+                    } else // i.e. ( lf == '=' )
                         lf = '#';
                     break;
                 case ' ':
                 case '\t':
                     // if( lf == '#' ) just ignore
-                    if( lf == '=' || lf == '\\' ) {
-                        if( !nav.name.isEmpty() ) { // else ignore
-                            nav.name += c;
+                    if (lf == '=' || lf == '\\') {
+                        if (name.length() != 0) { // else ignore
+                            name.append(c);
                             trim_length++;
                         }
-                    }
-                    else if( lf == '$' ) {
-                        nav.unit += c;
+                    } else if (lf == '$') {
+                        unit.append(c);
                         trim_length_unit++;
                     }
                     break;
                 case ',':
                 case '.':
-                    if( divider != 0 || lf == '$' ) { // note that if divider, lf must be #
-                        nav.unit += c;
+                    if (divider != 0 || lf == '$') { // note that if divider, lf must be #
+                        unit.append(c);
                         trim_length_unit = 0;
                         lf = '$';
-                    }
-                    else if( lf == '#' )
+                    } else if (lf == '#') {
                         divider = 1;
-                    else {
-                        nav.name += c;
+                    } else {
+                        name.append(c);
                         trim_length = 0;
                         lf = '=';
                     }
                     break;
                 case '-':
-                    if( negative || lf == '$' ) { // note that if negative, lf must be #
-                        nav.unit += c;
+                    if (negative || lf == '$') { // note that if negative, lf must be #
+                        unit.append(c);
                         trim_length_unit = 0;
                         lf = '$';
-                    }
-                    else if( lf == '#' )
+                    } else if (lf == '#') {
                         negative = true;
-                    else {
-                        nav.name += c;
+                    } else {
+                        name.append(c);
                         trim_length = 0;
                         lf = '=';
                     }
@@ -138,31 +141,28 @@ class NameAndValue
                 case '7':
                 case '8':
                 case '9':
-                    if( lf == '#' ) {
-                        nav.status = NameAndValue.HAS_VALUE;
-                        nav.value *= 10;
-                        nav.value += ( c - '0' );
-                        if( divider != 0 )
+                    if (lf == '#') {
+                        status = NameAndValue.HAS_VALUE;
+                        value *= 10;
+                        value += (c - '0');
+                        if (divider != 0)
                             divider *= 10;
-                    }
-                    else if( lf == '$' ) {
-                        nav.unit += c;
+                    } else if (lf == '$') {
+                        unit.append(c);
                         trim_length_unit = 0;
-                    }
-                    else {
-                        nav.name += c;
+                    } else {
+                        name.append(c);
                         trim_length = 0;
                         lf = '='; // reset ( lf == \ ) case
                     }
                     break;
                 default:
-                    if( lf == '#' || lf == '$' ) {
-                        nav.unit += c;
+                    if (lf == '#' || lf == '$') {
+                        unit.append(c);
                         trim_length_unit = 0;
                         lf = '$';
-                    }
-                    else {
-                        nav.name += c;
+                    } else {
+                        name.append(c);
                         trim_length = 0;
                         lf = '=';
                     }
@@ -170,30 +170,33 @@ class NameAndValue
             }
         }
 
-        if( lf == '$' )
-            nav.status |= ( HAS_NAME | HAS_EQUAL | HAS_UNIT );
-        else if( lf == '#' )
-            nav.status |= ( HAS_NAME | HAS_EQUAL );
-        else if( !nav.name.isEmpty() )
-            nav.status = HAS_NAME;
+        if (lf == '$')
+            status |= (HAS_NAME | HAS_EQUAL | HAS_UNIT);
+        else if (lf == '#')
+            status |= (HAS_NAME | HAS_EQUAL);
+        else if (name.length() != 0)
+            status = HAS_NAME;
 
-        if( trim_length != 0 )
-            nav.name = nav.name.substring( 0, nav.name.length() - trim_length );
-        if( trim_length_unit != 0 )
-            nav.unit = nav.unit.substring( 0, nav.unit.length() - trim_length_unit );
+        String name_ = name.toString();
+        String unit_ = unit.toString();
 
-        if( lf == '=' && !nav.name.isEmpty() ) // implicit boolean tag
-            nav.value = 1.0;
-        else {
-            if( divider > 1 )
-                nav.value /= divider;
-            if( negative )
-                nav.value *= -1;
+        if (trim_length != 0)
+            name_ = name_.substring(0, name_.length() - trim_length);
+        if (trim_length_unit != 0)
+            unit_ = unit_.substring(0, unit_.length() - trim_length_unit);
+
+        if (lf == '=' && !name_.isEmpty()) { // implicit boolean tag
+            value = 1.0;
+        } else {
+            if (divider > 1)
+                value /= divider;
+            if (negative)
+                value *= -1;
         }
 
-        Log.d( Lifeograph.TAG, "tag parsed | name: " + nav.name + "; value: " + nav.value + "; " +
-                "unit: " + nav.unit );
+        Log.d(Lifeograph.TAG, "tag parsed | name: " + name_ + "; value: " + value + "; " +
+                "unit: " + unit_);
 
-        return nav;
+        return new NameAndValue(name_, value, unit_, status);
     }
 }

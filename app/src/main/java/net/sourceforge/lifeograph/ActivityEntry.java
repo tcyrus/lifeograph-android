@@ -22,6 +22,8 @@
 package net.sourceforge.lifeograph;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import android.annotation.SuppressLint;
 import android.support.v4.view.MenuItemCompat;
@@ -29,12 +31,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -60,7 +57,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.widget.TextView;
@@ -169,10 +165,9 @@ public class ActivityEntry extends AppCompatActivity
 
         //mDrawerLayout = ( DrawerLayout ) findViewById( R.id.drawer_layout );
 
-        HorizontalScrollView toolbar = ( HorizontalScrollView )
-                findViewById( R.id.toolbar_text_edit );
+        HorizontalScrollView toolbar = findViewById( R.id.toolbar_text_edit );
 
-        mEditText = ( EditText ) findViewById( R.id.editTextEntry );
+        mEditText = findViewById( R.id.editTextEntry );
         //mEditText.setMovementMethod( LinkMovementMethod.getInstance() );
 
         if( Diary.diary.is_read_only() ) {
@@ -368,21 +363,21 @@ public class ActivityEntry extends AppCompatActivity
             }
         } );
 
-        Button mButtonBold = ( Button ) findViewById( R.id.buttonBold );
+        Button mButtonBold = findViewById( R.id.buttonBold );
         mButtonBold.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) {
                 toggleFormat( "*" );
             }
         } );
 
-        Button mButtonItalic = ( Button ) findViewById( R.id.buttonItalic );
+        Button mButtonItalic = findViewById( R.id.buttonItalic );
         mButtonItalic.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) {
                 toggleFormat( "_" );
             }
         } );
 
-        Button mButtonStrikethrough = ( Button ) findViewById( R.id.buttonStrikethrough );
+        Button mButtonStrikethrough = findViewById( R.id.buttonStrikethrough );
         SpannableString spanStringS = new SpannableString( "S" );
         spanStringS.setSpan( new StrikethroughSpan(), 0, 1, 0 );
         mButtonStrikethrough.setText( spanStringS );
@@ -393,7 +388,7 @@ public class ActivityEntry extends AppCompatActivity
             }
         } );
 
-        mButtonHighlight = ( Button ) findViewById( R.id.buttonHighlight );
+        mButtonHighlight = findViewById( R.id.buttonHighlight );
         mButtonHighlight.setOnClickListener( new View.OnClickListener()
         {
             public void onClick( View v ) {
@@ -401,21 +396,21 @@ public class ActivityEntry extends AppCompatActivity
             }
         } );
 
-        Button mButtonIgnore = ( Button ) findViewById( R.id.button_ignore );
+        Button mButtonIgnore = findViewById( R.id.button_ignore );
         mButtonIgnore.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) {
                 toggleIgnoreParagraph();
             }
         } );
 
-        Button mButtonComment = ( Button ) findViewById( R.id.button_comment );
+        Button mButtonComment = findViewById( R.id.button_comment );
         mButtonComment.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) {
                 addComment();
             }
         } );
 
-        mViewTags = ( ViewEntryTags ) findViewById( R.id.view_entry_tags );
+        mViewTags = findViewById( R.id.view_entry_tags );
         mViewTags.setListener( this );
 
         Entry entry = Diary.diary.m_entries.get( getIntent().getLongExtra( "entry", 0 ) );
@@ -469,13 +464,12 @@ public class ActivityEntry extends AppCompatActivity
         getMenuInflater().inflate( R.menu.menu_entry, menu );
 
         MenuItem item = menu.findItem( R.id.change_todo_status );
-        ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
+        ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider(item);
         ToDoAction.mObject = this;
 
-        item = menu.findItem( R.id.search_text );
-        final SearchView searchView = ( SearchView ) MenuItemCompat.getActionView( item );
-        MenuItemCompat.setOnActionExpandListener( item, new MenuItemCompat.OnActionExpandListener()
-        {
+        item = menu.findItem(R.id.search_text);
+        final SearchView searchView = (SearchView) item.getActionView();
+        item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             public boolean onMenuItemActionExpand( MenuItem menuItem ) {
                 searchView.setQuery( Diary.diary.get_search_text(), false );
                 return true;
@@ -484,28 +478,28 @@ public class ActivityEntry extends AppCompatActivity
             public boolean onMenuItemActionCollapse( MenuItem menuItem ) {
                 return true;
             }
-        } );
+        });
 
-        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener()
-        {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             public boolean onQueryTextSubmit( String s ) {
                 return true;
             }
 
             public boolean onQueryTextChange( String s ) {
-                if( mFlagSearchIsOpen ) {
+                if (mFlagSearchIsOpen) {
                     Diary.diary.set_search_text( s.toLowerCase() );
                     parse_text( 0, mEditText.getText().length() );
                 }
                 return true;
             }
-        } );
-        searchView.setOnQueryTextFocusChangeListener( new View.OnFocusChangeListener()
+        });
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener()
         {
             public void onFocusChange( View view, boolean b ) {
                 mFlagSearchIsOpen = b;
             }
-        } );
+        });
 
         mMenu = menu;
         updateIcon();
@@ -733,8 +727,8 @@ public class ActivityEntry extends AppCompatActivity
     public void onInquireAction( int id, String text ) {
         switch( id ) {
             case R.string.edit_date:
-                Date date = new Date( text );
-                if( date.m_date != Date.NOT_SET ) {
+                LDate date = new LDate( text );
+                if( date.m_date != LDate.NOT_SET ) {
                     if( !date.is_ordinal() )
                         date.reset_order_1();
                     Diary.diary.set_entry_date( m_ptr2entry, date );
@@ -747,7 +741,7 @@ public class ActivityEntry extends AppCompatActivity
     public boolean onInquireTextChanged( int id, String s ) {
         switch( id ) {
             case R.string.edit_date:
-                long date = Date.parse_string( s );
+                long date = LDate.parse_string( s );
                 return( date > 0 && date != m_ptr2entry.m_date.m_date );
             default:
                 return true;
@@ -823,11 +817,10 @@ public class ActivityEntry extends AppCompatActivity
     private boolean calculate_multi_para_bounds( int[] bounds ) {
         String str = mEditText.getText().toString();
 
-        if( mEditText.hasSelection() ) {
+        if (mEditText.hasSelection()) {
             bounds[ 0 ] = mEditText.getSelectionStart();
             bounds[ 1 ] = mEditText.getSelectionEnd();
-        }
-        else {
+        } else {
             bounds[ 0 ] = bounds[ 1 ] = mEditText.getSelectionStart();
             if( bounds[ 0 ] == 0 )
                 return false;
@@ -1192,20 +1185,20 @@ public class ActivityEntry extends AppCompatActivity
     private StringBuilder word_last = new StringBuilder();
     private int int_last;
     private int id_last;
-    private Date date_last = new Date();
+    private LDate date_last = new LDate();
     protected boolean m_flag_hidden_link;
 
-    private java.util.List< AbsChar > m_chars_looked_for = new ArrayList< AbsChar >();
+    private List<AbsChar> m_chars_looked_for = new ArrayList<>();
     private ParSel m_applier_nl;
 
-    private class AbsChar  // abstract char
-    {
-        AbsChar( int f, ParSel a, boolean j ) {
+    // abstract char
+    private class AbsChar {
+        AbsChar(int f, ParSel a, boolean j) {
             flags = f;
             applier = a;
             junction = j;
         }
-        AbsChar( int f, ParSel a ) {
+        AbsChar(int f, ParSel a) {
             flags = f;
             applier = a;
             junction = false;
@@ -1216,25 +1209,21 @@ public class ActivityEntry extends AppCompatActivity
     }
 
     // SPANS =======================================================================================
-    private interface AdvancedSpan
-    {
+    private interface AdvancedSpan {
         char getType();
     }
-    private class SpanOther implements  AdvancedSpan
-    {
+    private class SpanOther implements AdvancedSpan {
         public char getType() {
             return 'O';
         }
     }
-    private class SpanNull implements  AdvancedSpan
-    {
+    private class SpanNull implements AdvancedSpan {
         public char getType() {
             return ' ';
         }
     }
-    @SuppressLint( "ParcelCreator" )
-    private class SpanBold extends StyleSpan implements AdvancedSpan
-    {
+    @SuppressLint("ParcelCreator")
+    private class SpanBold extends StyleSpan implements AdvancedSpan {
         SpanBold() {
             super( Typeface.BOLD );
         }
@@ -1242,7 +1231,7 @@ public class ActivityEntry extends AppCompatActivity
             return '*';
         }
     }
-    @SuppressLint( "ParcelCreator" )
+    @SuppressLint("ParcelCreator")
     private class SpanItalic extends StyleSpan implements AdvancedSpan
     {
         SpanItalic() {
@@ -1252,9 +1241,8 @@ public class ActivityEntry extends AppCompatActivity
             return '_';
         }
     }
-    @SuppressLint( "ParcelCreator" )
-    private class SpanHighlight extends BackgroundColorSpan implements AdvancedSpan
-    {
+    @SuppressLint("ParcelCreator")
+    private class SpanHighlight extends BackgroundColorSpan implements AdvancedSpan {
         SpanHighlight() {
             super(m_ptr2entry.get_theme().color_highlight);
         }
@@ -1262,36 +1250,33 @@ public class ActivityEntry extends AppCompatActivity
             return '#';
         }
     }
-    @SuppressLint( "ParcelCreator" )
-    private class SpanStrikethrough extends StrikethroughSpan implements AdvancedSpan
-    {
+    @SuppressLint("ParcelCreator")
+    private class SpanStrikethrough extends StrikethroughSpan implements AdvancedSpan {
         public char getType() {
             return '=';
         }
     }
-    @SuppressLint( "ParcelCreator" )
-    private class SpanMarkup extends ForegroundColorSpan implements AdvancedSpan
-    {
+    @SuppressLint("ParcelCreator")
+    private class SpanMarkup extends ForegroundColorSpan implements AdvancedSpan {
         SpanMarkup() {
-            super( mColorMid );
+            super(mColorMid);
         }
         public char getType() {
             return 'm';
         }
     }
 
-    private class LinkDate extends ClickableSpan implements AdvancedSpan
-    {
-        LinkDate( long date ) {
+    private class LinkDate extends ClickableSpan implements AdvancedSpan {
+        LinkDate(long date) {
             mDate = date;
         }
 
         @Override
-        public void onClick( View widget ) {
-            Entry entry = Diary.diary.get_entry( mDate );
+        public void onClick(View widget) {
+            Entry entry = Diary.diary.get_entry(mDate);
 
-            if( entry == null )
-                entry = Diary.diary.create_entry( new Date( mDate ), "", false );
+            if (entry == null)
+                entry = Diary.diary.create_entry(new LDate(mDate), "", false);
 
             Lifeograph.showElem( entry );
         }
@@ -1320,20 +1305,19 @@ public class ActivityEntry extends AppCompatActivity
 
         private final String mUri;
     }
-    private class LinkID extends ClickableSpan implements AdvancedSpan
-    {
-        LinkID( int id ) {
+    private class LinkID extends ClickableSpan implements AdvancedSpan {
+        LinkID(int id) {
             mId = id;
         }
 
         @Override
-        public void onClick( View widget ) {
+        public void onClick(View widget) {
             DiaryElement elem = Diary.diary.get_element( mId );
-            if( elem != null ) {
-                if( elem.get_type() != DiaryElement.Type.ENTRY )
+            if (elem != null) {
+                if (elem.get_type() != DiaryElement.Type.ENTRY)
                     Log.d( Lifeograph.TAG, "Target is not entry" );
                 else
-                    Lifeograph.showElem( elem );
+                    Lifeograph.showElem(elem);
             }
         }
 
@@ -1344,7 +1328,7 @@ public class ActivityEntry extends AppCompatActivity
         private final int mId;
     }
 
-    private java.util.Vector< Object > mSpans = new java.util.Vector< Object >();
+    private Vector<Object> mSpans = new Vector<>();
 
     // PARSING =====================================================================================
     private void reset( int start, int end ) {
@@ -1354,8 +1338,8 @@ public class ActivityEntry extends AppCompatActivity
 
         // TODO: only remove spans within the parsing boundaries...
         // mEditText.getText().clearSpans(); <-- problematic!!
-        for( Object span : mSpans )
-            mEditText.getText().removeSpan( span );
+        for (Object span : mSpans)
+            mEditText.getText().removeSpan(span);
         mSpans.clear();
 
         m_cf_last = CF_NOT_SET;
@@ -1366,13 +1350,12 @@ public class ActivityEntry extends AppCompatActivity
         id_last = 0;
         m_chars_looked_for.clear();
 
-        if( start == 0 && end > 0 ) {
+        if (start == 0 && end > 0) {
             // to prevent formatting within title:
             m_chars_looked_for.add( new AbsChar( CF_IGNORE, ParSel.NULL ) );
             m_applier_nl = ParSel.AP_HEND;
             apply_heading();
-        }
-        else {
+        } else {
             m_chars_looked_for.add( new AbsChar( CF_NOTHING, ParSel.NULL ) );
             m_applier_nl = ParSel.NULL;
         }
@@ -1389,26 +1372,25 @@ public class ActivityEntry extends AppCompatActivity
         int i_search = 0;
         int i_search_end = Diary.diary.get_search_text().length() - 1;
 
-        for( ; pos_current < m_pos_end; ++pos_current ) {
+        for (; pos_current < m_pos_end; ++pos_current) {
             char_current = mEditText.getText().charAt( pos_current );
 
-            if( flag_search_active ) {
-                if( search_text.charAt( i_search ) == Character.toLowerCase( char_current ) ) {
-                    if( i_search == 0 )
+            if (flag_search_active) {
+                if (search_text.charAt(i_search) == Character.toLowerCase(char_current)) {
+                    if (i_search == 0)
                         pos_search = pos_current;
-                    if( i_search == i_search_end ) {
+
+                    if (i_search == i_search_end) {
                         apply_match();
                         i_search = 0;
-                    }
-                    else
+                    } else
                         i_search++;
-                }
-                else
+                } else
                     i_search = 0;
             }
 
             // MARKUP PARSING
-            switch( char_current ) {
+            switch (char_current) {
                 case '\n':
                 case '\r':
                     process_char( CF_NEWLINE, CF_NUM_CKBX | CF_ALPHA | CF_FORMATCHAR | CF_SLASH
@@ -1509,7 +1491,7 @@ public class ActivityEntry extends AppCompatActivity
 
     // PARSING HELPER FUNCTIONS ====================================================================
     private void selectParsingFunc( ParSel ps ) {
-        switch( ps ) {
+        switch (ps) {
             case TR_SUBH:
                 trigger_subheading();
                 break;
@@ -1610,8 +1592,8 @@ public class ActivityEntry extends AppCompatActivity
         }
     }
 
-    private void addSpan( Object span, int start, int end, int styles ) {
-        mSpans.add( span );
+    private void addSpan(Object span, int start, int end, int styles) {
+        mSpans.add(span);
         mEditText.getText().setSpan( span, start, end, styles );
     }
 
@@ -1953,7 +1935,7 @@ public class ActivityEntry extends AppCompatActivity
     }
 
     private void junction_date_dotym() { // dot between year and month
-        if( int_last >= Date.YEAR_MIN && int_last <= Date.YEAR_MAX ) {
+        if( int_last >= LDate.YEAR_MIN && int_last <= LDate.YEAR_MAX ) {
             date_last.set_year( int_last );
             m_chars_looked_for.remove( 0 );
         }

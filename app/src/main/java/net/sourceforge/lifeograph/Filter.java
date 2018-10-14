@@ -22,6 +22,7 @@
 package net.sourceforge.lifeograph;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Filter extends DiaryElement
 {
@@ -30,7 +31,7 @@ public class Filter extends DiaryElement
         super( d, name, ES_FILTER_RESET );
         m_tag = null;
         m_date_begin = 0;
-        m_date_end = Date.DATE_MAX;
+        m_date_end = LDate.DATE_MAX;
     }
 
     @Override
@@ -57,7 +58,7 @@ public class Filter extends DiaryElement
         m_status = ES_FILTER_RESET;
         m_tag = null;
         m_date_begin = 0;
-        m_date_end = Date.DATE_MAX;
+        m_date_end = LDate.DATE_MAX;
         m_entries.clear();
     }
 
@@ -150,7 +151,7 @@ public class Filter extends DiaryElement
 
     public void clear_dates() {
         m_date_begin = 0;
-        m_date_end = Date.DATE_MAX;
+        m_date_end = LDate.DATE_MAX;
         if( ( m_status & ES_FILTER_DATE_BEGIN ) != 0 )
             m_status -= ES_FILTER_DATE_BEGIN;
         if( ( m_status & ES_FILTER_DATE_END ) != 0 )
@@ -201,5 +202,5 @@ public class Filter extends DiaryElement
     private Tag m_tag;
     private long m_date_begin;
     private long m_date_end;
-    private java.util.List< Entry > m_entries = new ArrayList< Entry >();
+    private List<Entry> m_entries = new ArrayList<>();
 }

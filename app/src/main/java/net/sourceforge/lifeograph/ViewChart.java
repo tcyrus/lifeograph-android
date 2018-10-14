@@ -61,20 +61,20 @@ public class ViewChart extends View implements GestureDetector.OnGestureListener
         mPaint.setStrokeJoin( Paint.Join.ROUND );
         mPaint.setStrokeWidth( 4 * STROKE_WIDTH );
 
-        mGestureDetector = new GestureDetector( c, this );
+        mGestureDetector = new GestureDetector(c, this);
     }
 
-    public void setListener( Listener listener ) {
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
-    public void set_points( ChartPoints points, float zoom_level ) {
+    public void set_points(ChartPoints points, float zoom_level) {
         m_points = points;
         m_zoom_level = zoom_level;
         m_span = points != null ? points.getSpan() : 0;
 
         if (m_width > 0) { // if on_size_allocate is executed before
-            update_col_geom( true );
+            update_col_geom(true);
             invalidate();
         }
     }
@@ -299,10 +299,10 @@ public class ViewChart extends View implements GestureDetector.OnGestureListener
 
     //override the onTouchEvent
     @Override
-    public boolean onTouchEvent( MotionEvent event ) {
-        this.mGestureDetector.onTouchEvent( event );
+    public boolean onTouchEvent(MotionEvent event) {
+        this.mGestureDetector.onTouchEvent(event);
         // Be sure to call the superclass implementation
-        return super.onTouchEvent( event );
+        return super.onTouchEvent(event);
     }
 
     // GestureDetector.OnGestureListener INTERFACE METHODS
@@ -346,7 +346,7 @@ public class ViewChart extends View implements GestureDetector.OnGestureListener
     private Path mPath;
 
     private ChartPoints m_points = null;
-    private Date mLabelDate = new Date(); // this is local in C++
+    private LDate mLabelDate = new LDate(); // this is local in C++
 
     // GEOMETRICAL VARIABLES
     private int m_width = -1;

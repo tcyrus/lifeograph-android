@@ -29,7 +29,6 @@ import android.app.Dialog;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
@@ -50,113 +49,109 @@ public class ActivityLogin extends AppCompatActivity
         implements DialogInquireText.InquireListener, DialogPassword.Listener
 {
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate( savedInstanceState );
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        // TODO: REMOVE
         Lifeograph.sContext = this;
         Lifeograph.updateScreenSizes();
 
-        if( Diary.diary == null )
+        if (Diary.diary == null)
             Diary.diary = new Diary();
 
         // PREFERENCES
-        PreferenceManager.setDefaultValues( getApplicationContext(), R.xml.pref_general, false );
+        PreferenceManager.setDefaultValues(getApplicationContext(), R.xml.pref_general, false);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                getApplicationContext() );
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         sExternalStorage = prefs.getString(
-                Lifeograph.getStr( R.string.pref_DIARY_STORAGE_key ), "N/A" );
+                Lifeograph.getStr(R.string.pref_DIARY_STORAGE_key), "N/A");
         sDiaryPath = prefs.getString(
-                Lifeograph.getStr( R.string.pref_DIARY_PATH_key ), "N/A" );
-        Date.s_format_order = prefs.getString(
-                Lifeograph.getStr( R.string.pref_DATE_FORMAT_ORDER_key ), "N/A" );
-        Date.s_format_separator = prefs.getString(
-                Lifeograph.getStr( R.string.pref_DATE_FORMAT_SEPARATOR_key ), "." ).charAt( 0 );
+                Lifeograph.getStr(R.string.pref_DIARY_PATH_key), "N/A");
+        LDate.s_format_order = prefs.getString(
+                Lifeograph.getStr(R.string.pref_DATE_FORMAT_ORDER_key), "N/A" );
+        LDate.s_format_separator = prefs.getString(
+                Lifeograph.getStr(R.string.pref_DATE_FORMAT_SEPARATOR_key), ".").charAt(0);
 
-        setContentView( R.layout.login );
+        setContentView(R.layout.login);
 
         // READ-ONLY SWITCH
-        SwitchCompat switchReadOnly = ( SwitchCompat ) findViewById( R.id.switch_read_only );
-        switchReadOnly.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged( CompoundButton buttonView, boolean isChecked ) {
-                if( isChecked ) {
+        SwitchCompat switchReadOnly = findViewById(R.id.switch_read_only);
+        switchReadOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
                     mSetPathType = Diary.SetPathType.READ_ONLY;
-                }
-                else {
+                } else {
                     mSetPathType = Diary.SetPathType.NORMAL;
                 }
-
             }
-        } );
+        });
 
         // DIARY LIST
-        mAdapterDiaries = new ArrayAdapter< String >( this,
-                                                      R.layout.list_item_diary,
-                                                      R.id.title );
+        mAdapterDiaries = new ArrayAdapter<>(this,
+                                             R.layout.list_item_diary,
+                                             R.id.title);
 
-        ListView lv = ( ListView ) findViewById( R.id.list_diaries );
-        lv.setAdapter( mAdapterDiaries );
-        lv.setOnItemClickListener( new ListView.OnItemClickListener()
-        {
-            public void onItemClick( AdapterView< ? > parent, View v, int pos, long id ) {
-                Log.d( Lifeograph.TAG, "on item selected" );
+        ListView lv = findViewById(R.id.list_diaries);
+        lv.setAdapter(mAdapterDiaries);
+        lv.setOnItemClickListener(new ListView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
+                Log.d(Lifeograph.TAG, "on item selected");
                 boolean flag_open_ready = false;
 
                 Diary.diary.clear();
 
-                switch( Diary.diary.set_path( mPaths.get( pos ), mSetPathType ) ) {
+                switch (Diary.diary.set_path(mPaths.get(pos), mSetPathType)) {
                     case SUCCESS:
                         flag_open_ready = true;
                         break;
                     case FILE_NOT_FOUND:
-                        Lifeograph.showToast( "File is not found" );
+                        Lifeograph.showToast("File is not found");
                         break;
                     case FILE_NOT_READABLE:
-                        Lifeograph.showToast( "File is not readable" );
+                        Lifeograph.showToast("File is not readable");
                         break;
                     case FILE_LOCKED:
-                        Lifeograph.showToast( "File is locked" );
+                        Lifeograph.showToast("File is locked");
                         break;
                     default:
-                        Lifeograph.showToast( "Failed to open the diary" );
+                        Lifeograph.showToast("Failed to open the diary");
                         break;
                 }
 
-                if( flag_open_ready ) {
+                if (flag_open_ready) {
                     flag_open_ready = false;
-                    switch( Diary.diary.read_header( getAssets() ) ) {
+                    switch (Diary.diary.read_header(getAssets())) {
                         case SUCCESS:
                             flag_open_ready = true;
                             break;
                         case INCOMPATIBLE_FILE:
-                            Lifeograph.showToast( "Incompatible diary version" );
+                            Lifeograph.showToast("Incompatible diary version");
                             break;
                         case CORRUPT_FILE:
-                            Lifeograph.showToast( "Corrupt file" );
+                            Lifeograph.showToast("Corrupt file");
                             break;
                         default:
-                            Log.e( Lifeograph.TAG, "Unprocessed return value from read_header" );
+                            Log.e(Lifeograph.TAG, "Unprocessed return value from read_header");
                             break;
                     }
                 }
 
         /*
-         * TODO: if( flag_open_ready && ( ! flag_encrypted ) && m_flag_open_directly ) {
+         * TODO: if (flag_open_ready && (!flag_encrypted) && m_flag_open_directly) {
          * handle_button_opendb_clicked(); return; }
          */
 
-                if( flag_open_ready ) {
-                    if( Diary.diary.is_encrypted() )
+                if (flag_open_ready) {
+                    if (Diary.diary.is_encrypted())
                         askPassword();
                     else
                         readBody();
                 }
             }
 
-        } );
+        });
 
-        registerForContextMenu( lv ); // ???? What does this do?
+        registerForContextMenu(lv); // ???? What does this do?
 
         populate_diaries();
     }
@@ -165,23 +160,24 @@ public class ActivityLogin extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        // TODO: REMOVE
         Lifeograph.sContext = this;
 
-        if( Lifeograph.sLoginStatus == Lifeograph.LoginStatus.LOGGED_IN ) {
+        if (Lifeograph.sLoginStatus == Lifeograph.LoginStatus.LOGGED_IN) {
             Lifeograph.prepareForLogout();
 
             Lifeograph.sLoginStatus = Lifeograph.LoginStatus.LOGGED_OUT;
         }
 
         populate_diaries(); // this also helps with the changes in the diary path
-        Log.d( Lifeograph.TAG, "ActivityLogin.onResume()" );
+        Log.d(Lifeograph.TAG, "ActivityLogin.onResume()");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Log.d( Lifeograph.TAG, "ActivityLogin.onDestroy()" );
+        Log.d(Lifeograph.TAG, "ActivityLogin.onDestroy()");
     }
 
     @Override
@@ -190,10 +186,10 @@ public class ActivityLogin extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-        super.onCreateOptionsMenu( menu );
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
 
-        getMenuInflater().inflate( R.menu.menu_login, menu );
+        getMenuInflater().inflate(R.menu.menu_login, menu);
 
         return true;
     }
@@ -207,7 +203,7 @@ public class ActivityLogin extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected( MenuItem item ) {
-        switch( item.getItemId() ) {
+        switch (item.getItemId()) {
             case R.id.new_diary:
                 createNewDiary();
                 return true;
@@ -220,29 +216,29 @@ public class ActivityLogin extends AppCompatActivity
                 return true;
         }
 
-        return super.onOptionsItemSelected( item );
+        return super.onOptionsItemSelected(item);
     }
 
     private void askPassword() {
-        DialogPassword dlg = new DialogPassword( this,
+        DialogPassword dlg = new DialogPassword(this,
                                                  Diary.diary,
                                                  DialogPassword.DPAction.DPA_LOGIN,
-                                                 this );
+                                                 this);
         dlg.show();
     }
 
     private void readBody() {
-        switch( Diary.diary.read_body() ) {
+        switch (Diary.diary.read_body()) {
             case SUCCESS:
-                Intent i = new Intent( this, ActivityDiary.class );
+                Intent i = new Intent(this, ActivityDiary.class);
                 Lifeograph.sFlagStartingDiaryEditingActivity = true;
-                startActivity( i );
+                startActivity(i);
                 break;
             case WRONG_PASSWORD:
-                Lifeograph.showToast( R.string.wrong_password );
+                Lifeograph.showToast(R.string.wrong_password);
                 break;
             case CORRUPT_FILE:
-                Lifeograph.showToast( "Corrupt file" );
+                Lifeograph.showToast("Corrupt file");
                 break;
             default:
                 break;
@@ -250,40 +246,37 @@ public class ActivityLogin extends AppCompatActivity
     }
 
     File getDiariesDir() {
-        if( sExternalStorage.equals( "C" ) ) {
-            return new File( sDiaryPath );
-        }
-        else if( sExternalStorage.equals( "E" ) ) {
+        if (sExternalStorage.equals("C")) {
+            return new File(sDiaryPath);
+        } else if (sExternalStorage.equals("E") ) {
             String state = Environment.getExternalStorageState();
 
-            if( Environment.MEDIA_MOUNTED.equals( state ) ) {
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
                 // We can read and write the media
-                return new File( Environment.getExternalStorageDirectory(), sDiaryPath );
-            }
-            else if( Environment.MEDIA_MOUNTED_READ_ONLY.equals( state ) ) {
+                return new File(Environment.getExternalStorageDirectory(), sDiaryPath);
+            } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
                 // We can only read the media (we may do something else here)
-                Lifeograph.showToast( R.string.storage_not_available );
-                Log.d( Lifeograph.TAG, "Storage is read-only" );
-            }
-            else {
+                Lifeograph.showToast(R.string.storage_not_available);
+                Log.d(Lifeograph.TAG, "Storage is read-only");
+            } else {
                 // Something else is wrong. It may be one of many other states, but
                 // all we need to know is we can neither read nor write
-                Lifeograph.showToast( R.string.storage_not_available );
+                Lifeograph.showToast(R.string.storage_not_available);
             }
         }
 
-        return new File( getFilesDir(), sDiaryPath );
+        return new File(getFilesDir(), sDiaryPath);
     }
 
     // InquireListener INTERFACE METHODS
     public void onInquireAction( int id, String text ) {
-        switch( id ) {
+        switch (id) {
             case R.string.create_diary:
-                if( Diary.diary.init_new( Lifeograph.joinPath( getDiariesDir().getPath(), text ) )
-                    == Result.SUCCESS ) {
-                    Intent i = new Intent( ActivityLogin.this, ActivityDiary.class );
+                if (Diary.diary.init_new(Lifeograph.joinPath(getDiariesDir().getPath(), text))
+                    == Result.SUCCESS) {
+                    Intent i = new Intent(ActivityLogin.this, ActivityDiary.class);
                     Lifeograph.sFlagStartingDiaryEditingActivity = true;
-                    startActivity( i );
+                    startActivity(i);
                 }
                 // TODO else inform the user about the problem
                 break;
@@ -340,15 +333,15 @@ public class ActivityLogin extends AppCompatActivity
     }
 
     void launchSettings() {
-        Intent i = new Intent( this, ActivitySettings.class );
-        startActivity( i );
+        Intent i = new Intent(this, ActivitySettings.class);
+        startActivity(i);
     }
 
     // VARIABLES
     public static String sExternalStorage = "";
     public static String sDiaryPath;
-    private List< String > mPaths = new ArrayList< String >();
-    private ArrayAdapter< String > mAdapterDiaries;
+    private List<String> mPaths = new ArrayList<>();
+    private ArrayAdapter<String> mAdapterDiaries;
     private Diary.SetPathType mSetPathType = Diary.SetPathType.NORMAL;
     //private DiaryAdapter mAdapterDiaries; MAYBE LATER
 
@@ -448,10 +441,10 @@ public class ActivityLogin extends AppCompatActivity
             setTitle( R.string.program_name );
             setCancelable( true );
 
-            TextView tv = ( TextView ) findViewById( R.id.textViewWebsite );
+            TextView tv = findViewById( R.id.textViewWebsite );
             tv.setMovementMethod( LinkMovementMethod.getInstance() );
 
-            tv = ( TextView ) findViewById( R.id.textViewVersion );
+            tv = findViewById( R.id.textViewVersion );
             tv.setText( BuildConfig.VERSION_NAME );
         }
     }

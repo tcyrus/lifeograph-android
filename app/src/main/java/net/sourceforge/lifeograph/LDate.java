@@ -23,10 +23,12 @@ package net.sourceforge.lifeograph;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Date;
+import java.lang.Math;
 
 import android.util.Log;
 
-public class Date {
+public class LDate {
     public static final long    NOT_APPLICABLE   = 0x0L;
     public static final long    NOT_SET          = 0xFFFFFFFFL;
     public static final long    DATE_MAX         = 0xFFFFFFFFL;
@@ -76,27 +78,27 @@ public class Date {
     // int that holds the real value
     public long m_date;
 
-    public Date( long d ) {
+    public LDate(long d ) {
         m_date = d;
     }
 
-    public Date() {
+    public LDate() {
         m_date = NOT_SET;
     }
 
-    public Date( int y, int m, int d ) {
+    public LDate(int y, int m, int d ) {
         m_date = ( ( y << 19 ) | ( m << 15 ) | ( d << 10 ) );
     }
 
     // ORDINAL C'TOR
-    public Date( int o1, int o2 ) {
+    public LDate(int o1, int o2 ) {
         m_date = ( ORDINAL_FLAG | ( o1 << 10 ) | o2 );
     }
 
     // STRING C'TOR
-    public Date( String str_date ) {
-        m_date = parse_string( str_date );
-        if( m_date == 0 )
+    public LDate(String str_date) {
+        m_date = parse_string(str_date);
+        if (m_date == 0)
             m_date = NOT_SET;
     }
 
@@ -118,9 +120,9 @@ public class Date {
         int i = 0;
         long date;
 
-        for( int j = 0; j < str_date.length(); j++ ) {
-            c_cur = str_date.charAt( j );
-            switch( c_cur ) {
+        for (int j = 0; j < str_date.length(); j++) {
+            c_cur = str_date.charAt(j);
+            switch (c_cur) {
                 case '0': case '1': case '2': case '3': case '4':
                 case '5': case '6': case '7': case '8': case '9':
                     if( i > 2 )
@@ -129,13 +131,13 @@ public class Date {
                     num[ i ] += ( c_cur - '0' );
                     break;
                 case ' ':
-                    if( num[ i ] > 0 )
+                    if (num[i] > 0)
                         i++;
                     break;
                 case '.':
                 case '-':
                 case '/':
-                    if( num[ i ] == 0 || i == 2 )
+                    if (num[i] == 0 || i == 2)
                         return 0; //INVALID;
                     else
                         i++;
@@ -146,66 +148,57 @@ public class Date {
         }
 
         // TEMPORAL
-        if( num[ 2 ] != 0 ) {
-            int year;
-            int month;
-            int day;
+        if (num[2] != 0) {
+            int year, month, day;
 
             // YMD
-            if( num[ 0 ] > 31 && num[ 1 ] <= 12 && num[ 2 ] <= 31 ) {
-                year = num[ 0 ];
-                month = num[ 1 ];
-                day = num[ 2 ];
-            }
-            else {
-                // BOTH DMY AND MDY POSSIBLE
-                if( num[ 0 ] <= 12 && num[ 1 ] <= 12 ) {
-                    if( s_format_order.charAt( 0 ) == 'M' ) {
-                        month = num[ 0 ];
-                        day = num[ 1 ];
+            if (num[0] > 31 && num[1] <= 12 && num[2] <= 31) {
+                year = num[0];
+                month = num[1];
+                day = num[2];
+            } else {
+                if (num[0] <= 12 && num[1] <= 12) {
+                    // BOTH DMY AND MDY POSSIBLE
+                    if (s_format_order.charAt(0) == 'M') {
+                        month = num[0];
+                        day = num[1];
+                    } else {
+                        month = num[1];
+                        day = num[0];
                     }
-                    else {
-                        month = num[ 1 ];
-                        day = num[ 0 ];
-                    }
-                }
-                // DMY
-                else if( num[ 0 ] <= 31 && num[ 1 ] <= 12 ) {
-                    month = num[ 1 ];
-                    day = num[ 0 ];
-                }
-                // MDY
-                else if( num[ 0 ] <= 12 && num[ 1 ] <= 31 ) {
-                    month = num[ 1 ];
-                    day = num[ 0 ];
-                }
-                else
+                } else if (num[0] <= 31 && num[1] <= 12 ) {
+                    // DMY
+                    month = num[1];
+                    day = num[0];
+                } else if (num[0] <= 12 && num[1] <= 31) {
+                    // MDY
+                    month = num[1];
+                    day = num[0];
+                } else
                     return 0; //INVALID;
 
-                year = num[ 2 ];
+                year = num[2];
 
-                if( year < 100 )
-                    year += ( year < 30 ? 2000 : 1900 );
+                if (year < 100)
+                    year += (year < 30) ? 2000 : 1900;
             }
 
-            if( year < YEAR_MIN || year > YEAR_MAX )
+            if (year < YEAR_MIN || year > YEAR_MAX)
                 return 0; //OUT_OF_RANGE;
 
-            Date date_tmp = new Date( year, month, day );
-            if( ! date_tmp.is_valid() ) // checks days in month
+            LDate date_tmp = new LDate(year, month, day);
+            if (!date_tmp.is_valid()) // checks days in month
                 return 0; //INVALID;
 
             date = date_tmp.m_date;
 
-        }
-        // ORDINAL
-        else if( num[ 1 ] != 0 ) {
-            if( num[ 0 ] > CHAPTER_MAX || num[ 1 ] > ORDER_MAX )
+        } else if (num[1] != 0) {
+            // ORDINAL
+            if (num[0] > CHAPTER_MAX || num[1] > ORDER_MAX)
                 return 0; //OUT_OF_RANGE;
 
-            date = make_date( num[ 0 ], num[ 1 ] );
-        }
-        else
+            date = make_date(num[0], num[1]);
+        } else
             return 0; //INVALID;
 
         return date; //OK;
@@ -214,27 +207,29 @@ public class Date {
     public static String format_string( long d, String format, char separator ) {
         StringBuilder result = new StringBuilder();
 
-        if( ( d & ORDINAL_FLAG ) != 0 ) {
+        if ((d & ORDINAL_FLAG) != 0) {
             result.append( get_ordinal_order( d ) + 1 );
-            if( get_order( d ) != 0 )
+            if (get_order( d ) != 0)
                 result.append( "." ).append( get_order( d ) );
-        }
-        else {
-            for( int i = 0; i < format.length(); i++ ) {
-                result.append( String.format( "%02d", get_YMD( d, format.charAt( i ) ) ) );
-                if( i != format.length() - 1 )
-                    result.append( separator );
+        } else {
+            for (int i = 0; i < format.length(); i++) {
+                result.append(String.format("%02d", get_YMD( d, format.charAt(i))));
+                if (i != format.length() - 1)
+                    result.append(separator);
             }
         }
 
         return result.toString();
     }
+
     public String format_string() {
         return format_string( m_date, s_format_order, s_format_separator );
     }
+
     public String format_string( String format ) {
         return format_string( m_date, format, s_format_separator );
     }
+
     public String format_string( String format, char separator ) {
         return format_string( m_date, format, separator );
     }
@@ -245,17 +240,18 @@ public class Date {
     }
 
     public static String format_string_dt( long d ) {
-        java.util.Date date = new java.util.Date( d * 1000L );
+        Date date = new Date(d * 1000L);
         Calendar cal = Calendar.getInstance();
         cal.setTime( date );
         return String.format( "%02d.%02d.%02d, %2d:%2d", cal.get( Calendar.YEAR ),
                               cal.get( Calendar.MONTH ) + 1, cal.get( Calendar.DAY_OF_MONTH ),
                               cal.get( Calendar.HOUR ), cal.get( Calendar.MINUTE ) );
     }
+
     public static String format_string_d( long d ) {
-        java.util.Date date = new java.util.Date( d * 1000L );
+        Date date = new Date(d * 1000L);
         Calendar cal = Calendar.getInstance();
-        cal.setTime( date );
+        cal.setTime(date);
         return String.format( "%02d.%02d.%02d", cal.get( Calendar.YEAR ),
                               cal.get( Calendar.MONTH ) + 1, cal.get( Calendar.DAY_OF_MONTH ) );
     }
@@ -295,11 +291,11 @@ public class Date {
     }
 
     public long get_yearmonth() {
-        return( m_date & YEARMONTH_FILTER );
+        return (m_date & YEARMONTH_FILTER);
     }
 
     public long get_pure() {
-        return( m_date & PURE_FILTER );
+        return (m_date & PURE_FILTER);
     }
 
     public long get_order() {
@@ -334,24 +330,24 @@ public class Date {
         return( m_date != NOT_SET );
     }
 
-    public void set_year( int y ) {
-        if( y >= YEAR_MIN && y <= YEAR_MAX ) {
+    public void set_year(int y) {
+        if (y >= YEAR_MIN && y <= YEAR_MAX) {
             m_date &= YEAR_FILTER_INV;
-            m_date |= ( y << 19 );
+            m_date |= (y << 19);
         }
     }
 
-    public void set_month( int m ) {
-        if( m < 13 ) {
+    public void set_month(int m) {
+        if (m < 13) {
             m_date &= MONTH_FILTER_INV;
-            m_date |= ( m << 15 );
+            m_date |= (m << 15);
         }
     }
 
-    public void set_day( int d ) {
-        if( d < 32 ) {
+    public void set_day(int d) {
+        if (d < 32) {
             m_date &= DAY_FILTER_INV;
-            m_date |= ( d << 10 );
+            m_date |= (d << 10);
         }
     }
 
@@ -365,7 +361,7 @@ public class Date {
     }
 
     public static long reset_order_1( long d ) {
-        return( ( d | 0x1 ) & ORDER_FILTER_INV );
+        return (( d | 0x1 ) & ORDER_FILTER_INV);
     }
 
     public static long make_year( int y ) {
@@ -381,15 +377,15 @@ public class Date {
     }
 
     public static long make_date( int y, int m, int d, int o ) {
-        return( ( y << 19 ) | ( m << 15 ) | ( d << 10 ) | o );
+        return (( y << 19 ) | ( m << 15 ) | ( d << 10 ) | o);
     }
 
     public static long make_date( int c, int o ) {
-        return( TOPIC_MIN | ( ( c - 1 ) * ORDINAL_STEP ) | o );
+        return (TOPIC_MIN | ( ( c - 1 ) * ORDINAL_STEP ) | o);
     }
 
     public void backward_ordinal_order() {
-        if( get_ordinal_order() > 0 )
+        if (get_ordinal_order() > 0)
             m_date -= ORDINAL_STEP;
     }
 
@@ -397,33 +393,32 @@ public class Date {
         m_date += ORDINAL_STEP;
     }
 
-    public void forward_years( int years ) {
-        m_date += make_year( years );
+    public void forward_years(int years) {
+        m_date += make_year(years);
     }
 
     public void backward_month() {
         int day = get_day();
-        int month = ( ( get_month() + 10 ) % 12 ) + 1;
+        int month = ((get_month() + 10) % 12) + 1;
         int year = get_year();
-        if( month == 12 )
+        if (month == 12)
             year--;
-        m_date = make_year( year ) | make_month( month );
+        m_date = make_year(year) | make_month(month);
 
-        if( day > get_days_in_month() )
+        if (day > get_days_in_month())
             day = get_days_in_month();
 
-        m_date |= make_day( day );
+        m_date |= make_day(day);
     }
 
     public void forward_months( int months ) {
         months += get_month();
         m_date &= YEAR_FILTER;   // isolate year
         int mod_months = months % 12;
-        if( mod_months == 0 ) {
+        if (mod_months == 0) {
             m_date += make_year( ( months / 12 ) - 1 );
             m_date |= 0x60000;  // make month 12
-        }
-        else {
+        } else {
             m_date += make_year( months / 12 );
             m_date |= make_month( mod_months );
         }
@@ -432,18 +427,18 @@ public class Date {
     public int get_weekday() {
         // from wikipedia: http://en.wikipedia.org/wiki/Calculating_the_day_of_the_week
         int year = get_year();
-        int century = ( year - ( year % 100 ) ) / 100;
-        int c = 2 * ( 3 - ( century % 4 ) );
+        int century = (year - (year % 100)) / 100;
+        int c = 2 * (3 - (century % 4));
         int y = year % 100;
-        y = y + ( int ) java.lang.Math.floor( y / 4 );
+        y = y + (int) Math.floor( y / 4 );
 
         int m = get_month() - 1;
-        int d = ( c + y + tm[ m ] + get_day() );
+        int d = (c + y + tm[m] + get_day());
 
-        if( m < 2 && is_leap_year() ) // leap year!
+        if (m < 2 && is_leap_year()) // leap year!
             d += 6;
 
-        return( d % 7 );
+        return (d % 7);
     }
 
     public String get_weekday_str() {
@@ -452,25 +447,25 @@ public class Date {
 
     public int get_days_in_month() {
         int length = MONTHLENGHTS[ get_month() - 1 ];
-        if( get_month() == 2 )
-            if( is_leap_year() )
+        if (get_month() == 2)
+            if (is_leap_year())
                 length++;
         return length;
     }
 
     public boolean is_leap_year() {
         int year = get_year();
-        if( ( year % 400 ) == 0 )
+        if ((year % 400) == 0)
             return true;
-        else if( ( year % 100 ) == 0 )
+        else if ((year % 100) == 0)
             return false;
-        else return ( year % 4 ) == 0;
+        else return ((year % 4) == 0);
     }
 
-    public int calculate_days_between( Date date2 ) {
+    public int calculate_days_between(LDate date2) {
         // TODO: STUB!
-        Log.e( Lifeograph.TAG, "STUB! STUB! STUB!" );
-        return( 0 );
+        Log.e(Lifeograph.TAG, "STUB! STUB! STUB!");
+        return 0;
     }
 
     public int calculate_months_between( long date2 ) {

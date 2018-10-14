@@ -73,11 +73,11 @@ class DialogTags extends Dialog
             }
         } );
 
-        ListView listViewTags = ( ListView ) findViewById( R.id.listViewTags );
+        ListView listViewTags = findViewById( R.id.listViewTags );
         listViewTags.setAdapter( mAdapterTags );
         listViewTags.setItemsCanFocus( false );
 
-        buttonAdd = ( Button ) findViewById( R.id.buttonAddTag );
+        buttonAdd = findViewById( R.id.buttonAddTag );
         buttonAdd.setOnClickListener( new View.OnClickListener() {
             public void onClick( View v ) {
                 create_tag();
@@ -85,7 +85,7 @@ class DialogTags extends Dialog
         } );
         buttonAdd.setEnabled( false );
 
-        editText = ( EditText ) findViewById( R.id.editTextTag );
+        editText = findViewById( R.id.editTextTag );
 
         if( Lifeograph.getScreenHeight() >= Lifeograph.MIN_HEIGHT_FOR_NO_EXTRACT_UI )
             editText.setImeOptions( EditorInfo.IME_FLAG_NO_EXTRACT_UI );
@@ -143,16 +143,15 @@ class DialogTags extends Dialog
     private EditText editText;
     private String mFilterText = "";
     private Button buttonAdd;
-    private java.util.List< Tag > mTags = new ArrayList< Tag >();
+    private List<Tag> mTags = new ArrayList<>();
     private TagListAdapter mAdapterTags;
 
     // TAG LIST ADAPTER CLASS ======================================================================
-    class TagListAdapter extends ArrayAdapter< Tag > implements View.OnClickListener
-    {
+    class TagListAdapter extends ArrayAdapter<Tag> implements View.OnClickListener {
         TagListAdapter( Context context,
                         int resource,
                         int textViewResourceId,
-                        java.util.List< Tag > objects,
+                        List<Tag> objects,
                         LayoutInflater inflater ) {
             super( context, resource, textViewResourceId, objects );
             mInflater = inflater;
@@ -237,21 +236,21 @@ class DialogTags extends Dialog
 
             public TextView getName() {
                 if( mTitle == null ) {
-                    mTitle = ( TextView ) mRow.findViewById( R.id.title );
+                    mTitle = mRow.findViewById( R.id.title );
                 }
                 return mTitle;
             }
 
             public ImageView getIcon() {
                 if( mIcon == null ) {
-                    mIcon = ( ImageView ) mRow.findViewById( R.id.icon );
+                    mIcon = mRow.findViewById( R.id.icon );
                 }
                 return mIcon;
             }
 
             CheckBox getCheckBox() {
                 if( mCheckBox == null ) {
-                    mCheckBox = ( CheckBox ) mRow.findViewById( R.id.checkBox );
+                    mCheckBox = mRow.findViewById( R.id.checkBox );
                 }
                 return mCheckBox;
             }

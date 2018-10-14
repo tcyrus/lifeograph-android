@@ -30,11 +30,11 @@ import android.content.Intent;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.SizeF;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public class Lifeograph
-{
+public class Lifeograph {
     // CONSTANTS ===================================================================================
     //public static final String PROGRAM_NAME = "Lifeograph";
 
@@ -48,10 +48,10 @@ public class Lifeograph
     static LoginStatus sLoginStatus = LoginStatus.LOGGED_OUT;
 
     static void showElem( DiaryElement elem ) {
-        if( elem != null ) {
-            switch( elem.get_type() ) {
+        if (elem != null) {
+            switch (elem.get_type()) {
                 case ENTRY: {
-                    Intent i = new Intent( sContext, ActivityEntry.class );
+                    Intent i = new Intent(sContext, ActivityEntry.class);
                     i.putExtra( "entry", elem.get_date_t() );
                     sFlagStartingDiaryEditingActivity = true;
                     sContext.startActivity( i );
@@ -62,7 +62,7 @@ public class Lifeograph
                 case CHAPTER:
                 case TOPIC:
                 case GROUP: {
-                    Intent i = new Intent( sContext, ActivityChapterTag.class );
+                    Intent i = new Intent(sContext, ActivityChapterTag.class);
                     i.putExtra( "elem", elem.get_id() );
                     i.putExtra( "type", elem.get_type().i );
                     sFlagStartingDiaryEditingActivity = true;
@@ -78,20 +78,19 @@ public class Lifeograph
     static void prepareForLogout() {
         Log.d( Lifeograph.TAG, "Lifeograph.prepareForLogout()" );
 
-        if( sLoginStatus == LoginStatus.LOGGED_IN ) {
-            if( sSaveDiaryOnLogout && !Diary.diary.is_read_only() ) {
-                if( Diary.diary.write() == Result.SUCCESS )
-                    showToast( "Diary saved successfully" );
+        if (sLoginStatus == LoginStatus.LOGGED_IN) {
+            if (sSaveDiaryOnLogout && !Diary.diary.is_read_only()) {
+                if (Diary.diary.write() == Result.SUCCESS)
+                    showToast("Diary saved successfully");
                 else
-                    showToast( "Cannot write back changes" );
-            }
-            else
-                Log.d( Lifeograph.TAG, "Diary is not saved" );
+                    showToast( "Cannot write back changes");
+            } else
+                Log.d(Lifeograph.TAG, "Diary is not saved");
         }
     }
 
     static void handleDiaryEditingActivityDestroyed() {
-        if( !sFlagStartingDiaryEditingActivity )
+        if (!sFlagStartingDiaryEditingActivity)
             prepareForLogout();
         sFlagStartingDiaryEditingActivity = false;
     }
@@ -106,18 +105,18 @@ public class Lifeograph
     static float sDPIY;
     static final float MIN_HEIGHT_FOR_NO_EXTRACT_UI = 6.0f;
 
-    public static String getStr( int i ) {
-        if( sContext == null )
+    public static String getStr(int i) {
+        if (sContext == null)
             return "CONTEXT IS NOT READY. SOMETHING IS WRONG!";
         else
-            return sContext.getString( i );
+            return sContext.getString(i);
     }
 
     static void showConfirmationPrompt( int message,
                                         int positiveText,
                                         DialogInterface.OnClickListener posListener,
                                         DialogInterface.OnClickListener negListener ) {
-        AlertDialog.Builder builder = new AlertDialog.Builder( sContext );
+        AlertDialog.Builder builder = new AlertDialog.Builder(sContext);
         builder.setMessage( message )
                .setPositiveButton( positiveText, posListener )
                .setNegativeButton( R.string.cancel, negListener );
@@ -127,10 +126,10 @@ public class Lifeograph
     }
 
     static void showToast( String message ) {
-        Toast.makeText( sContext, message, Toast.LENGTH_LONG ).show();
+        Toast.makeText(sContext, message, Toast.LENGTH_LONG).show();
     }
     static void showToast( int message ) {
-        Toast.makeText( sContext, message, Toast.LENGTH_LONG ).show();
+        Toast.makeText(sContext, message, Toast.LENGTH_LONG).show();
     }
 
     static String joinPath( String p1, String p2) {
@@ -149,14 +148,14 @@ public class Lifeograph
 //    }
 
     static void updateScreenSizes() {
-        if( sContext == null ) {
+        if (sContext == null) {
             Log.e( TAG, "Failed to update screen sizes" );
             return;
         }
 
-        WindowManager wm = ( WindowManager ) sContext.getSystemService( Context.WINDOW_SERVICE );
+        WindowManager wm = (WindowManager) sContext.getSystemService( Context.WINDOW_SERVICE );
         DisplayMetrics metrics = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics( metrics );
+        wm.getDefaultDisplay().getMetrics(metrics);
         sScreenWidth = metrics.widthPixels / metrics.xdpi;
         sScreenHeight = metrics.heightPixels / metrics.ydpi;
         sDPIX = metrics.xdpi;
@@ -165,7 +164,7 @@ public class Lifeograph
     }
 
     static float getScreenShortEdge() {
-        return( sScreenHeight > sScreenWidth ? sScreenWidth : sScreenHeight );
+        return (sScreenHeight > sScreenWidth ? sScreenWidth : sScreenHeight);
     }
     static float getScreenWidth() {
         return sScreenWidth;
@@ -179,7 +178,7 @@ public class Lifeograph
 
     static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals( state );
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
 }

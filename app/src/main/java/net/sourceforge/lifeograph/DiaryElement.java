@@ -39,11 +39,11 @@ public abstract class DiaryElement {
     final static CharSequence STR_SEPARATOR = " - ";
 
     // layout type for list view section headers
-    static enum LayoutType {
+    enum LayoutType {
         ELEMENT, HEADER_SIMPLE, HEADER_TAG_CTG, HEADER_CHAPTER_CTG
     }
 
-    public static enum Type {
+    public enum Type {
         // CAUTION: order is significant and shouldn't be changed!
         NONE( 0, LayoutType.ELEMENT, "" ),
         TAG( 1, LayoutType.ELEMENT, Lifeograph.getStr( R.string.tag ) ),
@@ -64,7 +64,7 @@ public abstract class DiaryElement {
         public final LayoutType layout_type;
         public final int i;
 
-        Type( int order, LayoutType l, String v ) {
+        Type(int order, LayoutType l, String v) {
             this.i = order;
             this.layout_type = l;
             this.str = v;
@@ -106,19 +106,18 @@ public abstract class DiaryElement {
     final static int ES_FILTER_INDIVIDUAL    = 0x800000;
     final static int ES_FILTER_OUTSTANDING   = 0x20000000;
     final static int ES_FILTERED_OUT         = 0x40000000;
-    final static int ES_FILTER_RESET         =
-            ES_FILTER_FAVORED|ES_SHOW_NOT_TRASHED|ES_SHOW_NOT_TODO|ES_SHOW_TODO|ES_SHOW_PROGRESSED
-             |ES_FILTER_OUTSTANDING;
+    final static int ES_FILTER_RESET         = ES_FILTER_FAVORED | ES_SHOW_NOT_TRASHED |
+            ES_SHOW_NOT_TODO | ES_SHOW_TODO | ES_SHOW_PROGRESSED | ES_FILTER_OUTSTANDING;
     final static int ES_FILTER_MAX           = 0x7FFFFFFF; // the max for int in Java
 
-    public DiaryElement( Diary diary, String name, int status ) {
+    public DiaryElement(Diary diary, String name, int status) {
         m_ptr2diary = diary;
         m_status = status;
         m_name = name;
-        m_id = diary != null ? diary.create_new_id( this ) : DEID_UNSET;
+        m_id = diary != null ? diary.create_new_id(this) : DEID_UNSET;
     }
 
-    public DiaryElement( Diary diary, int id, int status ) {
+    public DiaryElement(Diary diary, int id, int status) {
         m_ptr2diary = diary;
         m_status = status;
         m_id = id;
@@ -138,8 +137,8 @@ public abstract class DiaryElement {
 
     abstract public int get_icon();
 
-    public Date get_date() {
-        return new Date( Date.NOT_APPLICABLE );
+    public LDate get_date() {
+        return new LDate(LDate.NOT_APPLICABLE);
     }
     public long get_date_t() {
         return get_date().m_date;
@@ -165,64 +164,69 @@ public abstract class DiaryElement {
     public int get_status() {
         return m_status;
     }
-    public void set_status( int status ) {
+    public void set_status(int status) {
         m_status = status;
     }
 
     public void set_status_flag( int flag, boolean add ) {
-        if( add )
+        if (add)
             m_status |= flag;
-        else if( ( m_status & flag ) != 0 )
+        else if ((m_status & flag) != 0)
             m_status -= flag;
     }
     // only for entries and chapters:
     public int get_todo_status() {
-        return ( m_status & ES_FILTER_TODO );
+        return (m_status & ES_FILTER_TODO);
     }
-    public void set_todo_status( int s ) {
-        m_status -= ( m_status & ES_FILTER_TODO );
+    public void set_todo_status(int s) {
+        m_status -= (m_status & ES_FILTER_TODO);
         m_status |= s;
     }
 
-    public boolean is_favored()
-    { return false; }
+    public boolean is_favored() { return false; }
 
     String m_name;
     Diary m_ptr2diary = null;
     int m_id = 0;
     int m_status;
 
-    static class CompareElemsByName implements Comparator< DiaryElement > {
-        public int compare( DiaryElement elem_l, DiaryElement elem_r ) {
-            return( elem_l.m_name.compareTo( elem_r.m_name ) );
+    static class CompareElemsByName implements Comparator<DiaryElement> {
+        public int compare(DiaryElement elem_l, DiaryElement elem_r) {
+            return elem_l.m_name.compareTo(elem_r.m_name);
         }
     }
 
-    static class CompareElemsByDate implements Comparator< DiaryElement > {
-        public int compare( DiaryElement elem_l, DiaryElement elem_r ) {
-            final long diff = ( elem_r.get_date_t() - elem_l.get_date_t() );
-            if( diff == 0 )
+    static class CompareElemsByDate implements Comparator<DiaryElement> {
+        public int compare(DiaryElement elem_l, DiaryElement elem_r) {
+            /*
+            final long diff = (elem_r.get_date_t() - elem_l.get_date_t());
+            if (diff == 0)
                 return 0;
-            else if( diff > 0 )
+            else if (diff > 0)
                 return 1;
             else return -1;
+            */
+            return Long.compare(elem_r.get_date_t(), elem_l.get_date_t());
         }
     }
 
-    static class CompareDates implements Comparator< Long > {
-        public int compare( Long date_l, Long date_r ) {
-            final long diff = ( date_r - date_l );
-            if( diff == 0 )
+    static class CompareDates implements Comparator<Long> {
+        public int compare(Long date_l, Long date_r) {
+            /*
+            final long diff = (date_r - date_l);
+            if (diff == 0)
                 return 0;
-            else if( diff > 0 )
+            else if (diff > 0)
                 return 1;
             else return -1;
+            */
+            return date_r.compareTo(date_l);
         }
     }
 
-    static class CompareNames implements Comparator< String > {
-        public int compare( String strL, String strR ) {
-            return( strL.compareToIgnoreCase( strR ) );
+    static class CompareNames implements Comparator<String> {
+        public int compare(String strL, String strR) {
+            return strL.compareToIgnoreCase(strR);
         }
     }
 

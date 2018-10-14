@@ -28,10 +28,9 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 
-public class AddElemAction extends ActionProvider implements MenuItem.OnMenuItemClickListener
-{
-    public AddElemAction( Context context ) {
-        super( context );
+public class AddElemAction extends ActionProvider implements MenuItem.OnMenuItemClickListener {
+    public AddElemAction(Context context) {
+        super(context);
     }
 
     @Override
@@ -40,8 +39,8 @@ public class AddElemAction extends ActionProvider implements MenuItem.OnMenuItem
     }
 
     @Override
-    public void onPrepareSubMenu( SubMenu menu ) {
-        super.onPrepareSubMenu( menu );
+    public void onPrepareSubMenu(SubMenu menu) {
+        super.onPrepareSubMenu(menu);
 
         menu.clear();
 
@@ -57,7 +56,7 @@ public class AddElemAction extends ActionProvider implements MenuItem.OnMenuItem
             .setIcon( R.mipmap.ic_chapter_f )
             .setOnMenuItemClickListener( this );
 
-        if( mParent.mPager.getCurrentItem() == 2 )
+        if (mParent.mPager.getCurrentItem() == 2)
             menu.add( 0, R.id.add_tag_ctg, 1, R.string.tag_ctg )
                 .setIcon( R.mipmap.ic_tag_ctg )
                 .setOnMenuItemClickListener( this );
@@ -65,22 +64,23 @@ public class AddElemAction extends ActionProvider implements MenuItem.OnMenuItem
 
     //@Override
     public boolean onMenuItemClick( MenuItem item ) {
-        switch( item.getItemId() ) {
+        switch (item.getItemId()) {
             case android.R.id.home:
-                return true;
+                break;
             case R.id.add_today:
                 mParent.goToToday();
-                return true;
+                break;
             case R.id.add_topic:
                 mParent.createTopic();
-                return true;
+                break;
             case R.id.add_group:
                 mParent.createGroup();
-                return true;
+                break;
             case R.id.add_tag_ctg:
                 mParent.createTagCtg();
-                return true;
+                break;
         }
+
         return true;
     }
 

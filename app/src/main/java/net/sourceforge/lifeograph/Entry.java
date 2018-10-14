@@ -22,30 +22,32 @@
 package net.sourceforge.lifeograph;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
 
 public class Entry extends DiaryElement {
-    public Entry( Diary diary, long date, String text, boolean favored ) {
-        super( diary, "", favored ? ES_ENTRY_DEFAULT_FAV : ES_ENTRY_DEFAULT );
-        m_date = new Date( date );
+    public Entry(Diary diary, long date, String text, boolean favored) {
+        super(diary, "", favored ? ES_ENTRY_DEFAULT_FAV : ES_ENTRY_DEFAULT);
+        m_date = new LDate(date);
 
-        // java.util.Date jd = new java.util.Date();
+        // Date jd = new Date();
         // m_date_created = jd.getTime() / 1000;
-        m_date_created = ( int ) ( System.currentTimeMillis() / 1000L );
+        m_date_created = (int) (System.currentTimeMillis() / 1000L);
         m_date_changed = m_date_created;
         m_date_status = m_date_created;
 
         m_text = text;
         m_ptr2theme_tag = null;
-        calculate_title( text );
+        calculate_title(text);
     }
 
-    public Entry( Diary diary, long date, boolean favored ) {
-        super( diary, Lifeograph.getStr( R.string.empty_entry ),
-                favored ? ES_ENTRY_DEFAULT_FAV : ES_ENTRY_DEFAULT );
-        m_date = new Date( date );
+    public Entry(Diary diary, long date, boolean favored) {
+        super(diary, Lifeograph.getStr(R.string.empty_entry),
+                favored ? ES_ENTRY_DEFAULT_FAV : ES_ENTRY_DEFAULT);
+        m_date = new LDate(date);
 
-        java.util.Date jd = new java.util.Date();
-        m_date_created = ( int ) ( jd.getTime() / 1000L );
+        Date jd = new Date();
+        m_date_created = (int) (jd.getTime() / 1000L);
         m_date_changed = m_date_created;
         m_date_status = m_date_created;
 
@@ -64,10 +66,9 @@ public class Entry extends DiaryElement {
 
     @Override
     public int get_icon() {
-        //return( is_favored() ? R.mipmap.ic_action_favorite : R.mipmap.ic_entry );
+        //return (is_favored() ? R.mipmap.ic_action_favorite : R.mipmap.ic_entry);
 
-        switch( get_todo_status() )
-        {
+        switch (get_todo_status()) {
             case ES_TODO:
                 return R.mipmap.ic_todo_open;
             case ES_PROGRESSED:
@@ -82,28 +83,27 @@ public class Entry extends DiaryElement {
     }
 
     @Override
-    public Date get_date() {
+    public LDate get_date() {
         return m_date;
     }
 
-    public void set_date( long date ) {
+    public void set_date(long date) {
         m_date.m_date = date;
     }
 
     @Override
     public String get_title_str() {
-        if( ! m_date.is_hidden() ) {
+        if (!m_date.is_hidden()) {
             StringBuilder title = new StringBuilder();
-            title.append( m_date.format_string() );
+            title.append(m_date.format_string());
 
-            if( !m_date.is_ordinal() && Lifeograph.getScreenWidth() > 3.0 )
-                title.append( ", " ).append( get_date().get_weekday_str() );
+            if (!m_date.is_ordinal() && Lifeograph.getScreenWidth() > 3.0)
+                title.append(", ").append(get_date().get_weekday_str());
 
             return title.toString();
-        }
-        else {
-            if( m_ptr2diary.m_groups.getMap().containsKey( m_date.get_pure() ) )
-                return m_ptr2diary.m_groups.getMap().get( m_date.get_pure() ).get_name();
+        } else {
+            if (m_ptr2diary.m_groups.getMap().containsKey(m_date.get_pure()))
+                return m_ptr2diary.m_groups.getMap().get(m_date.get_pure()).get_name();
             else
                 return "/"; // TODO find a better name
         }
@@ -111,24 +111,23 @@ public class Entry extends DiaryElement {
 
     @Override
     public String get_info_str() {
-        return( Date.format_string_d( m_date_changed ) );
+        return (LDate.format_string_d(m_date_changed));
     }
 
     @Override
     public String get_list_str() {
-        if( m_date.is_hidden() )
+        if (m_date.is_hidden())
             return m_name;
         else
-            return( m_date.format_string() + STR_SEPARATOR + m_name );
+            return (m_date.format_string() + STR_SEPARATOR + m_name);
     }
 
     @Override
     public String getListStrSecondary() {
-        if( m_date.is_ordinal() ) {
-            return( Lifeograph.getStr( R.string.entry_last_changed_on ) + " " +
-                    Date.format_string_d( m_date_changed ) );
-        }
-        else {
+        if (m_date.is_ordinal()) {
+            return (Lifeograph.getStr(R.string.entry_last_changed_on) + " " +
+                    LDate.format_string_d(m_date_changed));
+        } else {
             return m_date.get_weekday_str();
         }
     }
@@ -137,7 +136,7 @@ public class Entry extends DiaryElement {
         return m_text;
     }
 
-    public void set_text( String text ) {
+    public void set_text(String text) {
         m_text = text;
     }
 
@@ -146,24 +145,24 @@ public class Entry extends DiaryElement {
         Filter filter = m_ptr2diary.get_filter();
         int fs = filter.get_status();
 
-        boolean flag_filteredout = ( ( m_status & ES_FILTERED_OUT ) != 0 );
+        boolean flag_filteredout = ((m_status & ES_FILTERED_OUT) != 0);
 
-        while( ( fs & ES_FILTER_OUTSTANDING ) != 0 )  // this loop is meant for a single iteration
+        // this loop is meant for a single iteration
         // loop used instead of if to be able to break out
-        {
+        while ((fs & ES_FILTER_OUTSTANDING) != 0) {
 //            TODO WILL BE IMPLEMENTED IN 0.3
 //            flag_filteredout = ( ( fs & ES_FILTER_TRASHED & m_status ) == 0 );
 //
 //            // no need to continue if already filtered out
-//            if( flag_filteredout )
+//            if (flag_filteredout)
 //                break;
 
-            flag_filteredout = ( ( fs & ES_FILTER_FAVORED & m_status ) == 0 );
-            if( flag_filteredout )
+            flag_filteredout = ((fs & ES_FILTER_FAVORED & m_status) == 0);
+            if (flag_filteredout)
                 break;
 
-            flag_filteredout = ( ( fs & ES_FILTER_TODO & m_status ) == 0 );
-            if( flag_filteredout )
+            flag_filteredout = ((fs & ES_FILTER_TODO & m_status) == 0);
+            if (flag_filteredout)
                 break;
 
 //          TODO WILL BE IMPLEMENTED IN 0.3
@@ -174,77 +173,66 @@ public class Entry extends DiaryElement {
 //                    break;
 //                }
 //
-//            if( ( fs & ES_FILTER_DATE_END ) != 0 )
-//                if( m_date.m_date > filter.get_date_end() )
-//                {
+//            if ((fs & ES_FILTER_DATE_END ) != 0)
+//                if (m_date.m_date > filter.get_date_end()) {
 //                    flag_filteredout = true;
 //                    break;
 //                }
 //
-//            if( ( fs & ES_FILTER_TAG ) != 0 )
-//            {
-//                if( filter.get_tag().get_type() == Type.TAG )
-//                {
-//                    if( ! m_tags.contains( filter.get_tag() ) )
-//                    {
+//            if ((fs & ES_FILTER_TAG) != 0) {
+//                if (filter.get_tag().get_type() == Type.TAG) {
+//                    if (!m_tags.contains(filter.get_tag())) {
 //                        flag_filteredout = true;
 //                        break;
 //                    }
-//                }
-//                else // untagged
+//                } else // untagged
 //                {
-//                    if( ! m_tags.isEmpty() )
-//                    {
+//                    if (!m_tags.isEmpty()) {
 //                        flag_filteredout = true;
 //                        break;
 //                    }
 //                }
 //            }
 //
-//            if( ( fs & ES_FILTER_INDIVIDUAL ) != 0 )
-//            {
-//                if( filter.is_entry_filtered( this ) )
-//                {
+//            if ((fs & ES_FILTER_INDIVIDUAL) != 0) {
+//                if (filter.is_entry_filtered(this)) {
 //                    flag_filteredout = true;
 //                    break;
 //                }
 //            }
 
-            if( m_ptr2diary.is_search_active() )
-                flag_filteredout = !m_text.toLowerCase().contains( m_ptr2diary.get_search_text() );
+            if (m_ptr2diary.is_search_active())
+                flag_filteredout = !m_text.toLowerCase().contains(m_ptr2diary.get_search_text());
 
             break;
         }
 
-        if( ( fs & ES_FILTER_OUTSTANDING ) != 0 )
-            set_filtered_out( flag_filteredout );
+        if ((fs & ES_FILTER_OUTSTANDING) != 0)
+            set_filtered_out(flag_filteredout);
 
         return flag_filteredout;
     }
 
-    public void set_filtered_out( boolean filteredout ) {
-        if( filteredout )
+    public void set_filtered_out(boolean filteredout) {
+        if (filteredout)
             m_status |= ES_FILTERED_OUT;
-        else if( ( m_status & ES_FILTERED_OUT ) != 0 )
+        else if ((m_status & ES_FILTERED_OUT) != 0)
             m_status -= ES_FILTERED_OUT;
     }
 
     // FAVORITE ENTRY
     @Override
     public boolean is_favored() {
-        return( ( m_status & ES_FAVORED ) != 0 );
+        return ((m_status & ES_FAVORED) != 0);
     }
 
-    public void set_favored( boolean favored ) {
-        if( favored )
-        {
+    public void set_favored(boolean favored) {
+        if (favored) {
             m_status |= ES_FAVORED;
-            m_status &= ( ~ES_NOT_FAVORED );
-        }
-        else
-        {
+            m_status &= (~ES_NOT_FAVORED);
+        } else {
             m_status |= ES_NOT_FAVORED;
-            m_status &= ( ~ES_FAVORED );
+            m_status &= (~ES_FAVORED);
         }
     }
 
@@ -262,51 +250,49 @@ public class Entry extends DiaryElement {
                                                                            : m_option_lang;
     }
 
-    public void set_lang( String lang ) {
+    public void set_lang(String lang) {
         m_option_lang = lang;
     }
 
     // TRASH FUNCTIONALITY
     public boolean is_trashed() {
-        return( ( m_status & ES_TRASHED ) != 0 );
+        return ((m_status & ES_TRASHED) != 0);
     }
 
-    public void set_trashed( boolean trashed ) {
-        set_status_flag( ES_TRASHED, trashed );
+    public void set_trashed(boolean trashed) {
+        set_status_flag(ES_TRASHED, trashed);
     }
 
     // TAGS
-    public java.util.List< Tag > get_tags() { return m_tags; }
+    public List<Tag> get_tags() { return m_tags; }
 
-    public boolean add_tag( Tag tag ) {
-        return add_tag( tag, 1.0 );
+    public boolean add_tag(Tag tag) {
+        return add_tag(tag, 1.0);
     }
-    public boolean add_tag( Tag tag, double value ) {
-        if( tag.get_type() == Type.UNTAGGED ) { // may not be used in android actually
+    public boolean add_tag(Tag tag, double value) {
+        if (tag.get_type() == Type.UNTAGGED) { // may not be used in android actually
             return clear_tags();
-        }
-        else if( m_tags.add( tag ) ) {
+        } else if (m_tags.add(tag)) {
             tag.add_entry( this, value );
             m_ptr2diary.get_untagged().remove_entry( this );
 
-            if( m_ptr2theme_tag == null && tag.getHasOwnTheme() )
+            if (m_ptr2theme_tag == null && tag.getHasOwnTheme())
                 m_ptr2theme_tag = tag;
 
             return true;
-        }
-        else
+        } else
             return false;
     }
 
-    public boolean remove_tag( Tag tag ) {
-        if( m_tags.remove( tag ) ) {
-            tag.remove_entry( this );
+    public boolean remove_tag(Tag tag) {
+        if (m_tags.remove(tag)) {
+            tag.remove_entry(this);
 
-            if( m_tags.isEmpty() )
-                m_ptr2diary.get_untagged().add_entry( this );
+            if (m_tags.isEmpty())
+                m_ptr2diary.get_untagged().add_entry(this);
 
             // if this tag was the theme tag, re-adjust the theme tag
-            if( m_ptr2theme_tag == tag ) {
+            if (m_ptr2theme_tag == tag) {
                 for (Tag t : m_tags) {
                     if (t.getHasOwnTheme()) {
                         m_ptr2theme_tag = t;
@@ -318,8 +304,7 @@ public class Entry extends DiaryElement {
             }
 
             return true;
-        }
-        else
+        } else
             return false;
     }
 
@@ -328,7 +313,7 @@ public class Entry extends DiaryElement {
             return false;
 
         for (Tag tag : m_tags)
-            tag.remove_entry( this );
+            tag.remove_entry(this);
 
         m_tags.clear();
 
@@ -346,26 +331,26 @@ public class Entry extends DiaryElement {
         return m_ptr2theme_tag;
     }
 
-    public void set_theme_tag( Tag tag ) {
+    public void set_theme_tag(Tag tag) {
         // theme tag must be in the tag set
-        if( m_tags.contains( tag ) )
+        if (m_tags.contains(tag))
             m_ptr2theme_tag = tag;
     }
 
     public boolean get_theme_is_set() {
-        return( m_ptr2theme_tag != null );
+        return (m_ptr2theme_tag != null);
     }
 
     public void update_theme() { // called when a tag gained or lost custom theme
-        if( m_ptr2theme_tag != null ) { // if there already was a theme tag set
-            if( !m_ptr2theme_tag.getHasOwnTheme() ) // if it is no longer a theme tag
+        if (m_ptr2theme_tag != null) { // if there already was a theme tag set
+            if (!m_ptr2theme_tag.getHasOwnTheme()) // if it is no longer a theme tag
                 m_ptr2theme_tag = null;
         }
 
-        if( m_ptr2theme_tag == null ) {
+        if (m_ptr2theme_tag == null) {
             // check if another tag has its own theme and set it
-            for( Tag tag : m_tags ) {
-                if( tag.getHasOwnTheme() ) {
+            for (Tag tag : m_tags) {
+                if (tag.getHasOwnTheme()) {
                     m_ptr2theme_tag = tag;
                     break;
                 }
@@ -373,25 +358,24 @@ public class Entry extends DiaryElement {
         }
     }
 
-    private void calculate_title( String text ) {
-        if( text.length() < 1 ) {
-            m_name = Lifeograph.getStr( R.string.empty_entry );
-        }
-        else {
-            int pos = text.indexOf( '\n' );
-            if( pos == -1 )
+    private void calculate_title(String text) {
+        if (text.length() < 1) {
+            m_name = Lifeograph.getStr(R.string.empty_entry);
+        } else {
+            int pos = text.indexOf('\n');
+            if (pos == -1)
                 m_name = text;
             else
-                m_name = text.substring( 0, pos );
+                m_name = text.substring(0, pos);
         }
     }
 
-    Date m_date;
+    LDate m_date;
     long m_date_created;
     long m_date_changed;
     long m_date_status;
     String m_text = ""; // must be initialized to prevent crashes on empty entries with tags
-    java.util.List< Tag > m_tags = new ArrayList< Tag >();
+    List<Tag> m_tags = new ArrayList<>();
     String m_location = "";
     private Tag m_ptr2theme_tag;
     private String m_option_lang = Lifeograph.LANG_INHERIT_DIARY; // empty means off

@@ -21,8 +21,7 @@
 
 package net.sourceforge.lifeograph;
 
-public class Untagged extends Tag
-{
+public class Untagged extends Tag {
     public Untagged()
     {
         super( null, "Untagged", null );
