@@ -30,8 +30,8 @@ import android.preference.PreferenceManager;
 public class ActivitySettings extends PreferenceActivity
 {
     @Override
-    protected void onPostCreate( Bundle savedInstanceState ) {
-        super.onPostCreate( savedInstanceState );
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
 
         addPreferencesFromResource( R.xml.pref_general );
 

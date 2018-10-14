@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '28.0.0 rc1'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId 'net.sourceforge.lifeograph'
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionName '0.7.1'
         versionCode 7010
     }
@@ -28,9 +28,9 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'commons-codec:commons-codec:1.11'
-    implementation 'com.android.support:support-annotations:27.1.0'
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:support-v4:27.1.0'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.github.yukuku:ambilwarna:2.0.1'
 }
 

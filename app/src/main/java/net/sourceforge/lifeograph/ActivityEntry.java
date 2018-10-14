@@ -1361,10 +1361,10 @@ public class ActivityEntry extends AppCompatActivity
         }
     }
 
-    void parse_text( int start, int end ) {
+    void parse_text(int start, int end) {
         // everything below should go to Parser when there is one (and there is nothing above
         // as of yet...)
-        reset( start, end );
+        reset(start, end);
 
         // this part is different than in c++
         String search_text = Diary.diary.get_search_text();
@@ -1373,7 +1373,7 @@ public class ActivityEntry extends AppCompatActivity
         int i_search_end = Diary.diary.get_search_text().length() - 1;
 
         for (; pos_current < m_pos_end; ++pos_current) {
-            char_current = mEditText.getText().charAt( pos_current );
+            char_current = mEditText.getText().charAt(pos_current);
 
             if (flag_search_active) {
                 if (search_text.charAt(i_search) == Character.toLowerCase(char_current)) {
@@ -1633,11 +1633,11 @@ public class ActivityEntry extends AppCompatActivity
         boolean     flag_trigger = false;
         boolean     flag_apply = false;
 
-        if( ( char_flags & cf ) != 0 ) {
-            if( applier != ParSel.NULL ) {
-                if( m_chars_looked_for.get( 0 ).junction )
+        if ((char_flags & cf) != 0) {
+            if (applier != ParSel.NULL) {
+                if (m_chars_looked_for.get(0).junction)
                     flag_apply = true;
-                else if( ( m_cf_last & m_cf_req ) != 0 ) { // not junction = final applier
+                else if ((m_cf_last & m_cf_req) != 0) { // not junction = final applier
                     flag_clear_chars = true;
                     flag_apply = true;
                 }

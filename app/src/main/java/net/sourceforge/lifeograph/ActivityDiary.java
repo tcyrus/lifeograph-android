@@ -68,7 +68,7 @@ public class ActivityDiary extends AppCompatActivity
         Lifeograph.updateScreenSizes();
 
         // PICKING UP THE APPROPRIATE LAYOUT
-        if( Lifeograph.getScreenWidth() >= 4.0 ) {
+        if (Lifeograph.getScreenWidth() >= 4.0) {
             setContentView( R.layout.diary_wide );
 
             mButtonCalendar = findViewById( R.id.button_calendar );

@@ -49,32 +49,32 @@ public class ActivityChapterTag extends AppCompatActivity
         FragmentElemList.ListOperations, DialogTheme.DialogThemeHost, Spinner.OnItemSelectedListener
 {
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate( savedInstanceState );
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        Log.d( Lifeograph.TAG, "onCreate - ActivityChapterTag" );
+        Log.d(Lifeograph.TAG, "onCreate - ActivityChapterTag");
 
-        setContentView( R.layout.chapter );
+        setContentView(R.layout.chapter);
 
         Lifeograph.sContext = this;
         Lifeograph.updateScreenSizes();
 
         // ELEMENT TO SHOW
-        mElement = ( DiaryElementChart ) Diary.diary.get_element(
-                getIntent().getIntExtra( "elem", 0 ) );
-        if( mElement == null ) {
-            int type = getIntent().getIntExtra( "type", 0 );
-            if( type == DiaryElement.Type.UNTAGGED.i )
+        mElement = (DiaryElementChart) Diary.diary.get_element(
+                getIntent().getIntExtra("elem", 0));
+        if (mElement == null) {
+            int type = getIntent().getIntExtra("type", 0);
+            if (type == DiaryElement.Type.UNTAGGED.i)
                 mElement = Diary.diary.get_untagged();
-            else if( type == DiaryElement.Type.CHAPTER.i )
+            else if (type == DiaryElement.Type.CHAPTER.i)
                 mElement = Diary.diary.m_orphans;
             else
-                Log.e( Lifeograph.TAG, "Element not found in the diary" );
+                Log.e(Lifeograph.TAG, "Element not found in the diary");
         }
 
         // FILLING WIDGETS
-        mDrawerLayout = findViewById( R.id.drawer_layout );
-        //mInflater = ( LayoutInflater ) getSystemService( Activity.LAYOUT_INFLATER_SERVICE );
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        //mInflater = (LayoutInflater) getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         LinearLayout layoutTagProperties = findViewById( R.id.tag_properties );
         Spinner spinnerTagType = findViewById( R.id.tag_type );
@@ -175,9 +175,9 @@ public class ActivityChapterTag extends AppCompatActivity
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
-            // mActionBar.setIcon( mElement.get_icon() );
-            setTitle( mElement.get_title_str() );
-            mActionBar.setSubtitle( mElement.get_info_str() );
+            // mActionBar.setIcon(mElement.get_icon());
+            setTitle(mElement.get_title_str());
+            mActionBar.setSubtitle(mElement.get_info_str());
         }
     }
 
@@ -215,13 +215,13 @@ public class ActivityChapterTag extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-        super.onCreateOptionsMenu( menu );
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
 
-        getMenuInflater().inflate( R.menu.menu_chapter_tag, menu );
+        getMenuInflater().inflate(R.menu.menu_chapter_tag, menu);
 
-        MenuItem item = menu.findItem( R.id.change_todo_status );
-        ToDoAction ToDoAction = ( ToDoAction ) MenuItemCompat.getActionProvider( item );
+        MenuItem item = menu.findItem(R.id.change_todo_status);
+        ToDoAction ToDoAction = (ToDoAction) MenuItemCompat.getActionProvider(item);
         ToDoAction.mObject = this;
 
         mMenu = menu;
@@ -231,25 +231,25 @@ public class ActivityChapterTag extends AppCompatActivity
     }
 
     @Override
-    public boolean onPrepareOptionsMenu( Menu menu ) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu( menu );
 
-        boolean flagPseudoElement = ( mElement == Diary.diary.m_orphans );
+        boolean flagPseudoElement = (mElement == Diary.diary.m_orphans);
         boolean flagWritable = !Diary.diary.is_read_only();
         DiaryElement.Type type = mElement.get_type();
 
-        MenuItem item = menu.findItem( R.id.change_todo_status );
-        item.setVisible( type != DiaryElement.Type.UNTAGGED &&
-                         !flagPseudoElement &&
-                         flagWritable );
+        MenuItem item = menu.findItem(R.id.change_todo_status);
+        item.setVisible(type != DiaryElement.Type.UNTAGGED &&
+                        !flagPseudoElement &&
+                        flagWritable);
 
 //  TODO WILL BE IMPLEMENTED IN 0.7+
 //        item = menu.findItem( R.id.change_sort_type );
 //        item.setVisible( mParentElem != null );
 
-        item = menu.findItem( R.id.add_entry );
-        item.setVisible( ( type == DiaryElement.Type.TOPIC || type == DiaryElement.Type.GROUP ) &&
-                         flagWritable );
+        item = menu.findItem(R.id.add_entry);
+        item.setVisible((type == DiaryElement.Type.TOPIC || type == DiaryElement.Type.GROUP) &&
+                         flagWritable);
 
         item = menu.findItem( R.id.dismiss );
         item.setVisible( !flagPseudoElement && flagWritable );
@@ -382,15 +382,15 @@ public class ActivityChapterTag extends AppCompatActivity
     }
 
     // InquireListener INTERFACE METHODS
-    public void onInquireAction( int id, String text ) {
-        switch( id ) {
+    public void onInquireAction(int id, String text) {
+        switch (id) {
             case R.string.rename_tag:
-                Diary.diary.rename_tag( ( Tag ) mElement, text );
-                setTitle( mElement.m_name );
+                Diary.diary.rename_tag((Tag) mElement, text );
+                setTitle(mElement.m_name);
                 break;
             case R.string.rename_chapter:
                 mElement.m_name = text;
-                setTitle( mElement.get_list_str() );
+                setTitle(mElement.get_list_str());
                 break;
             case R.string.edit_date:
                 LDate date = new LDate(text);
@@ -399,11 +399,11 @@ public class ActivityChapterTag extends AppCompatActivity
                         break;
 
                     date.reset_order_0();
-                    Diary.diary.m_ptr2chapter_ctg_cur.set_chapter_date( ( Chapter ) mElement,
-                                                                        date.m_date );
+                    Diary.diary.m_ptr2chapter_ctg_cur.set_chapter_date((Chapter) mElement,
+                                                                        date.m_date);
                     Diary.diary.update_entries_in_chapters();
-                    setTitle( mElement.get_title_str() );
-                    mActionBar.setSubtitle( mElement.get_info_str() );
+                    setTitle(mElement.get_title_str());
+                    mActionBar.setSubtitle(mElement.get_info_str());
                     updateList();
                 }
                 break;
@@ -434,8 +434,8 @@ public class ActivityChapterTag extends AppCompatActivity
                 case CHAPTER:
                 case TOPIC:
                 case GROUP:
-                    Chapter chapter = ( Chapter ) mElement;
-                    chapter.set_todo_status( s );
+                    Chapter chapter = (Chapter) mElement;
+                    chapter.set_todo_status(s);
                     updateIcon();
                     return;
                 default:
@@ -447,10 +447,10 @@ public class ActivityChapterTag extends AppCompatActivity
     }
 
     void updateIcon() {
-        if( mMenu != null ) {
+        if (mMenu != null) {
             int icon = R.drawable.ic_action_not_todo;
 
-            switch( mElement.get_todo_status() ) {
+            switch (mElement.get_todo_status()) {
                 case Entry.ES_TODO:
                     icon = R.drawable.ic_action_todo_open;
                     break;
@@ -464,7 +464,7 @@ public class ActivityChapterTag extends AppCompatActivity
                     icon = R.drawable.ic_action_todo_canceled;
                     break;
             }
-            mMenu.findItem( R.id.change_todo_status ).setIcon( icon );
+            mMenu.findItem(R.id.change_todo_status).setIcon(icon);
         }
     }
 
@@ -472,13 +472,13 @@ public class ActivityChapterTag extends AppCompatActivity
     public Activity getActivity() {
         return this;
     }
-    public void createChapter( long date ) { } // dummy
+    public void createChapter(long date) { } // dummy
 
     // DiaryManager INTERFACE METHODS
-    public void addFragment( FragmentElemList fragment ) {
+    public void addFragment(FragmentElemList fragment) {
         mFragmentList = fragment;
     }
-    public void removeFragment( FragmentElemList fragment ) {
+    public void removeFragment(FragmentElemList fragment) {
         mFragmentList = null;
     }
     public DiaryElement getElement() {
@@ -490,33 +490,34 @@ public class ActivityChapterTag extends AppCompatActivity
 
     // ListOperations INTERFACE METHODS
     public void updateList() {
-        if( mFragmentList != null )
+        if (mFragmentList != null)
             mFragmentList.updateList();
     }
 
     // DialogThemeHost INTERFACE METHODS
     public void onDialogThemeClose() {
-        //mActionBar.setIcon( mElement.get_icon() );
+        //mActionBar.setIcon(mElement.get_icon());
     }
 
     // Spinner INTERFACE METHODS
-    public void onItemSelected( AdapterView<?> parent, View view, int pos, long id ) {
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         switch (pos) {
             case 0:
                 mElement.set_chart_type(ChartPoints.BOOLEAN);
-                mAtvTagUnit.setVisibility( View.GONE );
+                mAtvTagUnit.setVisibility(View.GONE);
                 break;
             case 1:
                 mElement.set_chart_type(ChartPoints.CUMULATIVE);
-                mAtvTagUnit.setVisibility( View.VISIBLE );
+                mAtvTagUnit.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 mElement.set_chart_type(ChartPoints.AVERAGE);
-                mAtvTagUnit.setVisibility( View.VISIBLE );
+                mAtvTagUnit.setVisibility(View.VISIBLE);
                 break;
         }
-        mViewChart.set_points( mElement.create_chart_data(), 1f );
+        mViewChart.set_points(mElement.create_chart_data(), 1f);
     }
+
     public void onNothingSelected(AdapterView<?> parent) {
         // do nothing?
     }

@@ -40,18 +40,18 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
 {
     // CONSTANTS (different in Android)
     static final float MARGIN = Lifeograph.getScreenShortEdge() * Lifeograph.sDPIX / 70f /
-                                ( Lifeograph.getScreenShortEdge() >= 2.8 ?
-                                ( float ) Math.log( Lifeograph.getScreenShortEdge() ) : 1f );
+                                (Lifeograph.getScreenShortEdge() >= 2.8 ?
+                                (float) Math.log(Lifeograph.getScreenShortEdge()) : 1f);
     static final float HSPACING = MARGIN / 1.16f;
     static final float VSPACING = MARGIN / 0.7f;
     static final float TEXT_HEIGHT = MARGIN / 0.4f;
     static final float TEXT_PADDING = MARGIN / 2.8f;
-    static final float ITEM_HEIGHT =  TEXT_HEIGHT + ( 2 * TEXT_PADDING );
+    static final float ITEM_HEIGHT =  TEXT_HEIGHT + (2 * TEXT_PADDING);
     static final float HALF_HEIGHT = ITEM_HEIGHT / 2;
     static final float STROKE_WIDTH = MARGIN / 14f;
 
-    public ViewEntryTags( Context c, AttributeSet attrs ) {
-        super( c, attrs );
+    public ViewEntryTags(Context c, AttributeSet attrs) {
+        super(c, attrs);
         context = c;
 
         // we set a new Path
@@ -59,35 +59,35 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
 
         // and we set a new Paint with the desired attributes
         mPaint = new Paint();
-        mPaint.setAntiAlias( true );
-        mPaint.setColor( Color.BLACK );
-        mPaint.setStyle( Paint.Style.FILL );
-        mPaint.setStrokeJoin( Paint.Join.ROUND );
-        mPaint.setStrokeWidth( 4 * STROKE_WIDTH );
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeWidth(4 * STROKE_WIDTH);
 
-        mGestureDetector = new GestureDetector( c, this );
+        mGestureDetector = new GestureDetector(c, this);
     }
 
-    public void setListener( Listener listener ) {
+    public void setListener(Listener listener) {
         mListener = listener;
     }
 
-    public void set_entry( Entry entry ) {
+    public void set_entry(Entry entry) {
         m_ptr2entry = entry;
         m_pos_x = MARGIN;
 
         m_items.clear();
-        java.util.List< Tag > tags = m_ptr2entry.get_tags();
-        for( Tag tag : tags ) {
-            TagItem ti = new TagItem( tag.get_name_and_value( entry, false, true ) );
+        List<Tag> tags = m_ptr2entry.get_tags();
+        for (Tag tag : tags) {
+            TagItem ti = new TagItem(tag.get_name_and_value(entry, false, true));
             ti.tag = tag;
 
-            m_items.add( ti );
+            m_items.add(ti);
         }
 
-        if( m_flag_editable ) {
-            TagItem ti_add = new TagItem( "Add Tag" );
-            m_items.add( ti_add );
+        if (m_flag_editable) {
+            TagItem ti_add = new TagItem("Add Tag");
+            m_items.add(ti_add);
         }
 
         invalidate();
@@ -113,7 +113,7 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
         mPath.reset(); // reset path
 
         // BACKGROUND
-        if( ti.hovered || ti.tag != null ) {
+        if (ti.hovered || ti.tag != null) {
             float h_width = ( TEXT_PADDING + text_width + TEXT_PADDING );
 
             mPath.moveTo( m_pos_x, m_pos_y );
@@ -123,10 +123,10 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
             mPath.rLineTo( -h_width, 0 );
             mPath.close();
 
-            if( ti.hovered && m_flag_editable )
+            if (ti.hovered && m_flag_editable)
                 mPaint.setStrokeWidth( 6 * STROKE_WIDTH );
 
-            if( ti.tag != null && ti.tag.getHasOwnTheme() ) {
+            if (ti.tag != null && ti.tag.getHasOwnTheme()) {
                 mPaint.setColor(ti.tag.getTheme().color_base);
                 canvas.drawPath( mPath, mPaint );
 
@@ -187,17 +187,17 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
         mPaint.setStyle( Paint.Style.FILL );
         mPaint.setStrokeWidth( STROKE_WIDTH );
 
-        if( m_items.isEmpty() && !m_flag_editable ) {
-            mPaint.setColor( m_color_text_default );
-            canvas.drawText( "Not tagged", m_pos_x, m_pos_y + TEXT_HEIGHT, mPaint );
+        if (m_items.isEmpty() && !m_flag_editable) {
+            mPaint.setColor(m_color_text_default);
+            canvas.drawText("Not tagged", m_pos_x, m_pos_y + TEXT_HEIGHT, mPaint);
         }
 
-        for( TagItem ti : m_items )
-            add_item( canvas, ti );
+        for (TagItem ti: m_items)
+            add_item(canvas, ti);
 
         ViewGroup.LayoutParams lp = getLayoutParams();
         lp.height = mDesiredHeight;
-        setLayoutParams( lp );
+        setLayoutParams(lp);
     }
 
     //override the onTouchEvent
@@ -209,11 +209,11 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
     }
 
     // GestureDetector.OnGestureListener INTERFACE METHODS
-    public boolean onDown( MotionEvent event ) {
-        if( m_flag_editable ) {
-            for( TagItem ti : m_items ) {
-                if( event.getX() > ti.xl && event.getX() < ti.xr &&
-                    ti.yl < event.getY() && ti.yr > event.getY() ) {
+    public boolean onDown(MotionEvent event) {
+        if (m_flag_editable) {
+            for (TagItem ti : m_items) {
+                if (event.getX() > ti.xl && event.getX() < ti.xr &&
+                    ti.yl < event.getY() && ti.yr > event.getY()) {
                     ti.hovered = true;
                     update();
                     break;
@@ -264,7 +264,7 @@ public class ViewEntryTags extends View implements GestureDetector.OnGestureList
 
     class TagItem
     {
-        TagItem( String l ) {
+        TagItem(String l) {
             label = l;
         }
 

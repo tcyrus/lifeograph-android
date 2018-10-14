@@ -269,7 +269,7 @@ public class ActivityLogin extends AppCompatActivity
     }
 
     // InquireListener INTERFACE METHODS
-    public void onInquireAction( int id, String text ) {
+    public void onInquireAction(int id, String text) {
         switch (id) {
             case R.string.create_diary:
                 if (Diary.diary.init_new(Lifeograph.joinPath(getDiariesDir().getPath(), text))
@@ -283,26 +283,26 @@ public class ActivityLogin extends AppCompatActivity
         }
     }
 
-    public boolean onInquireTextChanged( int id, String s ) {
-        switch( id ) {
+    public boolean onInquireTextChanged(int id, String s) {
+        switch (id) {
             case R.string.create_diary:
-                File fp = new File( getDiariesDir().getPath(), s );
-                return( !fp.exists() );
+                File fp = new File(getDiariesDir().getPath(), s);
+                return !fp.exists();
         }
         return true;
     }
 
     // DialogPassword INTERFACE METHODS
-    public void onDPAction( DialogPassword.DPAction action ) {
-        if( action == DialogPassword.DPAction.DPA_LOGIN )
+    public void onDPAction(DialogPassword.DPAction action) {
+        if (action == DialogPassword.DPAction.DPA_LOGIN)
             readBody();
     }
 
     void createNewDiary() {
         // ask for name
-        DialogInquireText dlg = new DialogInquireText( this, R.string.create_diary,
-                                                       Lifeograph.getStr( R.string.new_diary ),
-                                                       R.string.create, this );
+        DialogInquireText dlg = new DialogInquireText(this, R.string.create_diary,
+                                                      Lifeograph.getStr(R.string.new_diary),
+                                                      R.string.create, this);
         dlg.show();
     }
 
@@ -311,18 +311,17 @@ public class ActivityLogin extends AppCompatActivity
         mPaths.clear();
 
         File dir = getDiariesDir();
-        Log.d( Lifeograph.TAG, dir.getPath() );
-        if( !dir.exists() ) {
-            if( !dir.mkdirs() )
-                Lifeograph.showToast( "Failed to create the diary folder" );
-        }
-        else {
+        Log.d(Lifeograph.TAG, dir.getPath());
+        if (!dir.exists()) {
+            if (!dir.mkdirs())
+                Lifeograph.showToast("Failed to create the diary folder");
+        } else {
             File[] dirs = dir.listFiles();
-            if( dirs != null ) {
-                for( File ff : dirs ) {
-                    if( !ff.isDirectory() ) {
-                        mAdapterDiaries.add( ff.getName() );
-                        mPaths.add( ff.getPath() );
+            if (dirs != null) {
+                for (File ff : dirs) {
+                    if (!ff.isDirectory()) {
+                        mAdapterDiaries.add(ff.getName());
+                        mPaths.add(ff.getPath());
                     }
                 }
             }
@@ -429,23 +428,23 @@ public class ActivityLogin extends AppCompatActivity
     // ABOUT DIALOG ================================================================================
     public class DialogAbout extends Dialog
     {
-        DialogAbout( Context context ) {
-            super( context );
+        DialogAbout(Context context) {
+            super(context);
         }
 
         @Override
-        protected void onCreate( Bundle savedInstanceState ) {
-            super.onCreate( savedInstanceState );
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
 
-            setContentView( R.layout.dialog_about );
-            setTitle( R.string.program_name );
-            setCancelable( true );
+            setContentView(R.layout.dialog_about);
+            setTitle(R.string.program_name);
+            setCancelable(true);
 
-            TextView tv = findViewById( R.id.textViewWebsite );
-            tv.setMovementMethod( LinkMovementMethod.getInstance() );
+            TextView tv = findViewById(R.id.textViewWebsite);
+            tv.setMovementMethod(LinkMovementMethod.getInstance());
 
-            tv = findViewById( R.id.textViewVersion );
-            tv.setText( BuildConfig.VERSION_NAME );
+            tv = findViewById(R.id.textViewVersion);
+            tv.setText(BuildConfig.VERSION_NAME);
         }
     }
 }

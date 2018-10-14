@@ -198,28 +198,12 @@ public abstract class DiaryElement {
 
     static class CompareElemsByDate implements Comparator<DiaryElement> {
         public int compare(DiaryElement elem_l, DiaryElement elem_r) {
-            /*
-            final long diff = (elem_r.get_date_t() - elem_l.get_date_t());
-            if (diff == 0)
-                return 0;
-            else if (diff > 0)
-                return 1;
-            else return -1;
-            */
             return Long.compare(elem_r.get_date_t(), elem_l.get_date_t());
         }
     }
 
     static class CompareDates implements Comparator<Long> {
         public int compare(Long date_l, Long date_r) {
-            /*
-            final long diff = (date_r - date_l);
-            if (diff == 0)
-                return 0;
-            else if (diff > 0)
-                return 1;
-            else return -1;
-            */
             return date_r.compareTo(date_l);
         }
     }
